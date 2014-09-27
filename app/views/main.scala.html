@@ -59,7 +59,7 @@
                             @* TODO : add mashete *@
                             @* TODO : portal config *@
                             <form class="navbar-form navbar-right" action="/logout" method="POST" role="form">
-                                @* TODO : link to account *@
+                                @* TODO : link to account and user icon *@
                                 <label id="userinfo" style="color : white"></label>
                                 <button type="submit" class="btn btn-danger">Log out</button>
                             </form>
@@ -99,6 +99,11 @@
         <script src="@routes.Assets.at("javascripts/api/eventbus.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/api/userrights.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/api/structure.js")" type="text/javascript"></script>
+
+        <script src="@routes.Assets.at("javascripts/mashetes/mashete.js")" type="text/jsx"></script>
+        <script src="@routes.Assets.at("javascripts/mashetes/links.js")" type="text/jsx"></script>
+        <script src="@routes.Assets.at("javascripts/mashetes/iframe.js")" type="text/jsx"></script>
+
         <script src="@routes.Assets.at("javascripts/ui/init.js")" type="text/javascript"></script>
     </body>
 </html>

@@ -1,25 +1,26 @@
 package modules.structure
 
 import common.IdGenerator
-import modules.identity.{Writer, Admin, Anonymous, User}
-import play.api.Logger
+import modules.identity.{Admin, Anonymous, User, Writer}
 import play.api.libs.json.Json
 
 
 object MashetesStore {
+
 
 }
 
 object PagesStore {
 
   val widgetsIndex = Seq(
-    MasheteInstance("hello-1", "hello-mashete", Center, Json.obj()),
-    MasheteInstance("iframe-1", "iframe-mashete", Center, Json.obj("url" -> "http://www.google.fr")),
-    MasheteInstance("iframe-2", "iframe-mashete", Center, Json.obj("url" -> "https://www.playframework.com/"))
+    MasheteInstance("widget-1", "LinksMashete", Left, Json.obj()),
+    MasheteInstance("widget-2", "LinksMashete", Left, Json.obj()),
+    MasheteInstance("widget-3", "IframeMashete", Right, Json.obj("url" -> "https://www.playframework.com/", "title" -> "Playframework", "height" -> 600))
   )
 
   val widgetsPrivate = Seq(
-    MasheteInstance("private-1", "private-mashete", Center, Json.obj())
+    MasheteInstance("widget-1", "LinksMashete", Left, Json.obj()),
+    MasheteInstance("widget-2", "IframeMashete", Right, Json.obj("url" -> "http://underscorejs.org/", "title" -> "Underscore", "height" -> 600))
   )
 
   val privatePage = Page(IdGenerator.uuid, "My Private page", "", "/site/myprivatepage", Seq(Admin, Writer), Seq(), widgetsPrivate)

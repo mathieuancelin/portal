@@ -11,6 +11,33 @@ portal.Socket = portal.Socket || {};
         payload: {}
     };
 
+    var socket;
+
+    function init() {
+        socket = new WebSocket("ws://" + location.host + "/ws");
+        socket.onopen = function() {
+            wsPromise.resolve({});//socket);
+            console.log("Websocket connection successful")
+        };
+        socket.onerror = function() {
+            wsPromise.reject(new Error("The websocket cannot be initialized"));
+            console.error("The websocket cannot be initialized");
+        };
+        socket.onmessage = function(event) {
+            //console.trace('data received on user websocket : ' + event.data);
+            var data = JSON.parse(event.data);
+            var correlationId = data.correlationId;
+            if (waitingQueue[correlationId]) {
+                var promise = waitingQueue[correlationId];
+                promise.resolve(data.response);
+                delete waitingQueue[correlationId];
+            } else {
+                console.error("Correlation " + correlationId + " not in waiting queue");
+            }
+        };
+        return wsPromise.promise;
+    }
+
     function ask(options) {
         var promise = Q.defer();
         var future = promise.promise;
@@ -18,12 +45,9 @@ portal.Socket = portal.Socket || {};
         var correlationId = 'promise-' + (correlationIdCounter++);
         opt.correlationId = correlationId;
         waitingQueue[correlationId] = promise;
-        wsPromise.promise.then(function(ws) {
-            var pl = JSON.stringify(opt);
-            console.trace('Data asked on user websocket ' + pl);
-            ws.send(pl);
-            return ws;
-        });
+        var pl = JSON.stringify(opt);
+        //console.trace('Data asked on user websocket ' + pl);
+        socket.send(pl);
         setTimeout(function() {
             if (waitingQueue[correlationId]) {
                 delete waitingQueue[correlationId];
@@ -36,31 +60,15 @@ portal.Socket = portal.Socket || {};
     function tell(options) {
         var opt = _.extend({}, defaultOptions, options);
         opt.correlationId = 'promise-' + (correlationIdCounter++);
-        wsPromise.promise.then(function(ws) {
-            var pl = JSON.stringify(opt);
-            console.trace('Data sent on user websocket ' + pl);
-            ws.send(pl);
-        });
+        var pl = JSON.stringify(opt);
+        //console.trace('Data sent on user websocket ' + pl);
+        socket.send(pl);
     }
 
     exports.ask = ask;
+
     exports.tell = tell;
-    exports.resolveWS = function(wsk) {
-        wsPromise.resolve(wsk);
-        wsk.addEventListener("message", function(event) {
-            console.trace('data received on user websocket : ' + event.data);
-            var data = JSON.parse(event.data);
-            var correlationId = data.correlationId;
-            if (waitingQueue[correlationId]) {
-                var promise = waitingQueue[correlationId];
-                promise.resolve(data.response);
-                delete waitingQueue[correlationId];
-            } else {
-                console.error("Correlation " + correlationId + " not in waiting queue");
-            }
-        });
-    };
-    exports.rejectWS = function() {
-        wsPromise.reject(new Error("The websocket cannot be initialized"));
-    };
+
+    exports.init = init;
+
 })(portal.Socket);

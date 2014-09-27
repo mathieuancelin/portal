@@ -6,24 +6,28 @@ $(function() {
         });
     }
 
-    function showSubPages() {
-        portal.Structure.subPages().then(function(data) {
-            _.each(data, function(item) {
-                $('#subpages').append('<li><a href="' + item.url + '">' + item.name + '</a></li>');
-            });
-        });
-    }
-
-    var socket = new WebSocket("ws://" + location.host + "/ws");
-    socket.onopen = function() {
-        portal.Socket.resolveWS(socket);
-        // todo : init UI flow here
+    portal.Socket.init().then(function() {
         setTimeout(function() {
-            showIdentity();
-            showSubPages();
-        }, 0);
-    };
-    socket.onerror = function() {
-        portal.Socket.rejectWS();
-    };
+            try {
+
+                showIdentity();
+
+                _.chain(portal.Location.current.mashetes).filter(function(mashete) {
+                    return mashete.position === "Left";
+                }).each(function(mashete, idx) {
+                    React.renderComponent(new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig), document.getElementById('left-' + (idx + 1)));
+                });
+
+                _.chain(portal.Location.current.mashetes).filter(function(mashete) {
+                    return mashete.position === "Right";
+                }).each(function(mashete, idx) {
+                    React.renderComponent(new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig), document.getElementById('right-' + (idx + 1)));
+                });
+
+            } catch(e) {
+                console.error(e);
+                console.error(e.stack);
+            }
+        }, 800);  // Because of JSX transformer !!!
+    });
 });

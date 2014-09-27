@@ -1,0 +1,22 @@
+.mashete {
+    border-style: solid;
+    border-color: #eee;
+    border-width: 1px;
+    margin-bottom: 20px;
+    padding-top: 15px;
+}
+
+.mashete-bar {
+    border-bottom-style: solid;
+    border-bottom-color: #eee;
+    border-bottom-width: 1px;
+}
+
+.pushTop {
+    padding-top: 10px;
+}
+
+iframe {
+    border: none;
+    padding-top: 10px;
+}
