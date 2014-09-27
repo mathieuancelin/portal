@@ -24,4 +24,4 @@ object Admin extends Role("1", "ADMINISTRATOR", "An administrator")
 object Writer extends Role("2", "WRITER", "A person that can manage content")
 
 object AnonymousUser extends User("0", "John", "Doe", "john.doe@acme.com", "", Seq(Anonymous))
-object MathieuUser extends User("1", "Mathieu", "Ancelin", "mathieu.ancelin@gmail.com", "", Seq(Admin, Writer))
+object MathieuUser extends User("1", "Mathieu", "Ancelin", "mathieu.ancelin@acme.com", "", Seq(Admin, Writer))
