@@ -9,8 +9,8 @@ portal.Mashetes = portal.Mashetes || {};
             return {hide: false};
         },
         hide: function(e) {
-            console.log("hiding !!!");
             this.setState({hide: true});
+            this.props.config.closeCallback();
         },
         render: function() {
             if (this.state.hide) {
@@ -28,7 +28,7 @@ portal.Mashetes = portal.Mashetes || {};
                 AdminBar = undefined;
             }
             return (
-                <div className="mashete col-md-12" draggable="false" ondragover="event.preventDefault();" data-masheteid={this.props.masheteid}>
+                <div className="mashete col-md-12" draggable="false" ondragover="event.preventDefault();" data-masheteid={this.props.config.masheteid}>
                     <div className="container-fluid">
                         <div class="row droppable"></div>
                     {AdminBar}

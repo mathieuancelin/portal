@@ -15,7 +15,7 @@ portal.MashetesStore = portal.MashetesStore || {};
         render: function() {
             if (this.state.links.length === 0) {
                 return (
-                    portal.Mashetes.Mashete({title: "Navigate to"}, 
+                    portal.Mashetes.Mashete({title: "Navigate to", config: this.props}, 
                         React.DOM.h5(null, "Nothing here ...")
                     )
                 );
@@ -28,7 +28,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                 );
             });
             return (
-                portal.Mashetes.Mashete({title: "Navigate to", masheteid: this.props.masheteid}, 
+                portal.Mashetes.Mashete({title: "Navigate to", config: this.props}, 
                     React.DOM.ul({className: "pushTop unstyled"}, 
                         linkNodes
                     )

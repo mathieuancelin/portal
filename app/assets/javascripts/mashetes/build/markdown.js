@@ -8,7 +8,7 @@ portal.MashetesStore = portal.MashetesStore || {};
         render: function() {
             var rawMarkup = converter.makeHtml(this.props.markdown.decodeBase64());
             return (
-                portal.Mashetes.Mashete({title: this.props.title, masheteid: this.props.masheteid}, 
+                portal.Mashetes.Mashete({title: this.props.title, config: this.props}, 
                     React.DOM.div(null, 
                         React.DOM.span({dangerouslySetInnerHTML: {__html: rawMarkup}})
                     )

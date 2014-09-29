@@ -2,7 +2,7 @@ $(function() {
 
     function showIdentity() {
         portal.Identity.whoAmI().then(function(data) {
-            $('#userinfo').html(data.name + " " + data.surname + "&nbsp;&nbsp;");
+            $('#userinfo').html(data.name + " " + data.surname);
         });
     }
 
@@ -11,28 +11,30 @@ $(function() {
 
             showIdentity();
 
-            _.chain(portal.Location.current.mashetes).filter(function(mashete) {
-                return mashete.position.column === 0;
-            }).sortBy(function(mashete) {
-                return mashete.position.line;
-            }).each(function(mashete, idx) {
-                mashete.instanceConfig.masheteid = mashete.id;
-                React.renderComponent(new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig), document.getElementById('left-' + (idx + 1)));
-            });
-
-            _.chain(portal.Location.current.mashetes).filter(function(mashete) {
-                return mashete.position.column === 1;
-            }).sortBy(function(mashete) {
-                return mashete.position.line;
-            }).each(function(mashete, idx) {
-                mashete.instanceConfig.masheteid = mashete.id;
-                React.renderComponent(new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig), document.getElementById('right-' + (idx + 1)));
+            _.chain(portal.Location.current.mashetes).each(function(mashete) {
+                try {
+                    var idx = mashete.position.line;
+                    var side = 'left';
+                    if (mashete.position.column === 1) {
+                        side = 'right';
+                    }
+                    var hiding = '#' + side + '-row-' + (idx + 1);
+                    mashete.instanceConfig.masheteid = mashete.id;
+                    mashete.instanceConfig.closeCallback = function () {
+                        $(hiding).hide();
+                    };
+                    React.renderComponent(
+                        new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig),
+                        document.getElementById(side + '-' + (idx + 1))
+                    );
+                } catch(ex) {
+                    console.error(ex.stack);
+                }
             });
 
             (function() {
                 function dragIt(e) {
                     e.originalEvent.dataTransfer.setData("dragged-element", $(e.target).parent().attr('id'));
-                    console.log('Dragging : ' + e.originalEvent.target.id);
                 }
                 function dropIt(e) {
                     $('.draggedon').each(function() {
@@ -41,9 +43,7 @@ $(function() {
                     });
                     var theData = e.originalEvent.dataTransfer.getData("dragged-element");
                     var thePos = $(this).data('pos');
-                    console.log('Dropping ' + theData + ' in ' + $(e.originalEvent.target).parent().attr('id') + " at " + thePos);
                     var theDraggedElement = document.getElementById(theData);
-                    //$(e.originalEvent.target).parent().append(theDraggedElement);
                     if (thePos === 'start') {
                         $(e.originalEvent.target).parent().before(theDraggedElement);
                     } else {

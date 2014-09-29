@@ -28,7 +28,7 @@ object PagesStore {
 
   val privatePage = Page(IdGenerator.uuid, "My Private page", "", "/site/myprivatepage", Seq(Admin, Writer), Seq(), widgetsPrivate)
 
-  val index = Page(IdGenerator.uuid, "Welcome to 'the Portal'", "The best portal ever ...", "/", Seq(Anonymous, Admin, Writer), Seq(privatePage), widgetsIndex)
+  val index = Page(IdGenerator.uuid, "Welcome to 'The portal'", "The best portal ever ...", "/", Seq(Anonymous, Admin, Writer), Seq(privatePage), widgetsIndex)
 
   def findByUrl(url: String): Option[Page] = {  // For POC purpose only
     url match {
@@ -46,8 +46,6 @@ object PagesStore {
   }
 
   def subPages(user: User, from: Page): Seq[Page] = {  // For POC purpose only
-    Logger.info(s"$from")
-    Logger.info(s"${from == privatePage}")
     user.roles match {
       case Anonymous :: Nil => Seq()
       case _ if privatePage.id == from.id => Seq()

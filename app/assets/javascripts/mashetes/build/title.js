@@ -6,7 +6,7 @@ portal.MashetesStore = portal.MashetesStore || {};
     exports.TitleMashete = React.createClass({displayName: 'TitleMashete',
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.props.title, masheteid: this.props.masheteid}, 
+                portal.Mashetes.Mashete({title: this.props.title, config: this.props}, 
                     React.DOM.h1(null, portal.Location.current.name), 
                     React.DOM.p(null, portal.Location.current.description)
                 )
@@ -16,7 +16,7 @@ portal.MashetesStore = portal.MashetesStore || {};
     exports.CustomTitleMashete = React.createClass({displayName: 'CustomTitleMashete',
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.props.title, masheteid: this.props.masheteid}, 
+                portal.Mashetes.Mashete({title: this.props.title, config: this.props}, 
                     React.DOM.h1(null, this.props.title), 
                     React.DOM.p(null, this.props.description)
                 )

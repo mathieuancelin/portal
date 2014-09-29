@@ -6,7 +6,7 @@ portal.MashetesStore = portal.MashetesStore || {};
     exports.IframeMashete = React.createClass({
         render: function() {
             return (
-                <portal.Mashetes.Mashete title={this.props.title} masheteid={this.props.masheteid}>
+                <portal.Mashetes.Mashete title={this.props.title} config={this.props}>
                     <iframe className="pushTop" src={this.props.url} width="100%" height={this.props.height || 500}></iframe>
                 </portal.Mashetes.Mashete>
             );

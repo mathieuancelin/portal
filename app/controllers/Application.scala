@@ -19,6 +19,8 @@ import play.api.mvc._
 
 object Application extends Controller {
 
+  lazy val portalName = play.api.Play.current.configuration.getString("portal.name").getOrElse("Portal")
+
   def UserAction(url: String)(f: ((Request[AnyContent], User, Page)) => Result) = {
     Logger.trace(s"Accessing secured url : $url")
     Action { rh =>
@@ -43,11 +45,11 @@ object Application extends Controller {
   }
 
   def index = UserAction("/") {
-    case (request, user, page) => Ok(views.html.index(user, page))
+    case (request, user, page) => Ok(views.html.index(portalName, user, page))
   }
 
   def page(url: String) = UserAction("/site/" + url) {
-    case (request, user, page) => Ok(views.html.index(user, page))
+    case (request, user, page) => Ok(views.html.index(portalName, user, page))
   }
 
   def login = Action {
