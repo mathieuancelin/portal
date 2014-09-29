@@ -3,7 +3,7 @@ portal.Structure = portal.Structure || {};
 (function(exports) {
     function subPages() {
         return portal.Socket.ask({
-            topic: 'structurePortalTopic',
+            topic: '/portal/topics/structure',
             payload: {
                 command: 'subPages',
                 from: portal.Location.current

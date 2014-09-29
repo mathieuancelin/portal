@@ -3,10 +3,7 @@ package modules.structure
 import modules.identity.Role
 import play.api.libs.json._
 
-trait Position
-case object Left extends Position
-case object Right extends Position
-case object Center extends Position
+case class Position(column: Int, line: Int)
 
 case class Mashete(id: String, name: String, description: String, url: Option[String], instanciate: String)
 
@@ -22,19 +19,7 @@ object Mashete {
 }
 
 object Position {
-  implicit val positionFmt = new Format[Position] {
-    override def writes(o: Position): JsValue = o match {
-      case Left => JsString("Left")
-      case Right => JsString("Right")
-      case Center => JsString("Center")
-    }
-    override def reads(json: JsValue): JsResult[Position] = json match {
-      case JsString("Left") => JsSuccess(Left)
-      case JsString("Right") => JsSuccess(Right)
-      case JsString("Center") => JsSuccess(Center)
-      case _ => JsError()
-    }
-  }
+  implicit val positionFmt = Json.format[Position]
 }
 
 object MasheteInstance {

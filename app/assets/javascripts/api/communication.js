@@ -6,7 +6,7 @@ portal.Socket = portal.Socket || {};
     var wsPromise = Q.defer();
     var correlationIdCounter = 0;
     var defaultOptions = {
-        topic : 'defaultPortalTopic',
+        topic : '/portal/topics/default',
         timeout: 60000,
         payload: {}
     };

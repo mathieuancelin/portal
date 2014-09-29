@@ -13,13 +13,17 @@ $(function() {
                 showIdentity();
 
                 _.chain(portal.Location.current.mashetes).filter(function(mashete) {
-                    return mashete.position === "Left";
+                    return mashete.position.column === 0;
+                }).sortBy(function(mashete) {
+                    return mashete.position.line;
                 }).each(function(mashete, idx) {
                     React.renderComponent(new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig), document.getElementById('left-' + (idx + 1)));
                 });
 
                 _.chain(portal.Location.current.mashetes).filter(function(mashete) {
-                    return mashete.position === "Right";
+                    return mashete.position.column === 1;
+                }).sortBy(function(mashete) {
+                    return mashete.position.line;
                 }).each(function(mashete, idx) {
                     React.renderComponent(new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig), document.getElementById('right-' + (idx + 1)));
                 });

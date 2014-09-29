@@ -13,14 +13,14 @@ object MashetesStore {
 object PagesStore {
 
   val widgetsIndex = Seq(
-    MasheteInstance("widget-1", "LinksMashete", Left, Json.obj()),
-    MasheteInstance("widget-2", "LinksMashete", Left, Json.obj()),
-    MasheteInstance("widget-3", "IframeMashete", Right, Json.obj("url" -> "https://www.playframework.com/", "title" -> "Playframework", "height" -> 600))
+    MasheteInstance("widget-1", "LinksMashete", Position(0, 0), Json.obj()),
+    MasheteInstance("widget-2", "LinksMashete", Position(0, 1), Json.obj()),
+    MasheteInstance("widget-3", "IframeMashete", Position(1, 0), Json.obj("url" -> "https://www.playframework.com/", "title" -> "Playframework", "height" -> 600))
   )
 
   val widgetsPrivate = Seq(
-    MasheteInstance("widget-1", "LinksMashete", Left, Json.obj()),
-    MasheteInstance("widget-2", "IframeMashete", Right, Json.obj("url" -> "http://underscorejs.org/", "title" -> "Underscore", "height" -> 600))
+    MasheteInstance("widget-1", "LinksMashete", Position(0, 0), Json.obj()),
+    MasheteInstance("widget-2", "IframeMashete", Position(1, 0), Json.obj("url" -> "http://underscorejs.org/", "title" -> "Underscore", "height" -> 600))
   )
 
   val privatePage = Page(IdGenerator.uuid, "My Private page", "", "/site/myprivatepage", Seq(Admin, Writer), Seq(), widgetsPrivate)

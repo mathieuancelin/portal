@@ -13,6 +13,13 @@ portal.MashetesStore = portal.MashetesStore || {};
             }.bind(this));
         },
         render: function() {
+            if (this.state.links.length === 0) {
+                return (
+                    <portal.Mashetes.Mashete title="Navigate to">
+                        <h5>Nothing here ...</h5>
+                    </portal.Mashetes.Mashete>
+                );
+            }
             var linkNodes = _.map(this.state.links, function(link) {
                 return (
                     <li>

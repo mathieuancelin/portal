@@ -9,14 +9,17 @@ import play.api.libs.json.{Writes, JsObject, Json, JsValue}
 class UserActor(out: ActorRef, user: User) extends Actor {
 
   val topics = Map[String, (JsObject) => Unit](
-    "identityPortalTopic" -> securityTopic,
-    "structurePortalTopic" -> structureTopic
+    "/portal/topics/identity" -> securityTopic,
+    "/portal/topics/structure" -> structureTopic,
+    "/portal/topics/default" -> defaultTopic
   )
 
   override def receive: Receive = {
     case js: JsValue => topics.getOrElse((js \ "topic").as[String], defaultTopic(_))(js.as[JsObject])
     case e => Logger.error(s"User actor received weird message $e")
   }
+
+  // TODO : be careful about user rights
 
   def defaultTopic(js: JsObject) = {
 

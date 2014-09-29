@@ -3,7 +3,7 @@ portal.Identity = portal.Identity || {};
 (function(exports) {
     function whoAmI() {
         return portal.Socket.ask({
-            topic: "identityPortalTopic",
+            topic: "/portal/topics/identity",
             payload: {
                 command: "WHOAMI"
             }
