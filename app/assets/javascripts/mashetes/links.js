@@ -28,7 +28,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                 );
             });
             return (
-                <portal.Mashetes.Mashete title="Navigate to">
+                <portal.Mashetes.Mashete title="Navigate to" id={this.props.id}>
                     <ul className="pushTop unstyled">
                         {linkNodes}
                     </ul>

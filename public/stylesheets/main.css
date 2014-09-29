@@ -20,3 +20,12 @@ iframe {
     border: none;
     padding-top: 10px;
 }
+
+.draggedon {
+    height: 80px;
+    border: 1px dotted #333333;
+    background-color: #ffff99;
+}
+.droppable {
+    height: 20px;
+}

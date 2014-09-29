@@ -7,7 +7,7 @@ portal.Mashetes = portal.Mashetes || {};
     function MasheteTemplate(component) {
 
         var AdminBar = (
-            <div className="row mashete-bar ">
+            <div className="row mashete-bar">
                 <div className="pull-left">
                     <h5>{component.props.title}</h5>
                 </div>
@@ -17,9 +17,9 @@ portal.Mashetes = portal.Mashetes || {};
         if (portal.User.current.isNotAdmin()) {
             AdminBar = undefined;
         }
-
+        console.log(component.props);
         return (
-            <div className="mashete col-md-12">
+            <div className="mashete col-md-12" draggable="false" ondragover="event.preventDefault();" data-masheteid={component.props.id}>
                 <div className="container-fluid">
                     {AdminBar}
                     <div className="row">
