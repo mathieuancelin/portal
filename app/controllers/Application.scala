@@ -11,9 +11,7 @@ import play.api.libs.json.JsValue
 import play.api.mvc._
 
 // TODO : mashetes store to add mashetes to pages
-// TODO : mashetes drag and drop
-// TODO : add pages creator
-// TODO : add top menu for pages
+// TODO : add pages management
 // TODO : add users management page
 // TODO : add account management page
 

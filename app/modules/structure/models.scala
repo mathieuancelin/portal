@@ -12,6 +12,16 @@ case class MasheteInstance(id: String, masheteId: String, position: Position, in
 case class Page(id: String, name: String, description: String, url: String, accessibleBy: Seq[Role], subPages: Seq[Page], mashetes: Seq[MasheteInstance]) {
   def toJson = Page.pageFmt.writes(this)
   def toJsonString = Json.stringify(toJson)
+  def toHtml: String = {
+    if (subPages.nonEmpty) {
+      s"""<li class="dropdown">
+        <a href="$url" class="dropdown-toggle" data-toggle="dropdown">$name<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">""" +
+        subPages.map(_.toHtml).mkString("") + """</ul></li>"""
+    } else {
+      s"""<li><a href="$url">$name</a></li>"""
+    }
+  }
 }
 
 object Mashete {

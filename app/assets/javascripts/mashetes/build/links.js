@@ -27,6 +27,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                     )
                 );
             });
+            // TODO : display as tree
             return (
                 portal.Mashetes.Mashete({title: "Navigate to", config: this.props}, 
                     React.DOM.ul({className: "pushTop unstyled"}, 

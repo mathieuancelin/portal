@@ -27,6 +27,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                     </li>
                 );
             });
+            // TODO : display as tree
             return (
                 <portal.Mashetes.Mashete title="Navigate to" config={this.props}>
                     <ul className="pushTop unstyled">
