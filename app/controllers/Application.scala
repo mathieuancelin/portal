@@ -20,7 +20,7 @@ import play.api.mvc._
 object Application extends Controller {
 
   def UserAction(url: String)(f: ((Request[AnyContent], User, Page)) => Result) = {
-    Logger.info(s"Accessing url $url")
+    Logger.trace(s"Accessing secured url : $url")
     Action { rh =>
       val user = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
         cookie.value.split(":::").toList match {
@@ -33,6 +33,7 @@ object Application extends Controller {
           if (page.accessibleBy.intersect(user.roles).size > 0) {
             f(rh, user, page)
           } else {
+            // TODO : redirect to login page
             InternalServerError("Not accessible moron")
           }
         }
@@ -74,5 +75,4 @@ object Application extends Controller {
     def builder(out: ActorRef) = Props(classOf[UserActor], out, user)
     builder
   }
-
 }

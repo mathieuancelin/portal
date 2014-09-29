@@ -17,16 +17,17 @@ portal.Mashetes = portal.Mashetes || {};
         if (portal.User.current.isNotAdmin()) {
             AdminBar = undefined;
         }
-        console.log(component.props);
         return (
-            <div className="mashete col-md-12" draggable="false" ondragover="event.preventDefault();" data-masheteid={component.props.id}>
+            <div className="mashete col-md-12" draggable="false" ondragover="event.preventDefault();" data-masheteid={component.props.masheteid}>
                 <div className="container-fluid">
+                    <div class="row droppable"></div>
                     {AdminBar}
                     <div className="row">
                         <div className="col-md-12">
                         {component.props.children}
                         </div>
                     </div>
+                    <div class="row droppable"></div>
                 </div>
             </div>
         );

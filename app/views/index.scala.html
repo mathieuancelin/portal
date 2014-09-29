@@ -6,19 +6,28 @@
 
     <div class="row">
         <div class="col-md-6" id="left">
-            <div class="row droppable"></div>
-            @for(i <- 1 to 100) {
-                <div class="row"><div class="col-md-12 draggable" id="left-@i" draggable="true" ondragover="event.preventDefault();"></div></div>
-                <div class="row droppable" id="dropzone-@i"></div>
+            @page.mashetes.filter(_.position.column == 0).zipWithIndex.map(_._2 + 1).map { i =>
+                <div class="row" id="left-row-@i">
+                    <div class="row droppable" id="left-drop-start-@i" data-pos="start"></div>
+                    <div class="col-md-12 draggable" id="left-@i" draggable="true" ondragover="event.preventDefault();"></div>
+                    <div class="row droppable" id="left-drop-stop-@i" data-pos="stop"></div>
+                </div>
             }
+            <div class="row" id="left-row-new">
+                <div class="row droppable" id="left-drop-new" data-pos="start"></div>
+            </div>
         </div>
         <div class="col-md-6" id="right">
-            <div class="row droppable"></div>
-            @for(i <- 1 to 100) {
-                <div class="row"><div class="col-md-12 draggable" id="right-@i" draggable="true" ondragover="event.preventDefault();"></div></div>
-                <div class="row droppable" id="dropzone-@i"></div>
+            @page.mashetes.filter(_.position.column == 1).zipWithIndex.map(_._2 + 1).map { i =>
+                <div class="row" id="right-row-@i">
+                    <div class="row droppable" id="right-drop-start-@i" data-pos="start"></div>
+                    <div class="col-md-12 draggable" id="right-@i" draggable="true" ondragover="event.preventDefault();"></div>
+                    <div class="row droppable" id="right-drop-stop-@i" data-pos="stop"></div>
+                </div>
             }
+            <div class="row" id="right-row-new">
+                <div class="row droppable" id="right-drop-new" data-pos="start"></div>
+            </div>
         </div>
     </div>
-
 }
