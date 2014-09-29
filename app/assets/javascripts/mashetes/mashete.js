@@ -14,7 +14,7 @@ portal.Mashetes = portal.Mashetes || {};
                 <button type="button" className="btn btn-primary btn-xs pull-right">x</button>
             </div>
         );
-        if (!_.find(portal.User.current.roles, function(role) { return role.name === "ADMINISTRATOR"; })) {
+        if (portal.User.current.isNotAdmin()) {
             AdminBar = undefined;
         }
 

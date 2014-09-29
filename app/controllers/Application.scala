@@ -12,9 +12,10 @@ import play.api.mvc._
 
 // TODO : mashetes store to add mashetes to pages
 // TODO : mashetes drag and drop
-// TODO : add methods to user
 // TODO : add pages creator
 // TODO : add top menu for pages
+// TODO : add users management page
+// TODO : add account management page
 
 object Application extends Controller {
 
