@@ -50,7 +50,7 @@ object Application extends Controller {
   }
 
   def login = Action {
-    val cookieValue = "mathieu.ancelin@gmail.com"
+    val cookieValue = "mathieu.ancelin@acme.com"
     Redirect("/").withCookies(Cookie(
       name = "PORTAL_SESSION",
       value = s"${Crypto.sign(cookieValue)}:::$cookieValue",
