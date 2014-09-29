@@ -60,10 +60,12 @@ $(function() {
                 $('.droppable').on('dragenter', function(event) {
                     event.preventDefault();
                     $(this).addClass('draggedon');
+                    $(this).height('100px');
                 });
                 $('.droppable').on('dragleave', function(event) {
                     event.preventDefault();
                     $(this).removeClass('draggedon');
+                    $(this).height('20px');
                 });
             })();
 

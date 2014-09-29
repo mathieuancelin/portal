@@ -2,8 +2,6 @@
 
 @main(page.name, user, page) {
 
-    <h1>@page.name</h1>
-
     <div class="row">
         <div class="col-md-6" id="left">
             @page.mashetes.filter(_.position.column == 0).zipWithIndex.map(_._2 + 1).map { i =>
