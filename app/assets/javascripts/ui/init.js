@@ -37,6 +37,7 @@ $(function() {
                 function dropIt(e) {
                     $('.draggedon').each(function() {
                         $(this).removeClass('draggedon');
+                        $(this).height('20px');
                     });
                     var theData = e.originalEvent.dataTransfer.getData("dragged-element");
                     var thePos = $(this).data('pos');
