@@ -43,7 +43,7 @@ object PagesStore {
   val publicPage1 = Page(IdGenerator.uuid, "My public page 1", "", "/site/public/mypage1", Seq(Anonymous, Admin, Writer), Seq(), wigetsPublic)
   val publicPage2 = Page(IdGenerator.uuid, "My public page 2", "", "/site/public/mypage2", Seq(Anonymous, Admin, Writer), Seq(), wigetsPublic, 3, 9)
   val publicPage3 = Page(IdGenerator.uuid, "My public page 3", "", "/site/public/mypage3", Seq(Anonymous, Admin, Writer), Seq(), widgetsRoot, 12, 6)
-  val publicPage = Page(IdGenerator.uuid, "Public root", "", "/site/public", Seq(Anonymous, Admin, Writer), Seq(publicPage1, publicPage2), widgetsRoot)
+  val publicPage = Page(IdGenerator.uuid, "Public root", "", "/site/public", Seq(Anonymous, Admin, Writer), Seq(publicPage1, publicPage2, publicPage3), widgetsRoot)
 
   val index = Page(IdGenerator.uuid, "Welcome to 'The portal'", "The best portal ever ...", "/", Seq(Anonymous, Admin, Writer), Seq(privatePage), widgetsIndex)
 
