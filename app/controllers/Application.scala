@@ -3,7 +3,7 @@ package controllers
 import akka.actor.{ActorRef, Props}
 import modules.communication.UserActor
 import modules.identity.{AnonymousUser, User, UsersStore}
-import modules.structure.{Page, PagesStore}
+import modules.structure.{MashetesStore, Page, PagesStore}
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.Crypto
@@ -45,11 +45,11 @@ object Application extends Controller {
   }
 
   def index = UserAction("/") {
-    case (request, user, page) => Ok(views.html.index(portalName, user, page))
+    case (request, user, page) => Ok(views.html.index(portalName, user, page, MashetesStore.findAll()))
   }
 
   def page(url: String) = UserAction("/site/" + url) {
-    case (request, user, page) => Ok(views.html.index(portalName, user, page))
+    case (request, user, page) => Ok(views.html.index(portalName, user, page, MashetesStore.findAll()))
   }
 
   def login = Action {

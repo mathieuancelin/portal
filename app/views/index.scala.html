@@ -1,6 +1,6 @@
-@(portalName: String, user: modules.identity.User, page: modules.structure.Page)
+@(portalName: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete])
 
-@main(page.name, portalName, user, page) {
+@main(page.name, portalName, user, page, mashetes) {
 
     <div class="row">
         <div class="col-md-@page.leftColSize" id="left">

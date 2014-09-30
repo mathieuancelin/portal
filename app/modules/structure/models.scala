@@ -5,7 +5,7 @@ import play.api.libs.json._
 
 case class Position(column: Int, line: Int)
 
-case class Mashete(id: String, name: String, description: String, url: Option[String], instanciate: String)
+case class Mashete(id: String, name: String, description: String, url: String, defaultParam: JsObject)
 
 case class MasheteInstance(id: String, masheteId: String, position: Position, instanceConfig: JsObject)
 
