@@ -2,6 +2,8 @@ $(function() {
 
     function showIdentity() {
         portal.Identity.whoAmI().then(function(data) {
+            var url = 'http://www.gravatar.com/avatar/' + data.md5email + '?s=30&d=identicon';
+            $('#useravatar').attr('src', url);
             $('#userinfo').html(data.name + " " + data.surname);
         });
     }

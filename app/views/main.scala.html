@@ -61,16 +61,30 @@
                         case _ => {
                             @* TODO : add mashete *@
                             @* TODO : portal config *@
-                            <form class="navbar-form navbar-right" action="/logout" method="POST" role="form">
+                            <div class="pull-right">
+                                <ul class="nav navbar-nav">
+                                    <li class="dropdown">
+                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-plus-sign"></span> Mashetes <span class="caret"></span></a>
+                                        <ul class="dropdown-menu" role="menu">
+                                            <li><a href="#">Page links</a></li>
+                                            <li><a href="#">Page title</a></li>
+                                            <li class="divider"></li>
+                                            <li><a href="#">Iframe</a></li>
+                                            <li><a href="#">Markdown display</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-file"></span> Pages</a></li>
+                                    <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Portal</a></li>
+                                </ul>
 
-                                <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-file"></span> Pages</button>
-                                <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-plus-sign"></span> Mashetes</button>
-                                <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-cog"></span> Portal</button>
-                                @* TODO : link to account and user icon *@
-                                &nbsp;&nbsp;<a href="#" id="userinfo" style="color : white"></a>&nbsp;&nbsp;
-                                <button type="submit" class="btn btn-danger">Log out</button>
-                                <button type="button" id="showCss" class="btn btn-info">CSS</button>
-                            </form>
+                                <form class="navbar-form navbar-right" action="/logout" method="POST" role="form">
+                                    @* TODO : link to account and user icon *@
+                                    &nbsp;&nbsp;<a href="#" id="userinfo" style="color : white"></a>&nbsp;&nbsp;
+                                    <img id="useravatar" src=""/>
+                                    <button type="submit" class="btn btn-danger">Log out</button>
+                                    <button type="button" id="showCss" class="btn btn-info">CSS</button>
+                                </form>
+                            </div>
                         }
                     }
                 </div><!--/.navbar-collapse -->

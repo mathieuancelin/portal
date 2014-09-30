@@ -18,6 +18,9 @@ portal.Mashetes = portal.Mashetes || {};
         showOptions: function(e) {
             this.setState({edit: true});
         },
+        flipOptions: function(e) {
+            this.setState({edit: !this.state.edit});
+        },
         cancelAndHideOptions: function(e) {
             this.setState({edit: false});
         },
@@ -51,7 +54,7 @@ portal.Mashetes = portal.Mashetes || {};
                         <h5>{this.props.title}</h5>
                     </div>
                     <div className="btn-group pull-right">
-                        <button type="button" className="btn btn-primary btn-xs" onClick={this.showOptions}><span className="glyphicon glyphicon-cog"></span></button>
+                        <button type="button" className="btn btn-primary btn-xs" onClick={this.flipOptions}><span className="glyphicon glyphicon-cog"></span></button>
                         <button type="button" className="btn btn-danger btn-xs" onClick={this.hide}><span className="glyphicon glyphicon-remove"></span></button>
                     </div>
                 </div>

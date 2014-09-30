@@ -4,7 +4,9 @@ import akka.actor.{Actor, ActorRef}
 import modules.identity.User
 import modules.structure.{PagesStore, Page}
 import play.api.Logger
+import play.api.libs.{Codecs, Crypto}
 import play.api.libs.json.{Writes, JsObject, Json, JsValue}
+import play.api.mvc.Codec
 
 class UserActor(out: ActorRef, user: User) extends Actor {
 
@@ -30,7 +32,7 @@ class UserActor(out: ActorRef, user: User) extends Actor {
       case "WHOAMI" => {
         out ! Json.obj(
           "correlationId" -> (js \ "correlationId"),
-          "response" -> User.userFmt.writes(user)
+          "response" -> (User.userFmt.writes(user).as[JsObject] ++ Json.obj("md5email" -> Codecs.md5(user.email.getBytes())))
         )
       }
       case e => Logger.error(s"Unknown security command : $e")

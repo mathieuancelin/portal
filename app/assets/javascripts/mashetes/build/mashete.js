@@ -18,6 +18,9 @@ portal.Mashetes = portal.Mashetes || {};
         showOptions: function(e) {
             this.setState({edit: true});
         },
+        flipOptions: function(e) {
+            this.setState({edit: !this.state.edit});
+        },
         cancelAndHideOptions: function(e) {
             this.setState({edit: false});
         },
@@ -51,7 +54,7 @@ portal.Mashetes = portal.Mashetes || {};
                         React.DOM.h5(null, this.props.title)
                     ), 
                     React.DOM.div({className: "btn-group pull-right"}, 
-                        React.DOM.button({type: "button", className: "btn btn-primary btn-xs", onClick: this.showOptions}, React.DOM.span({className: "glyphicon glyphicon-cog"})), 
+                        React.DOM.button({type: "button", className: "btn btn-primary btn-xs", onClick: this.flipOptions}, React.DOM.span({className: "glyphicon glyphicon-cog"})), 
                         React.DOM.button({type: "button", className: "btn btn-danger btn-xs", onClick: this.hide}, React.DOM.span({className: "glyphicon glyphicon-remove"}))
                     )
                 )
