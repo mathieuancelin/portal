@@ -7,6 +7,7 @@ case class Role(id: String, name: String, description: String)
 case class User(id: String, name: String, surname: String, email: String, description: String, roles: Seq[Role]) {
   def toJson = User.userFmt.writes(this)
   def toJsonString = Json.stringify(toJson)
+  def isAdmin = roles.contains(Admin)
 }
 
 object Role {
