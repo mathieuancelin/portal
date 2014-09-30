@@ -52,7 +52,7 @@ portal.Mashetes = portal.Mashetes || {};
                     ), 
                     React.DOM.div({className: "btn-group pull-right"}, 
                         React.DOM.button({type: "button", className: "btn btn-primary btn-xs", onClick: this.showOptions}, React.DOM.span({className: "glyphicon glyphicon-cog"})), 
-                        React.DOM.button({type: "button", className: "btn btn-primary btn-xs", onClick: this.hide}, React.DOM.span({className: "glyphicon glyphicon-remove"}))
+                        React.DOM.button({type: "button", className: "btn btn-danger btn-xs", onClick: this.hide}, React.DOM.span({className: "glyphicon glyphicon-remove"}))
                     )
                 )
                 );

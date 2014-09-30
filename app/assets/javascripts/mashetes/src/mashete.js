@@ -52,7 +52,7 @@ portal.Mashetes = portal.Mashetes || {};
                     </div>
                     <div className="btn-group pull-right">
                         <button type="button" className="btn btn-primary btn-xs" onClick={this.showOptions}><span className="glyphicon glyphicon-cog"></span></button>
-                        <button type="button" className="btn btn-primary btn-xs" onClick={this.hide}><span className="glyphicon glyphicon-remove"></span></button>
+                        <button type="button" className="btn btn-danger btn-xs" onClick={this.hide}><span className="glyphicon glyphicon-remove"></span></button>
                     </div>
                 </div>
                 );
