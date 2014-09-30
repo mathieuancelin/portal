@@ -36,12 +36,13 @@ object PagesStore {
     MasheteInstance("widget-3", "IframeMashete", Position(1, 0), Json.obj("url" -> "http://underscorejs.org/", "title" -> "Underscore", "height" -> 600))
   )
 
-  val privatePage1 = Page(IdGenerator.uuid, "My Private page 1", "", "/site/private/myprivatepage1", Seq(Admin, Writer), Seq(), widgetsPrivate)
-  val privatePage2 = Page(IdGenerator.uuid, "My Private page 2", "", "/site/private/myprivatepage2", Seq(Admin, Writer), Seq(), widgetsPrivate)
+  val privatePage1 = Page(IdGenerator.uuid, "My Private page 1", "", "/site/private/myprivatepage1", Seq(Admin, Writer), Seq(), widgetsPrivate, 3, 9)
+  val privatePage2 = Page(IdGenerator.uuid, "My Private page 2", "", "/site/private/myprivatepage2", Seq(Admin, Writer), Seq(), widgetsPrivate, 8, 4)
   val privatePage = Page(IdGenerator.uuid, "Private root", "", "/site/private", Seq(Admin, Writer), Seq(privatePage1, privatePage2), widgetsRoot)
 
   val publicPage1 = Page(IdGenerator.uuid, "My public page 1", "", "/site/public/mypage1", Seq(Anonymous, Admin, Writer), Seq(), wigetsPublic)
-  val publicPage2 = Page(IdGenerator.uuid, "My public page 2", "", "/site/public/mypage2", Seq(Anonymous, Admin, Writer), Seq(), wigetsPublic)
+  val publicPage2 = Page(IdGenerator.uuid, "My public page 2", "", "/site/public/mypage2", Seq(Anonymous, Admin, Writer), Seq(), wigetsPublic, 3, 9)
+  val publicPage3 = Page(IdGenerator.uuid, "My public page 3", "", "/site/public/mypage3", Seq(Anonymous, Admin, Writer), Seq(), widgetsRoot, 12, 6)
   val publicPage = Page(IdGenerator.uuid, "Public root", "", "/site/public", Seq(Anonymous, Admin, Writer), Seq(publicPage1, publicPage2), widgetsRoot)
 
   val index = Page(IdGenerator.uuid, "Welcome to 'The portal'", "The best portal ever ...", "/", Seq(Anonymous, Admin, Writer), Seq(privatePage), widgetsIndex)
@@ -55,20 +56,21 @@ object PagesStore {
       case "/site/public" => Some(privatePage)
       case "/site/public/mypage1" => Some(publicPage1)
       case "/site/public/mypage2" => Some(publicPage2)
+      case "/site/public/mypage3" => Some(publicPage3)
       case _ => None
     }
   }
 
   def pages(user: User): Seq[Page] = { // For POC purpose only
     user.roles match {
-      case Anonymous :: Nil => Seq(index, publicPage, publicPage1, publicPage2)
-      case _ => Seq(index, publicPage, publicPage1, publicPage2, privatePage, privatePage1, privatePage2)
+      case Anonymous :: Nil => Seq(index, publicPage, publicPage1, publicPage2, publicPage3)
+      case _ => Seq(index, publicPage, publicPage1, publicPage2, publicPage3, privatePage, privatePage1, privatePage2)
     }
   }
 
   def directSubPages(user: User, from: Page): Seq[Page] = {  // For POC purpose only
     user.roles match {
-      case _ if from.id == publicPage.id => Seq(publicPage1, publicPage2)
+      case _ if from.id == publicPage.id => Seq(publicPage1, publicPage2, publicPage3)
       case Anonymous :: Nil if from.id == index.id => Seq(publicPage)
       case _                if from.id == index.id => Seq(publicPage, privatePage)
       case _                if from.id == privatePage.id => Seq(privatePage1, privatePage2)
@@ -78,9 +80,9 @@ object PagesStore {
 
   def subPages(user: User, from: Page): Seq[Page] = {  // For POC purpose only
     user.roles match {
-      case _ if from.id == publicPage.id => Seq(publicPage1, publicPage2)
-      case Anonymous :: Nil if from.id == index.id => Seq(publicPage, publicPage1, publicPage2)
-      case _                if from.id == index.id => Seq(publicPage, publicPage1, publicPage2, privatePage, privatePage1, privatePage2)
+      case _ if from.id == publicPage.id => Seq(publicPage1, publicPage2, publicPage3)
+      case Anonymous :: Nil if from.id == index.id => Seq(publicPage, publicPage1, publicPage2, publicPage3)
+      case _                if from.id == index.id => Seq(publicPage, publicPage1, publicPage2, publicPage3, privatePage, privatePage1, privatePage2)
       case _                if from.id == privatePage.id => Seq(privatePage1, privatePage2)
       case _  => Seq()
     }

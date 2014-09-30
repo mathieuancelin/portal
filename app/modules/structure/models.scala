@@ -9,7 +9,18 @@ case class Mashete(id: String, name: String, description: String, url: Option[St
 
 case class MasheteInstance(id: String, masheteId: String, position: Position, instanceConfig: JsObject)
 
-case class Page(id: String, name: String, description: String, url: String, accessibleBy: Seq[Role], subPages: Seq[Page], mashetes: Seq[MasheteInstance]) {
+case class Page(
+                 id: String,
+                 name: String,
+                 description: String,
+                 url: String,
+                 accessibleBy: Seq[Role],
+                 subPages: Seq[Page],
+                 mashetes: Seq[MasheteInstance],
+                 leftColSize: Int = play.api.Play.current.configuration.getInt("portal.left-width").getOrElse(6),
+                 rightColSize: Int = play.api.Play.current.configuration.getInt("portal.right-width").getOrElse(6)
+       ) {
+
   def toJson = Page.pageFmt.writes(this)
   def toJsonString = Json.stringify(toJson)
   def toHtml: String = {

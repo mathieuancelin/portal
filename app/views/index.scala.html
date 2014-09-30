@@ -3,7 +3,7 @@
 @main(page.name, portalName, user, page) {
 
     <div class="row">
-        <div class="col-md-@(play.api.Play.current.configuration.getString("portal.left-width").getOrElse("6"))" id="left">
+        <div class="col-md-@page.leftColSize" id="left">
             @page.mashetes.filter(_.position.column == 0).zipWithIndex.map(_._2 + 1).map { i =>
                 <div class="row" id="left-row-@i">
                     <div class="row droppable" id="left-drop-start-@i" data-pos="start"></div>
@@ -15,7 +15,7 @@
                 <div class="row droppable" id="left-drop-new" data-pos="start"></div>
             </div>
         </div>
-        <div class="col-md-@(play.api.Play.current.configuration.getString("portal.right-width").getOrElse("6"))" id="right">
+        <div class="col-md-@page.rightColSize" id="right">
             @page.mashetes.filter(_.position.column == 1).zipWithIndex.map(_._2 + 1).map { i =>
                 <div class="row" id="right-row-@i">
                     <div class="row droppable" id="right-drop-start-@i" data-pos="start"></div>
