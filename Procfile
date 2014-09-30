@@ -1,0 +1,1 @@
+web: target/universal/stage/bin/portal -Dhttp.port=${PORT} -Dconfig.file=conf/production.conf
