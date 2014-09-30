@@ -14,6 +14,8 @@ import play.api.mvc._
 // TODO : add pages management
 // TODO : add users management page
 // TODO : add account management page
+// TODO : history API hooks for mashetes
+// TODO : url management API for mashetes (with #)
 
 object Application extends Controller {
 
