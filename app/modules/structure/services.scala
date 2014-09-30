@@ -9,10 +9,10 @@ object MashetesStore {
 
     def findAll(): Seq[Mashete] = {
       Seq(
-        Mashete("TitleMashete", "Title Mashete", "Display title and description of the current page", "${ASSET}/javascripts/mashetes/build/title.js", Json.obj()),
+        Mashete("TitleMashete", "Title Mashete", "Display title and description of the current page", "${ASSET}/javascripts/mashetes/build/title.js", Json.obj("title" -> "Page description")),
         Mashete("LinksMashete", "Links Mashete", "Display links to follow from the current page", "${ASSET}/javascripts/mashetes/build/links.js", Json.obj()),
         Mashete("MarkdownMashete", "Markdown Mashete", "Display markdown formatted content", "${ASSET}/javascripts/mashetes/build/markdown.js", Json.obj("title" -> "Mardown display", "markdown" -> "VGhpcyBpcyB5b3VyIG5ldyBQbGF5IGFwcGxpY2F0aW9uDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg0KVGhpcyBmaWxlIHdpbGwgYmUgcGFja2FnZWQgd2l0aCB5b3VyIGFwcGxpY2F0aW9uLCB3aGVuIHVzaW5nIGBhY3RpdmF0b3IgZGlzdGAuDQo=")),
-        Mashete("IframeMashete", "Iframe Mashete", "Display content from another address", "${ASSET}/javascripts/mashetes/build/iframe.js", Json.obj("url" -> "https://www.reddit.com/", "title" -> "Reddit", "height" -> 400))
+        Mashete("IframeMashete", "Iframe Mashete", "Display content from another address", "${ASSET}/javascripts/mashetes/build/iframe.js", Json.obj("url" -> "http://fr.wikipedia.org/", "title" -> "Wikipedia", "height" -> 400))
       )
     }
 }

@@ -25,6 +25,7 @@ portal.Socket = portal.Socket || {};
         };
         socket.onmessage = function(event) {
             //console.trace('data received on user websocket : ' + event.data);
+            // TODO : handle special messages like : redirect to internal page, add mashete, etc ...
             var data = JSON.parse(event.data);
             var correlationId = data.correlationId;
             if (waitingQueue[correlationId]) {

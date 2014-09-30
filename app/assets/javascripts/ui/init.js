@@ -25,16 +25,28 @@ $(function() {
                     mashete.instanceConfig.closeCallback = function () {
                         $(hiding).hide();
                     };
-                    React.renderComponent(
-                        new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig),
-                        document.getElementById(side + '-' + (idx + 1))
-                    );
+                    if (portal.MashetesStore[mashete.masheteId]) {
+                        React.renderComponent(
+                            new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig),
+                            document.getElementById(side + '-' + (idx + 1))
+                        );
+                    } else {
+                        // TODO : fallback portlet
+                    }
                 } catch(ex) {
                     console.error(ex.stack);
                 }
             });
 
-            (function() {
+            $('.addmashete').click(function(e) {
+                e.preventDefault();
+                var id = $(this).data('mid');
+                var conf = JSON.parse($(this).data('conf').decodeBase64());
+                portal.Mashetes.add(id, conf, portal.User.current.isAdmin() + "");
+                registerDragAndDrop();
+            });
+
+            function registerDragAndDrop() {
                 function dragIt(e) {
                     e.originalEvent.dataTransfer.setData("dragged-element", $(e.target).parent().attr('id'));
                 }
@@ -70,7 +82,9 @@ $(function() {
                     $(this).removeClass('draggedon');
                     $(this).height('20px');
                 });
-            })();
+            }
+
+            registerDragAndDrop();
 
         } catch(e) {
             console.error(e);

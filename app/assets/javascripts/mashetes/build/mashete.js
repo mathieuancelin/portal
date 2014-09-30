@@ -4,6 +4,26 @@ var portal = portal || {};
 portal.Mashetes = portal.Mashetes || {};
 (function(exports) {
 
+    exports.add = function(masheteId, conf, isAdmin) {
+        // TODO : so ugly ...
+        // TODO : add it server side
+        var id = portal.Utils.generateUUID();
+        var hiding = '#left-row-' + id ;
+        var template = '<div class="row" id="left-row-' + id + '">' +
+        '    <div class="row droppable" id="left-drop-start-' + id + '" data-pos="start"></div>' +
+        '    <div class="col-md-12 draggable" id="left-' + id + '" draggable="' + isAdmin + '" ondragover="event.preventDefault();"></div>' +
+        '    <div class="row droppable" id="left-drop-stop-' + id + '" data-pos="stop"></div>'
+        '</div>';
+        $('#left').prepend(template);
+        conf.masheteid = id;
+        conf.closeCallback = function () {
+            $(hiding).hide();
+        };
+        React.renderComponent(
+            new portal.MashetesStore[masheteId](conf), document.getElementById("left-" + id)
+        );
+    };
+
     exports.Mashete = React.createClass({displayName: 'Mashete',
         getInitialState: function() {
             return {

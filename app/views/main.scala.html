@@ -53,11 +53,10 @@
                                         <ul class="dropdown-menu" role="menu">
                                             @* TODO : instanciate  *@
                                             @for(mashete <- mashetes) {
-                                                <li><a href="#">@mashete.name</a></li>
+                                                <li><a class="addmashete" href="#" data-mid="@mashete.id" data-conf="@(org.apache.commons.codec.binary.Base64.encodeBase64String(play.api.libs.json.Json.stringify(mashete.defaultParam).getBytes()))">@mashete.name</a></li>
                                             }
                                         </ul>
                                     </li>
-                                    <li><a href="#"><span class="glyphicon glyphicon-file"></span> Pages</a></li>
                                     <li><a href="#"><span class="glyphicon glyphicon-cog"></span> Portal</a></li>
                                 </ul>
 
