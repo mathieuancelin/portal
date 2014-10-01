@@ -24,7 +24,8 @@ iframe {
 .draggedon {
     height: 80px;
     border: 1px dotted #333333;
-    background-color: #ffff99;
+    /*background-color: #ffff99;*/
+    background-color: rgb(231, 231, 231);
 }
 .droppable {
     height: 20px;

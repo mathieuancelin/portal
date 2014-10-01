@@ -41,7 +41,7 @@ $(function() {
             $('.addmashete').click(function(e) {
                 e.preventDefault();
                 var id = $(this).data('mid');
-                var conf = JSON.parse($(this).data('conf').decodeBase64());
+                var conf = JSON.parse($(this).data('conf').decodeBase64()); // TODO : server side
                 portal.Mashetes.add(id, conf, portal.User.current.isAdmin() + "");
                 registerDragAndDrop();
             });

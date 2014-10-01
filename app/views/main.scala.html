@@ -65,7 +65,7 @@
                                     &nbsp;&nbsp;<a href="#" id="userinfo" style="color : white"></a>&nbsp;&nbsp;
                                     <img id="useravatar" src=""/>
                                     <button type="submit" class="btn btn-danger">Log out</button>
-                                    <button type="button" id="showCss" class="btn btn-info">CSS</button>
+                                    <button type="button" id="showCss" class="btn btn-inverse">CSS</button>
                                 </form>
                             </div>
                         }
@@ -86,7 +86,7 @@
             var portal = portal || {};
             portal.Location = portal.Location || {};
             portal.User = portal.User || {};
-            portal.Location.current = portal.Location.current || @Html(page.toJsonString);
+            portal.Location.current = portal.Location.current || @Html(page.toJsonString);  @* TODO : avoid it of filter it *@
             portal.User.current = portal.User.current || @Html(user.toJsonString);
             portal.User.current.isAdmin = function() {
                 return ! _.isUndefined(_.find(portal.User.current.roles, function(role) { return role.name === "ADMINISTRATOR"; }));
