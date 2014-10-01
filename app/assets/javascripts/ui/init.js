@@ -31,7 +31,10 @@ $(function() {
                             document.getElementById(side + '-' + (idx + 1))
                         );
                     } else {
-                        // TODO : fallback portlet
+                        React.renderComponent(
+                            new portal.MashetesStore.FallbackMashete({}),
+                            document.getElementById(side + '-' + (idx + 1))
+                        );
                     }
                 } catch(ex) {
                     console.error(ex.stack);

@@ -42,7 +42,7 @@ class UserActor(out: ActorRef, user: User) extends Actor {
   def structureTopic(js: JsObject) = {
     (js \ "payload" \ "command").as[String] match {
       case "subPages" => {
-        val page = (js \ "payload" \ "from").as(Page.pageFmt)
+        val page = (js \ "payload" \ "from").as[String]
         val subPages = PagesStore.subPages(user, page)
         out ! Json.obj(
           "correlationId" -> (js \ "correlationId"),

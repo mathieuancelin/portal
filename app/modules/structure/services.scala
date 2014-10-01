@@ -83,12 +83,12 @@ object PagesStore {
     }
   }
 
-  def subPages(user: User, from: Page): Seq[Page] = {  // For POC purpose only
+  def subPages(user: User, from: String): Seq[Page] = {  // For POC purpose only
     user.roles match {
-      case _ if from.id == publicPage.id => Seq(publicPage1, publicPage2, publicPage3)
-      case Anonymous :: Nil if from.id == index.id => Seq(publicPage, publicPage1, publicPage2, publicPage3)
-      case _                if from.id == index.id => Seq(publicPage, publicPage1, publicPage2, publicPage3, privatePage, privatePage1, privatePage2)
-      case _                if from.id == privatePage.id => Seq(privatePage1, privatePage2)
+      case _ if from == publicPage.id => Seq(publicPage1, publicPage2, publicPage3)
+      case Anonymous :: Nil if from == index.id => Seq(publicPage, publicPage1, publicPage2, publicPage3)
+      case _                if from == index.id => Seq(publicPage, publicPage1, publicPage2, publicPage3, privatePage, privatePage1, privatePage2)
+      case _                if from == privatePage.id => Seq(privatePage1, privatePage2)
       case _  => Seq()
     }
   }

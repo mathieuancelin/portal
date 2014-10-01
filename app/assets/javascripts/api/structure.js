@@ -6,7 +6,7 @@ portal.Structure = portal.Structure || {};
             topic: '/portal/topics/structure',
             payload: {
                 command: 'subPages',
-                from: portal.Location.current     // TODO : by id
+                from: portal.Location.current.id
             }
         });
     }
