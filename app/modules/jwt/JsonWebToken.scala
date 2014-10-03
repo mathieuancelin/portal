@@ -4,11 +4,14 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 import org.apache.commons.codec.binary.Base64
+import play.api.Play
 import play.api.libs.json.{JsObject, Json}
 
 import scala.util.Try
 
 case class JsonWebToken(header: JsObject, claims: JsObject) {
+
+  def encrypt(): Try[String] = encrypt(JsonWebToken.defaultKey)
 
   def encrypt(key: String): Try[String] = {
     Try {
@@ -19,8 +22,8 @@ case class JsonWebToken(header: JsObject, claims: JsObject) {
         val data = s"$encodedHeader.$encodedClaims"
         val bytes = algo match {
           case "HS256" => build("HmacSHA256", data, key)
-          case "HS384" => build("HmacSHA256", data, key)
-          case "HS512" => build("HmacSHA256", data, key)
+          case "HS384" => build("HmacSHA384", data, key)
+          case "HS512" => build("HmacSHA512", data, key)
           case "none" => Array.empty[Byte]
           case a => throw new RuntimeException(s"Unknown algorithm $a")
         }
@@ -39,6 +42,8 @@ case class JsonWebToken(header: JsObject, claims: JsObject) {
 
 object JsonWebToken {
 
+  val defaultKey = Play.current.configuration.getString("portal.jwt.key").getOrElse("a4gWSbdOOW0BP4ovrccfvYkopwRuj9xyiCdMEXfcI1xqeDgcnt7kWxIR9q7jtSvD")
+
   val defaultHeader = Json.obj("typ" -> "JWT", "alg" -> "HS256")
 
   def apply(claims: JsObject): JsonWebToken = JsonWebToken(defaultHeader, claims)
@@ -53,6 +58,8 @@ object JsonWebToken {
       None
     }
   }
+
+  def validate(jwt: String): Boolean = validate(jwt, defaultKey)
 
   def validate(jwt: String, key: String): Boolean = {
     val sections = jwt.split("\\.")

@@ -11,10 +11,6 @@ import play.api.libs.json._
 
 import scala.concurrent.Promise
 
-object UserActor {
-  val key = "a4gWSbdOOW0BP4ovrccfvYkopwRuj9xyiCdMEXfcI1xqeDgcnt7kWxIR9q7jtSvD"
-}
-
 class UserActor(out: ActorRef, user: User) extends Actor {
 
   val topics = Map[String, (JsObject) => Unit](
@@ -29,19 +25,20 @@ class UserActor(out: ActorRef, user: User) extends Actor {
     val userJson = User.userFmt.writes(user).as[JsObject] ++ Json.obj(
       "md5email" -> Codecs.md5(user.email.getBytes)
     ) ++ Json.obj(
-      "date" -> DateTime.now().toString("yyyy-mm-yy-hh-MM-ss")
+      "date" -> DateTime.now().toString("yyyy-MM-dd-HH-mm-ss-SSS")
     )
-    val token: String = JsonWebToken(userJson).encrypt(UserActor.key).toOption.getOrElse("")
+    val token: String = JsonWebToken(userJson).encrypt().toOption.getOrElse("")
     (token, userJson)
   }
 
   override def receive: Receive = {
     case js: JsValue => {
       val token = (js \ "token").asOpt[String]
+      //Logger.info(token.getOrElse(""))
       if (!promise.isCompleted) {
         promise.trySuccess(())
         defaultTopic(js.as[JsObject])
-      } else if (JsonWebToken.validate(token.getOrElse(""), UserActor.key)) {
+      } else if (JsonWebToken.validate(token.getOrElse(""))) {
         topics.getOrElse((js \ "topic").as[String], defaultTopic(_))(js.as[JsObject])
       } else {
         Logger.error(s"Non token request on ${(js \ "topic").as[String]}")
@@ -83,7 +80,7 @@ class UserActor(out: ActorRef, user: User) extends Actor {
       case "subPages" => {
         val page = (js \ "payload" \ "from").as[String]
         val subPages = PagesStore.subPages(user, page)
-        val (token, userJson) = tokenAndUser()
+        val (token, _) = tokenAndUser()
         out ! Json.obj(
           "correlationId" -> (js \ "correlationId"),
           "token" -> token,
