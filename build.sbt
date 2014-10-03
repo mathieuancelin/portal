@@ -8,5 +8,6 @@ scalaVersion := "2.11.1"
 
 libraryDependencies ++= Seq(
   cache,
-  ws
+  ws,
+  "commons-codec" % "commons-codec" % "1.9"
 )

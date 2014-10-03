@@ -82,20 +82,6 @@
             </footer>
         </div> <!-- /container -->
 
-        <script type="text/javascript">
-            var portal = portal || {};
-            portal.Location = portal.Location || {};
-            portal.User = portal.User || {};
-            portal.Location.current = portal.Location.current || @Html(page.toJsonString);  @* TODO : avoid it of filter it *@
-            portal.User.current = portal.User.current || @Html(user.toJsonString);
-            portal.User.current.isAdmin = function() {
-                return ! _.isUndefined(_.find(portal.User.current.roles, function(role) { return role.name === "ADMINISTRATOR"; }));
-            };
-            portal.User.current.isNotAdmin = function() {
-                return !portal.User.current.isAdmin();
-            };
-        </script>
-
         <script src="@routes.Assets.at("javascripts/cssdebug.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/thirdparty/q.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/thirdparty/jquery-min.js")" type="text/javascript"></script>
