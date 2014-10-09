@@ -7,7 +7,7 @@ portal.MashetesStore = portal.MashetesStore || {};
         render: function() {
             return (
                 <portal.Mashetes.Mashete title="Fallback" config={this.props}>
-                    <h3>Something went wrong ... </h3>
+                    <h3>Mashete kills ... </h3>
                 </portal.Mashetes.Mashete>
             );
         }

@@ -2,12 +2,12 @@ package controllers
 
 import akka.actor.{ActorRef, Props}
 import modules.communication.UserActor
-import modules.identity.{AnonymousUser, User, UsersStore}
-import modules.structure.{MashetesStore, Page, PagesStore}
+import modules.identity.{Role, AnonymousUser, User, UsersStore}
+import modules.structure.{Mashete, MashetesStore, Page, PagesStore}
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.Crypto
-import play.api.libs.json.JsValue
+import play.api.libs.json.{Writes, Json, JsValue}
 import play.api.mvc._
 
 // TODO : mashetes store to add mashetes to pages
@@ -24,15 +24,15 @@ object Application extends Controller {
   def UserAction(url: String)(f: ((Request[AnyContent], User, Page)) => Result) = {
     Logger.trace(s"Accessing secured url : $url")
     Action { rh =>
-      val user = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+      val user = rh.cookies.get("PORTAL_SESSION").flatMap { cookie: Cookie =>
         cookie.value.split(":::").toList match {
           case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
-          case _ => AnonymousUser
+          case _ => Some(AnonymousUser)
         }
       }.getOrElse(AnonymousUser)
       PagesStore.findByUrl(url) match {
         case Some(page) => {
-          if (page.accessibleBy.intersect(user.roles).size > 0) {
+          if (page.accessibleByRoles.intersect(user.actualRoles).size > 0) {
             f(rh, user, page)
           } else {
             // TODO : redirect to login page
@@ -68,10 +68,10 @@ object Application extends Controller {
   }
 
   def userWebsocket = WebSocket.acceptWithActor[JsValue, JsValue] { rh =>
-    val user = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+    val user = rh.cookies.get("PORTAL_SESSION").flatMap { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
-        case _ => AnonymousUser
+        case _ => Some(AnonymousUser)
       }
     }.getOrElse(AnonymousUser)
     def builder(out: ActorRef) = Props(classOf[UserActor], out, user)

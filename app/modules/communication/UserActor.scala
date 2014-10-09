@@ -11,6 +11,7 @@ import play.api.libs.json._
 
 import scala.concurrent.Promise
 
+// verification with http://jwt.io/
 class UserActor(out: ActorRef, user: User) extends Actor {
 
   val topics = Map[String, (JsObject) => Unit](
@@ -25,7 +26,10 @@ class UserActor(out: ActorRef, user: User) extends Actor {
     val userJson = User.userFmt.writes(user).as[JsObject] ++ Json.obj(
       "md5email" -> Codecs.md5(user.email.getBytes)
     ) ++ Json.obj(
-      "date" -> DateTime.now().toString("yyyy-MM-dd-HH-mm-ss-SSS")
+      "iat" -> DateTime.now().toString("yyyy-MM-dd-HH-mm-ss-SSS"),
+      "jti" -> common.IdGenerator.uuid,
+      "iss" -> "http://theportal.ovh",
+      "sub" -> user.email
     )
     val token: String = JsonWebToken(userJson).encrypt().toOption.getOrElse("")
     (token, userJson)

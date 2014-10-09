@@ -38,7 +38,7 @@ portal.Socket = portal.Socket || {};
                 portal.Location.current = portal.Location.current || data.page;
                 portal.User.current = portal.User.current || data.user;
                 portal.User.current.isAdmin = function() {
-                    return ! _.isUndefined(_.find(portal.User.current.roles, function(role) { return role.name === "ADMINISTRATOR"; }));
+                    return ! _.isUndefined(_.find(portal.User.current.roles, function(role) { return role === "ADMINISTRATOR"; }));
                 };
                 portal.User.current.isNotAdmin = function() {
                     return !portal.User.current.isAdmin();

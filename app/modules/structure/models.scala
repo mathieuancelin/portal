@@ -1,6 +1,6 @@
 package modules.structure
 
-import modules.identity.Role
+import modules.identity.{User, RolesStore, Role}
 import play.api.libs.json._
 
 case class Position(column: Int, line: Int)
@@ -14,21 +14,22 @@ case class Page(
                  name: String,
                  description: String,
                  url: String,
-                 accessibleBy: Seq[Role],
+                 accessibleBy: Seq[String],
                  subPages: Seq[Page],
                  mashetes: Seq[MasheteInstance],
                  leftColSize: Int = play.api.Play.current.configuration.getInt("portal.left-width").getOrElse(6),
                  rightColSize: Int = play.api.Play.current.configuration.getInt("portal.right-width").getOrElse(6)
        ) {
 
+  def accessibleByRoles = accessibleBy.map(RolesStore.role).collect { case Some(role) => role }
   def toJson = Page.pageFmt.writes(this)
   def toJsonString = Json.stringify(toJson)
-  def toHtml: String = {
+  def toHtml(user: User): String = {
     if (subPages.nonEmpty) {
       s"""<li class="dropdown">
         <a href="$url" class="dropdown-toggle" data-toggle="dropdown">$name<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">""" +
-        subPages.map(_.toHtml).mkString("") + """</ul></li>"""
+        PagesStore.directSubPages(user, this).map(_.toHtml(user)).mkString("") + """</ul></li>"""
     } else {
       s"""<li><a href="$url">$name</a></li>"""
     }

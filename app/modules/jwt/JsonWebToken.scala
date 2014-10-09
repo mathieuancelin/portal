@@ -21,9 +21,9 @@ case class JsonWebToken(header: JsObject, claims: JsObject) {
         val encodedClaims = Base64.encodeBase64URLSafeString(Json.stringify(claims).getBytes("UTF-8"))
         val data = s"$encodedHeader.$encodedClaims"
         val bytes = algo match {
-          case "HS256" => build("HmacSHA256", data, key)
-          case "HS384" => build("HmacSHA384", data, key)
-          case "HS512" => build("HmacSHA512", data, key)
+          case "HS256" => encrypt("HmacSHA256", data, key)
+          case "HS384" => encrypt("HmacSHA384", data, key)
+          case "HS512" => encrypt("HmacSHA512", data, key)
           case "none" => Array.empty[Byte]
           case a => throw new RuntimeException(s"Unknown algorithm $a")
         }
@@ -32,7 +32,7 @@ case class JsonWebToken(header: JsObject, claims: JsObject) {
       }
   }
 
-  private[this] def build(algorithm: String, data: String, key: String): Array[Byte] = {
+  private[this] def encrypt(algorithm: String, data: String, key: String): Array[Byte] = {
     val mac: Mac = Mac.getInstance(algorithm)
     val secretKey: SecretKeySpec = new SecretKeySpec(key.getBytes, algorithm)
     mac.init(secretKey)
