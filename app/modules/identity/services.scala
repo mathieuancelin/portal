@@ -20,4 +20,5 @@ object RolesStore {
   private[this] lazy val roles = Json.parse(Files.toString(play.api.Play.current.getFile("conf/data/roles.json"), Charset.forName("UTF-8"))).as(Reads.seq(Role.roleFmt))
 
   def role(id: String): Future[Option[Role]] = Future.successful(roles.find(_.id == id))
+
 }
