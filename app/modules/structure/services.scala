@@ -6,8 +6,7 @@ import com.google.common.io.Files
 import modules.identity.User
 import play.api.libs.json.{Json, Reads}
 
-import scala.concurrent.Future
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
+import scala.concurrent.{ExecutionContext, Future}
 
 object MashetesStore {
 
@@ -18,42 +17,25 @@ object MashetesStore {
 
 object PagesStore {
 
-  lazy val root = Json.parse(Files.toString(play.api.Play.current.getFile("conf/data/portal.json"), Charset.forName("UTF-8"))).as(Page.pageFmt)
+  lazy val pages: Seq[Page] = Json.parse(Files.toString(play.api.Play.current.getFile("conf/data/portal.json"), Charset.forName("UTF-8"))).as(Reads.seq(Page.pageFmt))
 
-  def findByUrl(url: String): Future[Option[Page]] = Future.successful(findBy(root, { p => p.url }, url))
+  def findByUrl(url: String)(implicit ec: ExecutionContext): Future[Option[Page]] = Future.successful(pages.find(p => p.url == url))
 
-  def findById(id: String): Future[Option[Page]] = Future.successful(findBy(root, { p => p.id }, id))
+  def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Page]] = Future.successful(pages.find(p => p.id == id))
 
-  private[this] def findBy(page: Page, extractor: (Page) => String, what: String): Option[Page] = {
-    what match {
-      case _ if extractor(page) == what => Some(page)
-      case _ if extractor(page) != what && page.subPages.nonEmpty => page.subPages.map(findBy(_, extractor, what)).find(_.isDefined).flatten
-      case _ if extractor(page) != what && page.subPages.isEmpty => None
-      case _ => None
-    }
+  def pages(user: User)(implicit ec: ExecutionContext): Future[Seq[Page]] = Future.successful(pages.filter(p => p.accessibleByIds.intersect(user.roles).size > 0))
+  def pages(from: Page, user: User)(implicit ec: ExecutionContext): Future[Seq[Page]] = {
+    Future.successful(pages.filter(p => p.url.startsWith(from.url)))
   }
 
-  def pages(user: User): Future[Seq[Page]] = Future.successful(pages(root, user, Seq()))
-
-  private[this] def pages(page: Page, user: User, ps: Seq[Page]): Seq[Page] = {
-    val result = page match {
-      case _ if page.accessibleBy.intersect(user.roles).size > 0 && page.subPages.nonEmpty => page.subPages.map(pages(_, user, ps :+ page)).flatten
-      case _ if page.accessibleBy.intersect(user.roles).size > 0 && page.subPages.isEmpty => ps :+ page
-      case _ if page.accessibleBy.intersect(user.roles).size == 0 && page.subPages.nonEmpty => page.subPages.map(pages(_, user, ps)).flatten
-      case _ if page.accessibleBy.intersect(user.roles).size == 0 && page.subPages.isEmpty => ps
-      case _ => Seq()
-    }
-    result.toSet.toSeq
+  def directSubPages(user: User, from: Page)(implicit ec: ExecutionContext): Future[Seq[Page]] = {
+    from.subPages.map(_.filter(_.accessibleByIds.intersect(user.roles).size > 0))
   }
 
-  def directSubPages(user: User, from: Page): Future[Seq[Page]] = {
-    Future.successful(from.subPages.filter(_.accessibleBy.intersect(user.roles).size > 0))
-  }
-
-  def subPages(user: User, from: String): Future[Seq[Page]] = {
-    findById(from).map {
-      case Some(page) => page.subPages.map(pages(_, user, Seq())).flatten
-      case _ => Seq()
+  def subPages(user: User, from: String)(implicit ec: ExecutionContext): Future[Seq[Page]] = {
+    findById(from).flatMap {
+      case Some(page) => page.subPages.flatMap(c => Future.sequence(c.map(p => pages(p, user))).map(_.flatten))
+      case _ => Future.successful(Seq())
     }
   }
 }

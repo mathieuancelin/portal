@@ -36,7 +36,7 @@ object Application extends Controller {
       fuser.flatMap { user =>
         PagesStore.findByUrl(url).flatMap {
           case Some(page) => {
-            if (page.accessibleBy.intersect(user.roles).size > 0) {
+            if (page.accessibleByIds.intersect(user.roles).size > 0) {
               f(rh, user, page)
             } else {
               // TODO : redirect to login page
@@ -52,7 +52,7 @@ object Application extends Controller {
   def index = UserAction("/") {
     case (request, user, page) => {
       for {
-        subTree <- PagesStore.directSubPages(user, modules.structure.PagesStore.root).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
+        subTree <- PagesStore.directSubPages(user, page).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- MashetesStore.findAll()
       } yield Ok(views.html.index(portalName, user, page, all, subTree))
     }
@@ -61,7 +61,8 @@ object Application extends Controller {
   def page(url: String) = UserAction("/site/" + url) {
     case (request, user, page) => {
       for {
-        subTree <- PagesStore.directSubPages(user, modules.structure.PagesStore.root).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
+        root <- PagesStore.findByUrl("/")
+        subTree <- PagesStore.directSubPages(user, root.getOrElse(page)).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- MashetesStore.findAll()
       } yield Ok(views.html.index(portalName, user, page, all, subTree))
     }

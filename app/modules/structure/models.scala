@@ -1,9 +1,12 @@
 package modules.structure
 
+import java.util.concurrent.TimeUnit
+
 import modules.identity.{User, RolesStore, Role}
 import play.api.libs.json._
 
-import scala.concurrent.{Future, ExecutionContext}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future, ExecutionContext}
 
 case class Position(column: Int, line: Int)
 
@@ -16,22 +19,25 @@ case class Page(
                  name: String,
                  description: String,
                  url: String,
-                 accessibleBy: Seq[String],
-                 subPages: Seq[Page],
+                 accessibleByIds: Seq[String],
+                 subPageIds: Seq[String],
                  mashetes: Seq[MasheteInstance],
                  leftColSize: Int = play.api.Play.current.configuration.getInt("portal.left-width").getOrElse(6),
                  rightColSize: Int = play.api.Play.current.configuration.getInt("portal.right-width").getOrElse(6)
        ) {
 
-  def accessibleByRoles(implicit ec: ExecutionContext) = Future.sequence(accessibleBy.map(RolesStore.role).map(_.collect { case Some(role) => role }))
+  def subPages(implicit ec: ExecutionContext): Future[Seq[Page]] = Future.sequence(subPageIds.map(PagesStore.findById)).map(_.collect { case Some(role) => role })
+  def accessibleByRoles(implicit ec: ExecutionContext): Future[Seq[Role]] = Future.sequence(accessibleByIds.map(RolesStore.role).map(_.collect { case Some(role) => role }))
   def toJson = Page.pageFmt.writes(this)
   def toJsonString = Json.stringify(toJson)
   def toHtml(user: User): String = {
-    if (subPages.nonEmpty) {
+    import play.api.libs.concurrent.Execution.Implicits.defaultContext
+    if (subPageIds.nonEmpty) {
       s"""<li class="dropdown">
         <a href="$url" class="dropdown-toggle" data-toggle="dropdown">$name<span class="caret"></span></a>
           <ul class="dropdown-menu" role="menu">""" +
-            subPages.filter(p => p.accessibleBy.intersect(user.roles).size > 0).map(_.toHtml(user)).mkString("") + "</ul></li>"
+            // TODO : arrrrrggghhhhhh !!!!
+            Await.result(subPages, Duration(5, TimeUnit.SECONDS)).filter(p => p.accessibleByIds.intersect(user.roles).size > 0).map(_.toHtml(user)).mkString("") + "</ul></li>"
     } else {
       s"""<li><a href="$url">$name</a></li>"""
     }

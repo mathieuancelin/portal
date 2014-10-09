@@ -1,283 +1,286 @@
-{
-    "id": "5708ca388-3ae1-4bbb-a0e1-120dd40ad786",
-    "name": "Welcome to 'The portal'",
-    "description": "The best portal ever ...",
-    "url": "/",
-    "accessibleBy": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
-    "subPages": [
-        {
-            "id": "cbdb951b5-3795-4d52-9380-9aad0e514a4a",
-            "name": "Private root",
-            "description": "",
-            "url": "/site/private",
-            "accessibleBy": ["ADMINISTRATOR", "WRITER"],
-            "subPages": [
-                {
-                    "id": "684895662-8d49-46a4-ac9a-44d8ddc443e8",
-                    "name": "My Private page 1",
-                    "description": "",
-                    "url": "/site/private/myprivatepage1",
-                    "accessibleBy": ["ADMINISTRATOR", "WRITER"],
-                    "subPages": [ ],
-                    "mashetes": [
-                        {
-                            "id": "widget-1",
-                            "masheteId": "TitleMashete",
-                            "position": {
-                                "column": 0,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "title": "Page description"
-                            }
-                        },
-                        {
-                            "id": "widget-2",
-                            "masheteId": "LinksMashete",
-                            "position": {
-                                "column": 0,
-                                "line": 1
-                            },
-                            "instanceConfig": { }
-                        },
-                        {
-                            "id": "widget-3",
-                            "masheteId": "IframeMashete",
-                            "position": {
-                                "column": 1,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "url": "http://underscorejs.org/",
-                                "title": "Underscore",
-                                "height": 600
-                            }
-                        }
-                    ],
-                    "leftColSize": 3,
-                    "rightColSize": 9
+[
+    {
+        "id": "684895662-8d49-46a4-ac9a-44d8ddc443e8",
+        "name": "My Private page 1",
+        "description": "",
+        "url": "/site/private/myprivatepage1",
+        "accessibleByIds": ["ADMINISTRATOR", "WRITER"],
+        "subPageIds": [ ],
+        "mashetes": [
+            {
+                "id": "widget-1",
+                "masheteId": "TitleMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
                 },
-                {
-                    "id": "1a47dee22-421b-4b0e-9d2b-cc5bab33d4d0",
-                    "name": "My Private page 2",
-                    "description": "",
-                    "url": "/site/private/myprivatepage2",
-                    "accessibleBy": ["ADMINISTRATOR", "WRITER"],
-                    "subPages": [ ],
-                    "mashetes": [
-                        {
-                            "id": "widget-1",
-                            "masheteId": "TitleMashete",
-                            "position": {
-                                "column": 0,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "title": "Page description"
-                            }
-                        },
-                        {
-                            "id": "widget-2",
-                            "masheteId": "LinksMashete",
-                            "position": {
-                                "column": 0,
-                                "line": 1
-                            },
-                            "instanceConfig": { }
-                        },
-                        {
-                            "id": "widget-3",
-                            "masheteId": "IframeMashete",
-                            "position": {
-                                "column": 1,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "url": "http://underscorejs.org/",
-                                "title": "Underscore",
-                                "height": 600
-                            }
-                        }
-                    ],
-                    "leftColSize": 8,
-                    "rightColSize": 4
+                "instanceConfig": {
+                    "title": "Page description"
                 }
-            ],
-            "mashetes": [
-                {
-                    "id": "widget-2",
-                    "masheteId": "LinksMashete",
-                    "position": {
-                        "column": 0,
-                        "line": 0
-                    },
-                    "instanceConfig": { }
-                }
-            ],
-            "leftColSize": 6,
-            "rightColSize": 6
-        },
-        {
-            "id": "75539595b-c8e6-4237-81c8-6dd3a8c19391",
-            "name": "Public root",
-            "description": "",
-            "url": "/site/public",
-            "accessibleBy": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
-            "subPages": [
-                {
-                    "id": "771841d45-19e2-4918-904c-c5e281cce9d4",
-                    "name": "My public page 1",
-                    "description": "",
-                    "url": "/site/public/mypage1",
-                    "accessibleBy": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
-                    "subPages": [ ],
-                    "mashetes": [
-                        {
-                            "id": "widget-1",
-                            "masheteId": "TitleMashete",
-                            "position": {
-                                "column": 0,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "title": "Page description"
-                            }
-                        },
-                        {
-                            "id": "widget-2",
-                            "masheteId": "MarkdownMashete",
-                            "position": {
-                                "column": 1,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "title": "Mardown display",
-                                "markdown": "IyBDYWVsbyBvcmlzIGRpcmEgc3VvcXVlIGNhcHV0IHJlbGV2YXJlIGNvbnRyYXhpdA0KDQojIyBRdWFsZSB2YXRpY2luYXR1cyBuaWR1bSBzb3JvcmVtIGV0IGFkaWl0DQoNCkxvcmVtIG1hcmtkb3dudW0gZmlicmFzLCBxdWVtIGluIGVzdCBwcm9jdXJydW50IGFyY2FuaXMgcHJvY3VsIHVuYSBDYWRtZSB2ZW5lbmkNCmluIGRlY2xpbmF0LiBMYWJlZmFjdGFxdWUgcG9zdWl0IGFubm9zIHZpcmlidXMgcXVhIHVuZGlzIGxvbmdpdXMgdm9zLCBwYXRlcnF1ZQ0KY2FyZW50aWEgZGljdG9zIExldWNvdGhvZSBjdXJydSBpbnF1YW0gdHJheGVyZSBwZWN0b3JlLiBDb2VyY2ViYXQgaXBzZSBhcnR1cw0KVGhlYmFzIHF1b3MsIGFsaW9zIGFybWEgcGxlYmUgbWUgZ3VsYWUgdm9sdWNyaXMuIEV1ZW5pbmFlIHF1b3F1ZSBlc3NlIHNvbGl0byBldA0KdmlkaSBub3ZpcyBkZXNlcnVpdDogcHV0YXJlcy4gVmlkaXQgdGFudG8gaWduaXMgbmVjIGNvbml1bnggbHVtaW5hLCB0YW1lbiBmZWNpdA0KYmlwZW5uaWZlcnVtcXVlIGRlY29ydW0gc2Nyb2JlIHV0IG9jdG9uaXMgbm9uIHN1bW1vLg0KDQoxLiBDYXVzYSBhbW9yZSBiaXMgZXQgaXViZSBmbGV4ZXJlIHVyaXR1cg0KMi4gSGFiZXQgcGVkZSBzdXN0aW51aXNzZSBvcGFjYXMgaW4gcXVvIGRlYmVyaQ0KMy4gTmVjIGRlc3BlY3RhYmF0IHF1aWQgZXQgbW9ydGUgdGFjaXRvDQo0LiBUdW0gaWduZSBpbiBtYXJtb3JlIHBlbGFnbyBkZXRlc3RhdHVyIGhhYw0KNS4gU29sYSBtb3ZpdCBlYSB2ZWxhIHJlcyBmdXJvcmlzIHBhc2NpDQoNClBvc2l0YSBpbiBwaWV0YXRpcyBxdW9zLCBpdXZlbmVtLCB0ZXJyYXMgZXQgZm9yc2l0YW4gZGV1cyBTY3l0aGljaXMsIGVzdCBpbg0KbWFnbm8/IFN0eXBoZWx1bXF1ZSBpbmRlLCBIaXBwb2x5dHVtIGNhbmFlcXVlIFJob2RvcGUgaW50YWN0YSByZXJ1bSBHb3JnZW5xdWUNCnZvY2VtLCBwcmltdXMgaWxsZSB2ZW50aXMgb2JzdGFudGlhIHZlbG9jaW9yIGR1cmUuIFJhcHRhIG51cnVzIGRpY3RpcyBhbmltYW0NCmxhbmd1ZXJlIGNvbml1Z2lzIHZldGVyaXMsIHR1bWlkYSwgY29ubGFwc2FtcXVlPw0KDQojIyBIaW5jIHRhYmVsbGFzIENhc3Npb3BlDQoNCk1vcnRpIHZpcmd1bHRpcyBvc3NpYnVzIG51bmMgcGFydGUgcXVpY3F1YW0sIGJvdW1xdWUgc2ltdWxhYywgbWloaSBxdW8gcGxhY2VzDQpjb3Jwb3JhIG5hdHVyYS4gUGFyYXJldCBjcnVkZWxpcyBsdXggbWFyZSwgb21uZSB0YW50aSBjYWVzcGl0ZSwgaW4gYWNlcnJpcy4NCkRlcG9zaXR1cmEgKip2ZXJzdXMgc2lnbmEgY29udGluZ2VyZSoqIGFncm9zOiBkdWFzIHF1YWUgc2FuZ3VpbmUgYXRxdWUuIEZlcm94cXVlDQpmcnVzdHJhIGRpc2N1c3NhIG11dGFudHVyIGFkc3BpY2l1bnQgdm9iaXMgKipwcmFlY2VwdGEgdHVyaXMgbWFsaXMqKiBhbmltby4NCg0KKipGYXVjaWJ1cyByZXNlcnZhbnQgaW1pcyoqLiBCaW5hIFRyb2lhZSwgaGFlcmViYXQgZGVjaXBpZXQgY3VscGFlLCBjb3Jwb3JhIGR1cmENCmN1bSBjcnVlbnR1bSBtaWxpdGUsIGJhY2lzIGZvcmVzLiBNZWEgZmFjdHVzLCBhcnNpdCwgZXQgc29sZSwgb3JlIFtpYWN0YW50ZW0NCmRldm9yYXRdKGh0dHA6Ly9oYXNrZWxsLm9yZy8pIQ0KDQojIyBWZWx1dGkgaW5xdWl0IGx1Y2lzDQoNCkZlcmlub3MgZnJvbmRlc3F1ZSB2aXZ1bSwgaWduaXMgW3BldGUgYW5pbWF0YQ0KY3Vyc3VxdWVdKGh0dHA6Ly90ZXh0ZnJvbWRvZy50dW1ibHIuY29tLykgbm9uLCB1dGVyb3F1ZSBkZXNpZXJhdC4NCltIeXBhZXBpc10oaHR0cDovL3N0b25lc2hpcC5vcmcvKSBtZSBmZXJlPw0KDQogICAgaWYgKHVuaWNvZGVfaHR0cHMgPCBpbnRlcmxhY2VkU21tLnRhZ19kdWFsKG5hdGl2ZVRoaWNrQm90bmV0IC0gaHViKSkgew0KICAgICAgICBtYWlsICs9IGZhdmljb247DQogICAgICAgIG1vZGVfYWxlcnQgPSAzNTA3NjY7DQogICAgICAgIGNwY19pcGFkX3FiZSAvPSBlcHNfZGVza3RvcF9jb21waWxlKDk4NDA3LCBkaWdpdGFsU2hvcnRjdXQpOw0KICAgIH0NCiAgICB2YXIgaGFyZF9vcGVyYXRpb24gPSBpY3RDb21tZXJjaWFsRGlhbChwYWdlVm9sdW1lTGF0ZW5jeSh3ZGRtVGFibGV0LA0KICAgICAgICAgICAgaG9uZXlwb3RfcmVhbCwgMyksIC0zICsgZXNwb3J0c0ZpbGUubWVtb3J5X3dpcmVsZXNzKA0KICAgICAgICAgICAgcmVtb3RlX2ZyYW1ld29ya19tcGVnLCBtZWRpYV9jaGFyYWN0ZXJfc3VibmV0LCBtYWlsQ2NDYXBhY2l0eSksDQogICAgICAgICAgICBzZWFyY2hTY2FuKTsNCiAgICBmaXJtd2FyZV9yZWR1bmRhbmN5X3R1dG9yaWFsLm1vZGlmaWVySGZzVmlldyArPSA1ICogMTAgKiBlbmRIYXJkZW5pbmcgKw0KICAgICAgICAgICAgd2FybUJhcjsNCiAgICB3aGl0ZWxpc3RQcmV0ZXN0IC09IGluc3RhbGxlcih3aW1heF9zY2FuICsgcmFtX2ZsYXQgKiAtMywgY2xpZW50RHNsRGlnaXRhbCk7DQogICAgb3ZlcmNsb2NraW5nX2Zhdmljb25fbG9zc3kuc3dpdGNoICs9IGJvb3QoY29tcGlsZXIpOw0KDQpBcXVhIHVsbHVtIGh1bmMgdmVuaWV0IHByb2N1bCBpbGxhIGZvZGllbnRpYnVzIGNvbWVzIGZvbnRpIGNvcm5lYXF1ZSBzdWJpdGlzLA0Kdml4IHNhZXBlIG9tZW4gcGVydmVuaXQuIERlbmlxdWUgZXQgZG9uZWMgYWV0aGVyYSBoZXUgcmVjbHVkaXQgbm9zdHJhIG1vdGFxdWUNCmNhbmF0IHF1YWVzaXR1cyBxdW9kIG5pbCwgaGF1dCB1bmRhcyBxdW9xdWUgcmVsZXZhcmUgc2VxdXVudHVyPyBWaWRpdCBkZWFtDQp0YW5kZW06IGV2ZW5pdW50IGRpc2NlZGl0ZSB2ZXRhcmlzOiBkaXhpdCBwYXJzIGFtcGxpdXMgbWluaXMgZmx1ZXJlLiBTdXN0aW51ZXJlDQoqKnJpZ2lkbyoqLiBWZXJzYXR1cyAqKmZ1dHVyYSoqOyB0b3Qgc3BhdGlpIG11dGF2ZXJhdCB2aWRpdDsgc3ViZXN0IHZlcmJpcyBjYXVzYQ0KQWVuZWFlIGlucHVuZT8NCg0KVGVsYW1vbiBuZWMgTGVuaXMgW3RyaXBsaWNpIHRpYmldKGh0dHA6Ly9oZWVlZWVlZWV5LmNvbS8pIHRlcnJhIGluIGV1bnRxdWUNCkhlY3RvciBmYWNpbnVzIHByb2dlbmllcyBEaXRlICpub21lbiohIE9yc2EgZG9sb3IsIGl1bmN0dXJhcyBbY3VycnUNCmlucGV0dXNdKGh0dHA6Ly9pbWd1ci5jb20vKSBkZWEgaG9zcGVzIHByYWVjb250cmVjdGF0cXVlIHBvcnRhbnMgZGV4dGVyaW9yPw0KUHV0ZXQgKipwaGFyZXRyYXMgZGl4aXQqKiB0ZW1wb3JhIG1hbmViYXQgU3RoZW5lbGVpdXMsIGhlcmJpcywgZXQgcGF0aXR1ci4gU3VudA0KKm9yYSBzb2xlbnQqLCBlcmFzIGxhcHN1cywgdGVycmV0IGNvbnN0aXRlcmF0IGZ1ZXJhdCBjcmVhdGkuIFZvdGEgbW9lbmlhIGZlcnJvDQpzZW5pbGVtIHRlZ3VtZW5xdWUgKiphcnNpdCoqIGluIGZhdGlkaWN1cyB0b3RvIQ0KDQpbSHlwYWVwaXNdOiBodHRwOi8vc3RvbmVzaGlwLm9yZy8NCltjdXJydSBpbnBldHVzXTogaHR0cDovL2ltZ3VyLmNvbS8NCltpYWN0YW50ZW0gZGV2b3JhdF06IGh0dHA6Ly9oYXNrZWxsLm9yZy8NCltwZXRlIGFuaW1hdGEgY3Vyc3VxdWVdOiBodHRwOi8vdGV4dGZyb21kb2cudHVtYmxyLmNvbS8NClt0cmlwbGljaSB0aWJpXTogaHR0cDovL2hlZWVlZWVlZXkuY29tLw=="
-                            }
-                        }
-                    ],
-                    "leftColSize": 6,
-                    "rightColSize": 6
+            },
+            {
+                "id": "widget-2",
+                "masheteId": "LinksMashete",
+                "position": {
+                    "column": 0,
+                    "line": 1
                 },
-                {
-                    "id": "10e370ec3-0aaa-4328-a11b-e9ada3149079",
-                    "name": "My public page 2",
-                    "description": "",
-                    "url": "/site/public/mypage2",
-                    "accessibleBy": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
-                    "subPages": [ ],
-                    "mashetes": [
-                        {
-                            "id": "widget-1",
-                            "masheteId": "TitleMashete",
-                            "position": {
-                                "column": 0,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "title": "Page description"
-                            }
-                        },
-                        {
-                            "id": "widget-2",
-                            "masheteId": "MarkdownMashete",
-                            "position": {
-                                "column": 1,
-                                "line": 0
-                            },
-                            "instanceConfig": {
-                                "title": "Mardown display",
-                                "markdown": "IyBDYWVsbyBvcmlzIGRpcmEgc3VvcXVlIGNhcHV0IHJlbGV2YXJlIGNvbnRyYXhpdA0KDQojIyBRdWFsZSB2YXRpY2luYXR1cyBuaWR1bSBzb3JvcmVtIGV0IGFkaWl0DQoNCkxvcmVtIG1hcmtkb3dudW0gZmlicmFzLCBxdWVtIGluIGVzdCBwcm9jdXJydW50IGFyY2FuaXMgcHJvY3VsIHVuYSBDYWRtZSB2ZW5lbmkNCmluIGRlY2xpbmF0LiBMYWJlZmFjdGFxdWUgcG9zdWl0IGFubm9zIHZpcmlidXMgcXVhIHVuZGlzIGxvbmdpdXMgdm9zLCBwYXRlcnF1ZQ0KY2FyZW50aWEgZGljdG9zIExldWNvdGhvZSBjdXJydSBpbnF1YW0gdHJheGVyZSBwZWN0b3JlLiBDb2VyY2ViYXQgaXBzZSBhcnR1cw0KVGhlYmFzIHF1b3MsIGFsaW9zIGFybWEgcGxlYmUgbWUgZ3VsYWUgdm9sdWNyaXMuIEV1ZW5pbmFlIHF1b3F1ZSBlc3NlIHNvbGl0byBldA0KdmlkaSBub3ZpcyBkZXNlcnVpdDogcHV0YXJlcy4gVmlkaXQgdGFudG8gaWduaXMgbmVjIGNvbml1bnggbHVtaW5hLCB0YW1lbiBmZWNpdA0KYmlwZW5uaWZlcnVtcXVlIGRlY29ydW0gc2Nyb2JlIHV0IG9jdG9uaXMgbm9uIHN1bW1vLg0KDQoxLiBDYXVzYSBhbW9yZSBiaXMgZXQgaXViZSBmbGV4ZXJlIHVyaXR1cg0KMi4gSGFiZXQgcGVkZSBzdXN0aW51aXNzZSBvcGFjYXMgaW4gcXVvIGRlYmVyaQ0KMy4gTmVjIGRlc3BlY3RhYmF0IHF1aWQgZXQgbW9ydGUgdGFjaXRvDQo0LiBUdW0gaWduZSBpbiBtYXJtb3JlIHBlbGFnbyBkZXRlc3RhdHVyIGhhYw0KNS4gU29sYSBtb3ZpdCBlYSB2ZWxhIHJlcyBmdXJvcmlzIHBhc2NpDQoNClBvc2l0YSBpbiBwaWV0YXRpcyBxdW9zLCBpdXZlbmVtLCB0ZXJyYXMgZXQgZm9yc2l0YW4gZGV1cyBTY3l0aGljaXMsIGVzdCBpbg0KbWFnbm8/IFN0eXBoZWx1bXF1ZSBpbmRlLCBIaXBwb2x5dHVtIGNhbmFlcXVlIFJob2RvcGUgaW50YWN0YSByZXJ1bSBHb3JnZW5xdWUNCnZvY2VtLCBwcmltdXMgaWxsZSB2ZW50aXMgb2JzdGFudGlhIHZlbG9jaW9yIGR1cmUuIFJhcHRhIG51cnVzIGRpY3RpcyBhbmltYW0NCmxhbmd1ZXJlIGNvbml1Z2lzIHZldGVyaXMsIHR1bWlkYSwgY29ubGFwc2FtcXVlPw0KDQojIyBIaW5jIHRhYmVsbGFzIENhc3Npb3BlDQoNCk1vcnRpIHZpcmd1bHRpcyBvc3NpYnVzIG51bmMgcGFydGUgcXVpY3F1YW0sIGJvdW1xdWUgc2ltdWxhYywgbWloaSBxdW8gcGxhY2VzDQpjb3Jwb3JhIG5hdHVyYS4gUGFyYXJldCBjcnVkZWxpcyBsdXggbWFyZSwgb21uZSB0YW50aSBjYWVzcGl0ZSwgaW4gYWNlcnJpcy4NCkRlcG9zaXR1cmEgKip2ZXJzdXMgc2lnbmEgY29udGluZ2VyZSoqIGFncm9zOiBkdWFzIHF1YWUgc2FuZ3VpbmUgYXRxdWUuIEZlcm94cXVlDQpmcnVzdHJhIGRpc2N1c3NhIG11dGFudHVyIGFkc3BpY2l1bnQgdm9iaXMgKipwcmFlY2VwdGEgdHVyaXMgbWFsaXMqKiBhbmltby4NCg0KKipGYXVjaWJ1cyByZXNlcnZhbnQgaW1pcyoqLiBCaW5hIFRyb2lhZSwgaGFlcmViYXQgZGVjaXBpZXQgY3VscGFlLCBjb3Jwb3JhIGR1cmENCmN1bSBjcnVlbnR1bSBtaWxpdGUsIGJhY2lzIGZvcmVzLiBNZWEgZmFjdHVzLCBhcnNpdCwgZXQgc29sZSwgb3JlIFtpYWN0YW50ZW0NCmRldm9yYXRdKGh0dHA6Ly9oYXNrZWxsLm9yZy8pIQ0KDQojIyBWZWx1dGkgaW5xdWl0IGx1Y2lzDQoNCkZlcmlub3MgZnJvbmRlc3F1ZSB2aXZ1bSwgaWduaXMgW3BldGUgYW5pbWF0YQ0KY3Vyc3VxdWVdKGh0dHA6Ly90ZXh0ZnJvbWRvZy50dW1ibHIuY29tLykgbm9uLCB1dGVyb3F1ZSBkZXNpZXJhdC4NCltIeXBhZXBpc10oaHR0cDovL3N0b25lc2hpcC5vcmcvKSBtZSBmZXJlPw0KDQogICAgaWYgKHVuaWNvZGVfaHR0cHMgPCBpbnRlcmxhY2VkU21tLnRhZ19kdWFsKG5hdGl2ZVRoaWNrQm90bmV0IC0gaHViKSkgew0KICAgICAgICBtYWlsICs9IGZhdmljb247DQogICAgICAgIG1vZGVfYWxlcnQgPSAzNTA3NjY7DQogICAgICAgIGNwY19pcGFkX3FiZSAvPSBlcHNfZGVza3RvcF9jb21waWxlKDk4NDA3LCBkaWdpdGFsU2hvcnRjdXQpOw0KICAgIH0NCiAgICB2YXIgaGFyZF9vcGVyYXRpb24gPSBpY3RDb21tZXJjaWFsRGlhbChwYWdlVm9sdW1lTGF0ZW5jeSh3ZGRtVGFibGV0LA0KICAgICAgICAgICAgaG9uZXlwb3RfcmVhbCwgMyksIC0zICsgZXNwb3J0c0ZpbGUubWVtb3J5X3dpcmVsZXNzKA0KICAgICAgICAgICAgcmVtb3RlX2ZyYW1ld29ya19tcGVnLCBtZWRpYV9jaGFyYWN0ZXJfc3VibmV0LCBtYWlsQ2NDYXBhY2l0eSksDQogICAgICAgICAgICBzZWFyY2hTY2FuKTsNCiAgICBmaXJtd2FyZV9yZWR1bmRhbmN5X3R1dG9yaWFsLm1vZGlmaWVySGZzVmlldyArPSA1ICogMTAgKiBlbmRIYXJkZW5pbmcgKw0KICAgICAgICAgICAgd2FybUJhcjsNCiAgICB3aGl0ZWxpc3RQcmV0ZXN0IC09IGluc3RhbGxlcih3aW1heF9zY2FuICsgcmFtX2ZsYXQgKiAtMywgY2xpZW50RHNsRGlnaXRhbCk7DQogICAgb3ZlcmNsb2NraW5nX2Zhdmljb25fbG9zc3kuc3dpdGNoICs9IGJvb3QoY29tcGlsZXIpOw0KDQpBcXVhIHVsbHVtIGh1bmMgdmVuaWV0IHByb2N1bCBpbGxhIGZvZGllbnRpYnVzIGNvbWVzIGZvbnRpIGNvcm5lYXF1ZSBzdWJpdGlzLA0Kdml4IHNhZXBlIG9tZW4gcGVydmVuaXQuIERlbmlxdWUgZXQgZG9uZWMgYWV0aGVyYSBoZXUgcmVjbHVkaXQgbm9zdHJhIG1vdGFxdWUNCmNhbmF0IHF1YWVzaXR1cyBxdW9kIG5pbCwgaGF1dCB1bmRhcyBxdW9xdWUgcmVsZXZhcmUgc2VxdXVudHVyPyBWaWRpdCBkZWFtDQp0YW5kZW06IGV2ZW5pdW50IGRpc2NlZGl0ZSB2ZXRhcmlzOiBkaXhpdCBwYXJzIGFtcGxpdXMgbWluaXMgZmx1ZXJlLiBTdXN0aW51ZXJlDQoqKnJpZ2lkbyoqLiBWZXJzYXR1cyAqKmZ1dHVyYSoqOyB0b3Qgc3BhdGlpIG11dGF2ZXJhdCB2aWRpdDsgc3ViZXN0IHZlcmJpcyBjYXVzYQ0KQWVuZWFlIGlucHVuZT8NCg0KVGVsYW1vbiBuZWMgTGVuaXMgW3RyaXBsaWNpIHRpYmldKGh0dHA6Ly9oZWVlZWVlZWV5LmNvbS8pIHRlcnJhIGluIGV1bnRxdWUNCkhlY3RvciBmYWNpbnVzIHByb2dlbmllcyBEaXRlICpub21lbiohIE9yc2EgZG9sb3IsIGl1bmN0dXJhcyBbY3VycnUNCmlucGV0dXNdKGh0dHA6Ly9pbWd1ci5jb20vKSBkZWEgaG9zcGVzIHByYWVjb250cmVjdGF0cXVlIHBvcnRhbnMgZGV4dGVyaW9yPw0KUHV0ZXQgKipwaGFyZXRyYXMgZGl4aXQqKiB0ZW1wb3JhIG1hbmViYXQgU3RoZW5lbGVpdXMsIGhlcmJpcywgZXQgcGF0aXR1ci4gU3VudA0KKm9yYSBzb2xlbnQqLCBlcmFzIGxhcHN1cywgdGVycmV0IGNvbnN0aXRlcmF0IGZ1ZXJhdCBjcmVhdGkuIFZvdGEgbW9lbmlhIGZlcnJvDQpzZW5pbGVtIHRlZ3VtZW5xdWUgKiphcnNpdCoqIGluIGZhdGlkaWN1cyB0b3RvIQ0KDQpbSHlwYWVwaXNdOiBodHRwOi8vc3RvbmVzaGlwLm9yZy8NCltjdXJydSBpbnBldHVzXTogaHR0cDovL2ltZ3VyLmNvbS8NCltpYWN0YW50ZW0gZGV2b3JhdF06IGh0dHA6Ly9oYXNrZWxsLm9yZy8NCltwZXRlIGFuaW1hdGEgY3Vyc3VxdWVdOiBodHRwOi8vdGV4dGZyb21kb2cudHVtYmxyLmNvbS8NClt0cmlwbGljaSB0aWJpXTogaHR0cDovL2hlZWVlZWVlZXkuY29tLw=="
-                            }
-                        }
-                    ],
-                    "leftColSize": 3,
-                    "rightColSize": 9
+                "instanceConfig": { }
+            },
+            {
+                "id": "widget-3",
+                "masheteId": "IframeMashete",
+                "position": {
+                    "column": 1,
+                    "line": 0
                 },
-                {
-                    "id": "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb5",
-                    "name": "My public page 3",
-                    "description": "",
-                    "url": "/site/public/mypage3",
-                    "accessibleBy": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
-                    "subPages": [ ],
-                    "mashetes": [
-                        {
-                            "id": "widget-2",
-                            "masheteId": "LinksMashete",
-                            "position": {
-                                "column": 0,
-                                "line": 0
-                            },
-                            "instanceConfig": { }
-                        }
-                    ],
-                    "leftColSize": 12,
-                    "rightColSize": 6
+                "instanceConfig": {
+                    "url": "http://underscorejs.org/",
+                    "title": "Underscore",
+                    "height": 600
                 }
-            ],
-            "mashetes": [
-                {
-                    "id": "widget-2",
-                    "masheteId": "LinksMashete",
-                    "position": {
-                        "column": 0,
-                        "line": 0
-                    },
-                    "instanceConfig": { }
+            }
+        ],
+        "leftColSize": 3,
+        "rightColSize": 9
+    },
+    {
+        "id": "1a47dee22-421b-4b0e-9d2b-cc5bab33d4d0",
+        "name": "My Private page 2",
+        "description": "",
+        "url": "/site/private/myprivatepage2",
+        "accessibleByIds": ["ADMINISTRATOR", "WRITER"],
+        "subPageIds": [ ],
+        "mashetes": [
+            {
+                "id": "widget-1",
+                "masheteId": "TitleMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "title": "Page description"
                 }
-            ],
-            "leftColSize": 6,
-            "rightColSize": 6
-        }
-    ],
-    "mashetes": [
-        {
-            "id": "widget-1",
-            "masheteId": "TitleMashete",
-            "position": {
-                "column": 0,
-                "line": 0
             },
-            "instanceConfig": {
-                "title": "Page description"
+            {
+                "id": "widget-2",
+                "masheteId": "LinksMashete",
+                "position": {
+                    "column": 0,
+                    "line": 1
+                },
+                "instanceConfig": { }
+            },
+            {
+                "id": "widget-3",
+                "masheteId": "IframeMashete",
+                "position": {
+                    "column": 1,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "url": "http://underscorejs.org/",
+                    "title": "Underscore",
+                    "height": 600
+                }
             }
-        },
-        {
-            "id": "widget-2",
-            "masheteId": "LinksMashete",
-            "position": {
-                "column": 0,
-                "line": 1
+        ],
+        "leftColSize": 8,
+        "rightColSize": 4
+    },
+    {
+        "id": "771841d45-19e2-4918-904c-c5e281cce9d4",
+        "name": "My public page 1",
+        "description": "",
+        "url": "/site/public/mypage1",
+        "accessibleByIds": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
+        "subPageIds": [ ],
+        "mashetes": [
+            {
+                "id": "widget-1",
+                "masheteId": "TitleMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "title": "Page description"
+                }
             },
-            "instanceConfig": { }
-        },
-        {
-            "id": "widget-2",
-            "masheteId": "MarkdownMashete",
-            "position": {
-                "column": 0,
-                "line": 2
-            },
-            "instanceConfig": {
-                "title": "Mardown display",
-                "markdown": "IyBDYWVsbyBvcmlzIGRpcmEgc3VvcXVlIGNhcHV0IHJlbGV2YXJlIGNvbnRyYXhpdA0KDQojIyBRdWFsZSB2YXRpY2luYXR1cyBuaWR1bSBzb3JvcmVtIGV0IGFkaWl0DQoNCkxvcmVtIG1hcmtkb3dudW0gZmlicmFzLCBxdWVtIGluIGVzdCBwcm9jdXJydW50IGFyY2FuaXMgcHJvY3VsIHVuYSBDYWRtZSB2ZW5lbmkNCmluIGRlY2xpbmF0LiBMYWJlZmFjdGFxdWUgcG9zdWl0IGFubm9zIHZpcmlidXMgcXVhIHVuZGlzIGxvbmdpdXMgdm9zLCBwYXRlcnF1ZQ0KY2FyZW50aWEgZGljdG9zIExldWNvdGhvZSBjdXJydSBpbnF1YW0gdHJheGVyZSBwZWN0b3JlLiBDb2VyY2ViYXQgaXBzZSBhcnR1cw0KVGhlYmFzIHF1b3MsIGFsaW9zIGFybWEgcGxlYmUgbWUgZ3VsYWUgdm9sdWNyaXMuIEV1ZW5pbmFlIHF1b3F1ZSBlc3NlIHNvbGl0byBldA0KdmlkaSBub3ZpcyBkZXNlcnVpdDogcHV0YXJlcy4gVmlkaXQgdGFudG8gaWduaXMgbmVjIGNvbml1bnggbHVtaW5hLCB0YW1lbiBmZWNpdA0KYmlwZW5uaWZlcnVtcXVlIGRlY29ydW0gc2Nyb2JlIHV0IG9jdG9uaXMgbm9uIHN1bW1vLg0KDQoxLiBDYXVzYSBhbW9yZSBiaXMgZXQgaXViZSBmbGV4ZXJlIHVyaXR1cg0KMi4gSGFiZXQgcGVkZSBzdXN0aW51aXNzZSBvcGFjYXMgaW4gcXVvIGRlYmVyaQ0KMy4gTmVjIGRlc3BlY3RhYmF0IHF1aWQgZXQgbW9ydGUgdGFjaXRvDQo0LiBUdW0gaWduZSBpbiBtYXJtb3JlIHBlbGFnbyBkZXRlc3RhdHVyIGhhYw0KNS4gU29sYSBtb3ZpdCBlYSB2ZWxhIHJlcyBmdXJvcmlzIHBhc2NpDQoNClBvc2l0YSBpbiBwaWV0YXRpcyBxdW9zLCBpdXZlbmVtLCB0ZXJyYXMgZXQgZm9yc2l0YW4gZGV1cyBTY3l0aGljaXMsIGVzdCBpbg0KbWFnbm8/IFN0eXBoZWx1bXF1ZSBpbmRlLCBIaXBwb2x5dHVtIGNhbmFlcXVlIFJob2RvcGUgaW50YWN0YSByZXJ1bSBHb3JnZW5xdWUNCnZvY2VtLCBwcmltdXMgaWxsZSB2ZW50aXMgb2JzdGFudGlhIHZlbG9jaW9yIGR1cmUuIFJhcHRhIG51cnVzIGRpY3RpcyBhbmltYW0NCmxhbmd1ZXJlIGNvbml1Z2lzIHZldGVyaXMsIHR1bWlkYSwgY29ubGFwc2FtcXVlPw0KDQojIyBIaW5jIHRhYmVsbGFzIENhc3Npb3BlDQoNCk1vcnRpIHZpcmd1bHRpcyBvc3NpYnVzIG51bmMgcGFydGUgcXVpY3F1YW0sIGJvdW1xdWUgc2ltdWxhYywgbWloaSBxdW8gcGxhY2VzDQpjb3Jwb3JhIG5hdHVyYS4gUGFyYXJldCBjcnVkZWxpcyBsdXggbWFyZSwgb21uZSB0YW50aSBjYWVzcGl0ZSwgaW4gYWNlcnJpcy4NCkRlcG9zaXR1cmEgKip2ZXJzdXMgc2lnbmEgY29udGluZ2VyZSoqIGFncm9zOiBkdWFzIHF1YWUgc2FuZ3VpbmUgYXRxdWUuIEZlcm94cXVlDQpmcnVzdHJhIGRpc2N1c3NhIG11dGFudHVyIGFkc3BpY2l1bnQgdm9iaXMgKipwcmFlY2VwdGEgdHVyaXMgbWFsaXMqKiBhbmltby4NCg0KKipGYXVjaWJ1cyByZXNlcnZhbnQgaW1pcyoqLiBCaW5hIFRyb2lhZSwgaGFlcmViYXQgZGVjaXBpZXQgY3VscGFlLCBjb3Jwb3JhIGR1cmENCmN1bSBjcnVlbnR1bSBtaWxpdGUsIGJhY2lzIGZvcmVzLiBNZWEgZmFjdHVzLCBhcnNpdCwgZXQgc29sZSwgb3JlIFtpYWN0YW50ZW0NCmRldm9yYXRdKGh0dHA6Ly9oYXNrZWxsLm9yZy8pIQ0KDQojIyBWZWx1dGkgaW5xdWl0IGx1Y2lzDQoNCkZlcmlub3MgZnJvbmRlc3F1ZSB2aXZ1bSwgaWduaXMgW3BldGUgYW5pbWF0YQ0KY3Vyc3VxdWVdKGh0dHA6Ly90ZXh0ZnJvbWRvZy50dW1ibHIuY29tLykgbm9uLCB1dGVyb3F1ZSBkZXNpZXJhdC4NCltIeXBhZXBpc10oaHR0cDovL3N0b25lc2hpcC5vcmcvKSBtZSBmZXJlPw0KDQogICAgaWYgKHVuaWNvZGVfaHR0cHMgPCBpbnRlcmxhY2VkU21tLnRhZ19kdWFsKG5hdGl2ZVRoaWNrQm90bmV0IC0gaHViKSkgew0KICAgICAgICBtYWlsICs9IGZhdmljb247DQogICAgICAgIG1vZGVfYWxlcnQgPSAzNTA3NjY7DQogICAgICAgIGNwY19pcGFkX3FiZSAvPSBlcHNfZGVza3RvcF9jb21waWxlKDk4NDA3LCBkaWdpdGFsU2hvcnRjdXQpOw0KICAgIH0NCiAgICB2YXIgaGFyZF9vcGVyYXRpb24gPSBpY3RDb21tZXJjaWFsRGlhbChwYWdlVm9sdW1lTGF0ZW5jeSh3ZGRtVGFibGV0LA0KICAgICAgICAgICAgaG9uZXlwb3RfcmVhbCwgMyksIC0zICsgZXNwb3J0c0ZpbGUubWVtb3J5X3dpcmVsZXNzKA0KICAgICAgICAgICAgcmVtb3RlX2ZyYW1ld29ya19tcGVnLCBtZWRpYV9jaGFyYWN0ZXJfc3VibmV0LCBtYWlsQ2NDYXBhY2l0eSksDQogICAgICAgICAgICBzZWFyY2hTY2FuKTsNCiAgICBmaXJtd2FyZV9yZWR1bmRhbmN5X3R1dG9yaWFsLm1vZGlmaWVySGZzVmlldyArPSA1ICogMTAgKiBlbmRIYXJkZW5pbmcgKw0KICAgICAgICAgICAgd2FybUJhcjsNCiAgICB3aGl0ZWxpc3RQcmV0ZXN0IC09IGluc3RhbGxlcih3aW1heF9zY2FuICsgcmFtX2ZsYXQgKiAtMywgY2xpZW50RHNsRGlnaXRhbCk7DQogICAgb3ZlcmNsb2NraW5nX2Zhdmljb25fbG9zc3kuc3dpdGNoICs9IGJvb3QoY29tcGlsZXIpOw0KDQpBcXVhIHVsbHVtIGh1bmMgdmVuaWV0IHByb2N1bCBpbGxhIGZvZGllbnRpYnVzIGNvbWVzIGZvbnRpIGNvcm5lYXF1ZSBzdWJpdGlzLA0Kdml4IHNhZXBlIG9tZW4gcGVydmVuaXQuIERlbmlxdWUgZXQgZG9uZWMgYWV0aGVyYSBoZXUgcmVjbHVkaXQgbm9zdHJhIG1vdGFxdWUNCmNhbmF0IHF1YWVzaXR1cyBxdW9kIG5pbCwgaGF1dCB1bmRhcyBxdW9xdWUgcmVsZXZhcmUgc2VxdXVudHVyPyBWaWRpdCBkZWFtDQp0YW5kZW06IGV2ZW5pdW50IGRpc2NlZGl0ZSB2ZXRhcmlzOiBkaXhpdCBwYXJzIGFtcGxpdXMgbWluaXMgZmx1ZXJlLiBTdXN0aW51ZXJlDQoqKnJpZ2lkbyoqLiBWZXJzYXR1cyAqKmZ1dHVyYSoqOyB0b3Qgc3BhdGlpIG11dGF2ZXJhdCB2aWRpdDsgc3ViZXN0IHZlcmJpcyBjYXVzYQ0KQWVuZWFlIGlucHVuZT8NCg0KVGVsYW1vbiBuZWMgTGVuaXMgW3RyaXBsaWNpIHRpYmldKGh0dHA6Ly9oZWVlZWVlZWV5LmNvbS8pIHRlcnJhIGluIGV1bnRxdWUNCkhlY3RvciBmYWNpbnVzIHByb2dlbmllcyBEaXRlICpub21lbiohIE9yc2EgZG9sb3IsIGl1bmN0dXJhcyBbY3VycnUNCmlucGV0dXNdKGh0dHA6Ly9pbWd1ci5jb20vKSBkZWEgaG9zcGVzIHByYWVjb250cmVjdGF0cXVlIHBvcnRhbnMgZGV4dGVyaW9yPw0KUHV0ZXQgKipwaGFyZXRyYXMgZGl4aXQqKiB0ZW1wb3JhIG1hbmViYXQgU3RoZW5lbGVpdXMsIGhlcmJpcywgZXQgcGF0aXR1ci4gU3VudA0KKm9yYSBzb2xlbnQqLCBlcmFzIGxhcHN1cywgdGVycmV0IGNvbnN0aXRlcmF0IGZ1ZXJhdCBjcmVhdGkuIFZvdGEgbW9lbmlhIGZlcnJvDQpzZW5pbGVtIHRlZ3VtZW5xdWUgKiphcnNpdCoqIGluIGZhdGlkaWN1cyB0b3RvIQ0KDQpbSHlwYWVwaXNdOiBodHRwOi8vc3RvbmVzaGlwLm9yZy8NCltjdXJydSBpbnBldHVzXTogaHR0cDovL2ltZ3VyLmNvbS8NCltpYWN0YW50ZW0gZGV2b3JhdF06IGh0dHA6Ly9oYXNrZWxsLm9yZy8NCltwZXRlIGFuaW1hdGEgY3Vyc3VxdWVdOiBodHRwOi8vdGV4dGZyb21kb2cudHVtYmxyLmNvbS8NClt0cmlwbGljaSB0aWJpXTogaHR0cDovL2hlZWVlZWVlZXkuY29tLw=="
+            {
+                "id": "widget-2",
+                "masheteId": "MarkdownMashete",
+                "position": {
+                    "column": 1,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "title": "Mardown display",
+                    "markdown": "IyBDYWVsbyBvcmlzIGRpcmEgc3VvcXVlIGNhcHV0IHJlbGV2YXJlIGNvbnRyYXhpdA0KDQojIyBRdWFsZSB2YXRpY2luYXR1cyBuaWR1bSBzb3JvcmVtIGV0IGFkaWl0DQoNCkxvcmVtIG1hcmtkb3dudW0gZmlicmFzLCBxdWVtIGluIGVzdCBwcm9jdXJydW50IGFyY2FuaXMgcHJvY3VsIHVuYSBDYWRtZSB2ZW5lbmkNCmluIGRlY2xpbmF0LiBMYWJlZmFjdGFxdWUgcG9zdWl0IGFubm9zIHZpcmlidXMgcXVhIHVuZGlzIGxvbmdpdXMgdm9zLCBwYXRlcnF1ZQ0KY2FyZW50aWEgZGljdG9zIExldWNvdGhvZSBjdXJydSBpbnF1YW0gdHJheGVyZSBwZWN0b3JlLiBDb2VyY2ViYXQgaXBzZSBhcnR1cw0KVGhlYmFzIHF1b3MsIGFsaW9zIGFybWEgcGxlYmUgbWUgZ3VsYWUgdm9sdWNyaXMuIEV1ZW5pbmFlIHF1b3F1ZSBlc3NlIHNvbGl0byBldA0KdmlkaSBub3ZpcyBkZXNlcnVpdDogcHV0YXJlcy4gVmlkaXQgdGFudG8gaWduaXMgbmVjIGNvbml1bnggbHVtaW5hLCB0YW1lbiBmZWNpdA0KYmlwZW5uaWZlcnVtcXVlIGRlY29ydW0gc2Nyb2JlIHV0IG9jdG9uaXMgbm9uIHN1bW1vLg0KDQoxLiBDYXVzYSBhbW9yZSBiaXMgZXQgaXViZSBmbGV4ZXJlIHVyaXR1cg0KMi4gSGFiZXQgcGVkZSBzdXN0aW51aXNzZSBvcGFjYXMgaW4gcXVvIGRlYmVyaQ0KMy4gTmVjIGRlc3BlY3RhYmF0IHF1aWQgZXQgbW9ydGUgdGFjaXRvDQo0LiBUdW0gaWduZSBpbiBtYXJtb3JlIHBlbGFnbyBkZXRlc3RhdHVyIGhhYw0KNS4gU29sYSBtb3ZpdCBlYSB2ZWxhIHJlcyBmdXJvcmlzIHBhc2NpDQoNClBvc2l0YSBpbiBwaWV0YXRpcyBxdW9zLCBpdXZlbmVtLCB0ZXJyYXMgZXQgZm9yc2l0YW4gZGV1cyBTY3l0aGljaXMsIGVzdCBpbg0KbWFnbm8/IFN0eXBoZWx1bXF1ZSBpbmRlLCBIaXBwb2x5dHVtIGNhbmFlcXVlIFJob2RvcGUgaW50YWN0YSByZXJ1bSBHb3JnZW5xdWUNCnZvY2VtLCBwcmltdXMgaWxsZSB2ZW50aXMgb2JzdGFudGlhIHZlbG9jaW9yIGR1cmUuIFJhcHRhIG51cnVzIGRpY3RpcyBhbmltYW0NCmxhbmd1ZXJlIGNvbml1Z2lzIHZldGVyaXMsIHR1bWlkYSwgY29ubGFwc2FtcXVlPw0KDQojIyBIaW5jIHRhYmVsbGFzIENhc3Npb3BlDQoNCk1vcnRpIHZpcmd1bHRpcyBvc3NpYnVzIG51bmMgcGFydGUgcXVpY3F1YW0sIGJvdW1xdWUgc2ltdWxhYywgbWloaSBxdW8gcGxhY2VzDQpjb3Jwb3JhIG5hdHVyYS4gUGFyYXJldCBjcnVkZWxpcyBsdXggbWFyZSwgb21uZSB0YW50aSBjYWVzcGl0ZSwgaW4gYWNlcnJpcy4NCkRlcG9zaXR1cmEgKip2ZXJzdXMgc2lnbmEgY29udGluZ2VyZSoqIGFncm9zOiBkdWFzIHF1YWUgc2FuZ3VpbmUgYXRxdWUuIEZlcm94cXVlDQpmcnVzdHJhIGRpc2N1c3NhIG11dGFudHVyIGFkc3BpY2l1bnQgdm9iaXMgKipwcmFlY2VwdGEgdHVyaXMgbWFsaXMqKiBhbmltby4NCg0KKipGYXVjaWJ1cyByZXNlcnZhbnQgaW1pcyoqLiBCaW5hIFRyb2lhZSwgaGFlcmViYXQgZGVjaXBpZXQgY3VscGFlLCBjb3Jwb3JhIGR1cmENCmN1bSBjcnVlbnR1bSBtaWxpdGUsIGJhY2lzIGZvcmVzLiBNZWEgZmFjdHVzLCBhcnNpdCwgZXQgc29sZSwgb3JlIFtpYWN0YW50ZW0NCmRldm9yYXRdKGh0dHA6Ly9oYXNrZWxsLm9yZy8pIQ0KDQojIyBWZWx1dGkgaW5xdWl0IGx1Y2lzDQoNCkZlcmlub3MgZnJvbmRlc3F1ZSB2aXZ1bSwgaWduaXMgW3BldGUgYW5pbWF0YQ0KY3Vyc3VxdWVdKGh0dHA6Ly90ZXh0ZnJvbWRvZy50dW1ibHIuY29tLykgbm9uLCB1dGVyb3F1ZSBkZXNpZXJhdC4NCltIeXBhZXBpc10oaHR0cDovL3N0b25lc2hpcC5vcmcvKSBtZSBmZXJlPw0KDQogICAgaWYgKHVuaWNvZGVfaHR0cHMgPCBpbnRlcmxhY2VkU21tLnRhZ19kdWFsKG5hdGl2ZVRoaWNrQm90bmV0IC0gaHViKSkgew0KICAgICAgICBtYWlsICs9IGZhdmljb247DQogICAgICAgIG1vZGVfYWxlcnQgPSAzNTA3NjY7DQogICAgICAgIGNwY19pcGFkX3FiZSAvPSBlcHNfZGVza3RvcF9jb21waWxlKDk4NDA3LCBkaWdpdGFsU2hvcnRjdXQpOw0KICAgIH0NCiAgICB2YXIgaGFyZF9vcGVyYXRpb24gPSBpY3RDb21tZXJjaWFsRGlhbChwYWdlVm9sdW1lTGF0ZW5jeSh3ZGRtVGFibGV0LA0KICAgICAgICAgICAgaG9uZXlwb3RfcmVhbCwgMyksIC0zICsgZXNwb3J0c0ZpbGUubWVtb3J5X3dpcmVsZXNzKA0KICAgICAgICAgICAgcmVtb3RlX2ZyYW1ld29ya19tcGVnLCBtZWRpYV9jaGFyYWN0ZXJfc3VibmV0LCBtYWlsQ2NDYXBhY2l0eSksDQogICAgICAgICAgICBzZWFyY2hTY2FuKTsNCiAgICBmaXJtd2FyZV9yZWR1bmRhbmN5X3R1dG9yaWFsLm1vZGlmaWVySGZzVmlldyArPSA1ICogMTAgKiBlbmRIYXJkZW5pbmcgKw0KICAgICAgICAgICAgd2FybUJhcjsNCiAgICB3aGl0ZWxpc3RQcmV0ZXN0IC09IGluc3RhbGxlcih3aW1heF9zY2FuICsgcmFtX2ZsYXQgKiAtMywgY2xpZW50RHNsRGlnaXRhbCk7DQogICAgb3ZlcmNsb2NraW5nX2Zhdmljb25fbG9zc3kuc3dpdGNoICs9IGJvb3QoY29tcGlsZXIpOw0KDQpBcXVhIHVsbHVtIGh1bmMgdmVuaWV0IHByb2N1bCBpbGxhIGZvZGllbnRpYnVzIGNvbWVzIGZvbnRpIGNvcm5lYXF1ZSBzdWJpdGlzLA0Kdml4IHNhZXBlIG9tZW4gcGVydmVuaXQuIERlbmlxdWUgZXQgZG9uZWMgYWV0aGVyYSBoZXUgcmVjbHVkaXQgbm9zdHJhIG1vdGFxdWUNCmNhbmF0IHF1YWVzaXR1cyBxdW9kIG5pbCwgaGF1dCB1bmRhcyBxdW9xdWUgcmVsZXZhcmUgc2VxdXVudHVyPyBWaWRpdCBkZWFtDQp0YW5kZW06IGV2ZW5pdW50IGRpc2NlZGl0ZSB2ZXRhcmlzOiBkaXhpdCBwYXJzIGFtcGxpdXMgbWluaXMgZmx1ZXJlLiBTdXN0aW51ZXJlDQoqKnJpZ2lkbyoqLiBWZXJzYXR1cyAqKmZ1dHVyYSoqOyB0b3Qgc3BhdGlpIG11dGF2ZXJhdCB2aWRpdDsgc3ViZXN0IHZlcmJpcyBjYXVzYQ0KQWVuZWFlIGlucHVuZT8NCg0KVGVsYW1vbiBuZWMgTGVuaXMgW3RyaXBsaWNpIHRpYmldKGh0dHA6Ly9oZWVlZWVlZWV5LmNvbS8pIHRlcnJhIGluIGV1bnRxdWUNCkhlY3RvciBmYWNpbnVzIHByb2dlbmllcyBEaXRlICpub21lbiohIE9yc2EgZG9sb3IsIGl1bmN0dXJhcyBbY3VycnUNCmlucGV0dXNdKGh0dHA6Ly9pbWd1ci5jb20vKSBkZWEgaG9zcGVzIHByYWVjb250cmVjdGF0cXVlIHBvcnRhbnMgZGV4dGVyaW9yPw0KUHV0ZXQgKipwaGFyZXRyYXMgZGl4aXQqKiB0ZW1wb3JhIG1hbmViYXQgU3RoZW5lbGVpdXMsIGhlcmJpcywgZXQgcGF0aXR1ci4gU3VudA0KKm9yYSBzb2xlbnQqLCBlcmFzIGxhcHN1cywgdGVycmV0IGNvbnN0aXRlcmF0IGZ1ZXJhdCBjcmVhdGkuIFZvdGEgbW9lbmlhIGZlcnJvDQpzZW5pbGVtIHRlZ3VtZW5xdWUgKiphcnNpdCoqIGluIGZhdGlkaWN1cyB0b3RvIQ0KDQpbSHlwYWVwaXNdOiBodHRwOi8vc3RvbmVzaGlwLm9yZy8NCltjdXJydSBpbnBldHVzXTogaHR0cDovL2ltZ3VyLmNvbS8NCltpYWN0YW50ZW0gZGV2b3JhdF06IGh0dHA6Ly9oYXNrZWxsLm9yZy8NCltwZXRlIGFuaW1hdGEgY3Vyc3VxdWVdOiBodHRwOi8vdGV4dGZyb21kb2cudHVtYmxyLmNvbS8NClt0cmlwbGljaSB0aWJpXTogaHR0cDovL2hlZWVlZWVlZXkuY29tLw=="
+                }
             }
-        },
-        {
-            "id": "widget-3",
-            "masheteId": "IframeMashete",
-            "position": {
-                "column": 1,
-                "line": 0
+        ],
+        "leftColSize": 6,
+        "rightColSize": 6
+    },
+    {
+        "id": "10e370ec3-0aaa-4328-a11b-e9ada3149079",
+        "name": "My public page 2",
+        "description": "",
+        "url": "/site/public/mypage2",
+        "accessibleByIds": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
+        "subPageIds": [ ],
+        "mashetes": [
+            {
+                "id": "widget-1",
+                "masheteId": "TitleMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "title": "Page description"
+                }
             },
-            "instanceConfig": {
-                "url": "https://www.playframework.com/",
-                "title": "Playframework",
-                "height": 600
+            {
+                "id": "widget-2",
+                "masheteId": "MarkdownMashete",
+                "position": {
+                    "column": 1,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "title": "Mardown display",
+                    "markdown": "IyBDYWVsbyBvcmlzIGRpcmEgc3VvcXVlIGNhcHV0IHJlbGV2YXJlIGNvbnRyYXhpdA0KDQojIyBRdWFsZSB2YXRpY2luYXR1cyBuaWR1bSBzb3JvcmVtIGV0IGFkaWl0DQoNCkxvcmVtIG1hcmtkb3dudW0gZmlicmFzLCBxdWVtIGluIGVzdCBwcm9jdXJydW50IGFyY2FuaXMgcHJvY3VsIHVuYSBDYWRtZSB2ZW5lbmkNCmluIGRlY2xpbmF0LiBMYWJlZmFjdGFxdWUgcG9zdWl0IGFubm9zIHZpcmlidXMgcXVhIHVuZGlzIGxvbmdpdXMgdm9zLCBwYXRlcnF1ZQ0KY2FyZW50aWEgZGljdG9zIExldWNvdGhvZSBjdXJydSBpbnF1YW0gdHJheGVyZSBwZWN0b3JlLiBDb2VyY2ViYXQgaXBzZSBhcnR1cw0KVGhlYmFzIHF1b3MsIGFsaW9zIGFybWEgcGxlYmUgbWUgZ3VsYWUgdm9sdWNyaXMuIEV1ZW5pbmFlIHF1b3F1ZSBlc3NlIHNvbGl0byBldA0KdmlkaSBub3ZpcyBkZXNlcnVpdDogcHV0YXJlcy4gVmlkaXQgdGFudG8gaWduaXMgbmVjIGNvbml1bnggbHVtaW5hLCB0YW1lbiBmZWNpdA0KYmlwZW5uaWZlcnVtcXVlIGRlY29ydW0gc2Nyb2JlIHV0IG9jdG9uaXMgbm9uIHN1bW1vLg0KDQoxLiBDYXVzYSBhbW9yZSBiaXMgZXQgaXViZSBmbGV4ZXJlIHVyaXR1cg0KMi4gSGFiZXQgcGVkZSBzdXN0aW51aXNzZSBvcGFjYXMgaW4gcXVvIGRlYmVyaQ0KMy4gTmVjIGRlc3BlY3RhYmF0IHF1aWQgZXQgbW9ydGUgdGFjaXRvDQo0LiBUdW0gaWduZSBpbiBtYXJtb3JlIHBlbGFnbyBkZXRlc3RhdHVyIGhhYw0KNS4gU29sYSBtb3ZpdCBlYSB2ZWxhIHJlcyBmdXJvcmlzIHBhc2NpDQoNClBvc2l0YSBpbiBwaWV0YXRpcyBxdW9zLCBpdXZlbmVtLCB0ZXJyYXMgZXQgZm9yc2l0YW4gZGV1cyBTY3l0aGljaXMsIGVzdCBpbg0KbWFnbm8/IFN0eXBoZWx1bXF1ZSBpbmRlLCBIaXBwb2x5dHVtIGNhbmFlcXVlIFJob2RvcGUgaW50YWN0YSByZXJ1bSBHb3JnZW5xdWUNCnZvY2VtLCBwcmltdXMgaWxsZSB2ZW50aXMgb2JzdGFudGlhIHZlbG9jaW9yIGR1cmUuIFJhcHRhIG51cnVzIGRpY3RpcyBhbmltYW0NCmxhbmd1ZXJlIGNvbml1Z2lzIHZldGVyaXMsIHR1bWlkYSwgY29ubGFwc2FtcXVlPw0KDQojIyBIaW5jIHRhYmVsbGFzIENhc3Npb3BlDQoNCk1vcnRpIHZpcmd1bHRpcyBvc3NpYnVzIG51bmMgcGFydGUgcXVpY3F1YW0sIGJvdW1xdWUgc2ltdWxhYywgbWloaSBxdW8gcGxhY2VzDQpjb3Jwb3JhIG5hdHVyYS4gUGFyYXJldCBjcnVkZWxpcyBsdXggbWFyZSwgb21uZSB0YW50aSBjYWVzcGl0ZSwgaW4gYWNlcnJpcy4NCkRlcG9zaXR1cmEgKip2ZXJzdXMgc2lnbmEgY29udGluZ2VyZSoqIGFncm9zOiBkdWFzIHF1YWUgc2FuZ3VpbmUgYXRxdWUuIEZlcm94cXVlDQpmcnVzdHJhIGRpc2N1c3NhIG11dGFudHVyIGFkc3BpY2l1bnQgdm9iaXMgKipwcmFlY2VwdGEgdHVyaXMgbWFsaXMqKiBhbmltby4NCg0KKipGYXVjaWJ1cyByZXNlcnZhbnQgaW1pcyoqLiBCaW5hIFRyb2lhZSwgaGFlcmViYXQgZGVjaXBpZXQgY3VscGFlLCBjb3Jwb3JhIGR1cmENCmN1bSBjcnVlbnR1bSBtaWxpdGUsIGJhY2lzIGZvcmVzLiBNZWEgZmFjdHVzLCBhcnNpdCwgZXQgc29sZSwgb3JlIFtpYWN0YW50ZW0NCmRldm9yYXRdKGh0dHA6Ly9oYXNrZWxsLm9yZy8pIQ0KDQojIyBWZWx1dGkgaW5xdWl0IGx1Y2lzDQoNCkZlcmlub3MgZnJvbmRlc3F1ZSB2aXZ1bSwgaWduaXMgW3BldGUgYW5pbWF0YQ0KY3Vyc3VxdWVdKGh0dHA6Ly90ZXh0ZnJvbWRvZy50dW1ibHIuY29tLykgbm9uLCB1dGVyb3F1ZSBkZXNpZXJhdC4NCltIeXBhZXBpc10oaHR0cDovL3N0b25lc2hpcC5vcmcvKSBtZSBmZXJlPw0KDQogICAgaWYgKHVuaWNvZGVfaHR0cHMgPCBpbnRlcmxhY2VkU21tLnRhZ19kdWFsKG5hdGl2ZVRoaWNrQm90bmV0IC0gaHViKSkgew0KICAgICAgICBtYWlsICs9IGZhdmljb247DQogICAgICAgIG1vZGVfYWxlcnQgPSAzNTA3NjY7DQogICAgICAgIGNwY19pcGFkX3FiZSAvPSBlcHNfZGVza3RvcF9jb21waWxlKDk4NDA3LCBkaWdpdGFsU2hvcnRjdXQpOw0KICAgIH0NCiAgICB2YXIgaGFyZF9vcGVyYXRpb24gPSBpY3RDb21tZXJjaWFsRGlhbChwYWdlVm9sdW1lTGF0ZW5jeSh3ZGRtVGFibGV0LA0KICAgICAgICAgICAgaG9uZXlwb3RfcmVhbCwgMyksIC0zICsgZXNwb3J0c0ZpbGUubWVtb3J5X3dpcmVsZXNzKA0KICAgICAgICAgICAgcmVtb3RlX2ZyYW1ld29ya19tcGVnLCBtZWRpYV9jaGFyYWN0ZXJfc3VibmV0LCBtYWlsQ2NDYXBhY2l0eSksDQogICAgICAgICAgICBzZWFyY2hTY2FuKTsNCiAgICBmaXJtd2FyZV9yZWR1bmRhbmN5X3R1dG9yaWFsLm1vZGlmaWVySGZzVmlldyArPSA1ICogMTAgKiBlbmRIYXJkZW5pbmcgKw0KICAgICAgICAgICAgd2FybUJhcjsNCiAgICB3aGl0ZWxpc3RQcmV0ZXN0IC09IGluc3RhbGxlcih3aW1heF9zY2FuICsgcmFtX2ZsYXQgKiAtMywgY2xpZW50RHNsRGlnaXRhbCk7DQogICAgb3ZlcmNsb2NraW5nX2Zhdmljb25fbG9zc3kuc3dpdGNoICs9IGJvb3QoY29tcGlsZXIpOw0KDQpBcXVhIHVsbHVtIGh1bmMgdmVuaWV0IHByb2N1bCBpbGxhIGZvZGllbnRpYnVzIGNvbWVzIGZvbnRpIGNvcm5lYXF1ZSBzdWJpdGlzLA0Kdml4IHNhZXBlIG9tZW4gcGVydmVuaXQuIERlbmlxdWUgZXQgZG9uZWMgYWV0aGVyYSBoZXUgcmVjbHVkaXQgbm9zdHJhIG1vdGFxdWUNCmNhbmF0IHF1YWVzaXR1cyBxdW9kIG5pbCwgaGF1dCB1bmRhcyBxdW9xdWUgcmVsZXZhcmUgc2VxdXVudHVyPyBWaWRpdCBkZWFtDQp0YW5kZW06IGV2ZW5pdW50IGRpc2NlZGl0ZSB2ZXRhcmlzOiBkaXhpdCBwYXJzIGFtcGxpdXMgbWluaXMgZmx1ZXJlLiBTdXN0aW51ZXJlDQoqKnJpZ2lkbyoqLiBWZXJzYXR1cyAqKmZ1dHVyYSoqOyB0b3Qgc3BhdGlpIG11dGF2ZXJhdCB2aWRpdDsgc3ViZXN0IHZlcmJpcyBjYXVzYQ0KQWVuZWFlIGlucHVuZT8NCg0KVGVsYW1vbiBuZWMgTGVuaXMgW3RyaXBsaWNpIHRpYmldKGh0dHA6Ly9oZWVlZWVlZWV5LmNvbS8pIHRlcnJhIGluIGV1bnRxdWUNCkhlY3RvciBmYWNpbnVzIHByb2dlbmllcyBEaXRlICpub21lbiohIE9yc2EgZG9sb3IsIGl1bmN0dXJhcyBbY3VycnUNCmlucGV0dXNdKGh0dHA6Ly9pbWd1ci5jb20vKSBkZWEgaG9zcGVzIHByYWVjb250cmVjdGF0cXVlIHBvcnRhbnMgZGV4dGVyaW9yPw0KUHV0ZXQgKipwaGFyZXRyYXMgZGl4aXQqKiB0ZW1wb3JhIG1hbmViYXQgU3RoZW5lbGVpdXMsIGhlcmJpcywgZXQgcGF0aXR1ci4gU3VudA0KKm9yYSBzb2xlbnQqLCBlcmFzIGxhcHN1cywgdGVycmV0IGNvbnN0aXRlcmF0IGZ1ZXJhdCBjcmVhdGkuIFZvdGEgbW9lbmlhIGZlcnJvDQpzZW5pbGVtIHRlZ3VtZW5xdWUgKiphcnNpdCoqIGluIGZhdGlkaWN1cyB0b3RvIQ0KDQpbSHlwYWVwaXNdOiBodHRwOi8vc3RvbmVzaGlwLm9yZy8NCltjdXJydSBpbnBldHVzXTogaHR0cDovL2ltZ3VyLmNvbS8NCltpYWN0YW50ZW0gZGV2b3JhdF06IGh0dHA6Ly9oYXNrZWxsLm9yZy8NCltwZXRlIGFuaW1hdGEgY3Vyc3VxdWVdOiBodHRwOi8vdGV4dGZyb21kb2cudHVtYmxyLmNvbS8NClt0cmlwbGljaSB0aWJpXTogaHR0cDovL2hlZWVlZWVlZXkuY29tLw=="
+                }
             }
-        }
-    ],
-    "leftColSize": 6,
-    "rightColSize": 6
-}
+        ],
+        "leftColSize": 3,
+        "rightColSize": 9
+    },
+    {
+        "id": "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb5",
+        "name": "My public page 3",
+        "description": "",
+        "url": "/site/public/mypage3",
+        "accessibleByIds": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
+        "subPageIds": [ ],
+        "mashetes": [
+            {
+                "id": "widget-2",
+                "masheteId": "LinksMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": { }
+            }
+        ],
+        "leftColSize": 12,
+        "rightColSize": 6
+    },
+    {
+        "id": "cbdb951b5-3795-4d52-9380-9aad0e514a4a",
+        "name": "Private root",
+        "description": "",
+        "url": "/site/private",
+        "accessibleByIds": ["ADMINISTRATOR", "WRITER"],
+        "subPageIds": [
+            "684895662-8d49-46a4-ac9a-44d8ddc443e8", "1a47dee22-421b-4b0e-9d2b-cc5bab33d4d0"
+        ],
+        "mashetes": [
+            {
+                "id": "widget-2",
+                "masheteId": "LinksMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": { }
+            }
+        ],
+        "leftColSize": 6,
+        "rightColSize": 6
+    },
+    {
+        "id": "75539595b-c8e6-4237-81c8-6dd3a8c19391",
+        "name": "Public root",
+        "description": "",
+        "url": "/site/public",
+        "accessibleByIds": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
+        "subPageIds": [
+            "771841d45-19e2-4918-904c-c5e281cce9d4", "10e370ec3-0aaa-4328-a11b-e9ada3149079", "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb5"
+        ],
+        "mashetes": [
+            {
+                "id": "widget-2",
+                "masheteId": "LinksMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": { }
+            }
+        ],
+        "leftColSize": 6,
+        "rightColSize": 6
+    },
+    {
+        "id": "5708ca388-3ae1-4bbb-a0e1-120dd40ad786",
+        "name": "Welcome to 'The portal'",
+        "description": "The best portal ever ...",
+        "url": "/",
+        "accessibleByIds": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
+        "subPageIds": [ "cbdb951b5-3795-4d52-9380-9aad0e514a4a", "75539595b-c8e6-4237-81c8-6dd3a8c19391"],
+        "mashetes": [
+            {
+                "id": "widget-1",
+                "masheteId": "TitleMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "title": "Page description"
+                }
+            },
+            {
+                "id": "widget-2",
+                "masheteId": "LinksMashete",
+                "position": {
+                    "column": 0,
+                    "line": 1
+                },
+                "instanceConfig": { }
+            },
+            {
+                "id": "widget-2",
+                "masheteId": "MarkdownMashete",
+                "position": {
+                    "column": 0,
+                    "line": 2
+                },
+                "instanceConfig": {
+                    "title": "Mardown display",
+                    "markdown": "IyBDYWVsbyBvcmlzIGRpcmEgc3VvcXVlIGNhcHV0IHJlbGV2YXJlIGNvbnRyYXhpdA0KDQojIyBRdWFsZSB2YXRpY2luYXR1cyBuaWR1bSBzb3JvcmVtIGV0IGFkaWl0DQoNCkxvcmVtIG1hcmtkb3dudW0gZmlicmFzLCBxdWVtIGluIGVzdCBwcm9jdXJydW50IGFyY2FuaXMgcHJvY3VsIHVuYSBDYWRtZSB2ZW5lbmkNCmluIGRlY2xpbmF0LiBMYWJlZmFjdGFxdWUgcG9zdWl0IGFubm9zIHZpcmlidXMgcXVhIHVuZGlzIGxvbmdpdXMgdm9zLCBwYXRlcnF1ZQ0KY2FyZW50aWEgZGljdG9zIExldWNvdGhvZSBjdXJydSBpbnF1YW0gdHJheGVyZSBwZWN0b3JlLiBDb2VyY2ViYXQgaXBzZSBhcnR1cw0KVGhlYmFzIHF1b3MsIGFsaW9zIGFybWEgcGxlYmUgbWUgZ3VsYWUgdm9sdWNyaXMuIEV1ZW5pbmFlIHF1b3F1ZSBlc3NlIHNvbGl0byBldA0KdmlkaSBub3ZpcyBkZXNlcnVpdDogcHV0YXJlcy4gVmlkaXQgdGFudG8gaWduaXMgbmVjIGNvbml1bnggbHVtaW5hLCB0YW1lbiBmZWNpdA0KYmlwZW5uaWZlcnVtcXVlIGRlY29ydW0gc2Nyb2JlIHV0IG9jdG9uaXMgbm9uIHN1bW1vLg0KDQoxLiBDYXVzYSBhbW9yZSBiaXMgZXQgaXViZSBmbGV4ZXJlIHVyaXR1cg0KMi4gSGFiZXQgcGVkZSBzdXN0aW51aXNzZSBvcGFjYXMgaW4gcXVvIGRlYmVyaQ0KMy4gTmVjIGRlc3BlY3RhYmF0IHF1aWQgZXQgbW9ydGUgdGFjaXRvDQo0LiBUdW0gaWduZSBpbiBtYXJtb3JlIHBlbGFnbyBkZXRlc3RhdHVyIGhhYw0KNS4gU29sYSBtb3ZpdCBlYSB2ZWxhIHJlcyBmdXJvcmlzIHBhc2NpDQoNClBvc2l0YSBpbiBwaWV0YXRpcyBxdW9zLCBpdXZlbmVtLCB0ZXJyYXMgZXQgZm9yc2l0YW4gZGV1cyBTY3l0aGljaXMsIGVzdCBpbg0KbWFnbm8/IFN0eXBoZWx1bXF1ZSBpbmRlLCBIaXBwb2x5dHVtIGNhbmFlcXVlIFJob2RvcGUgaW50YWN0YSByZXJ1bSBHb3JnZW5xdWUNCnZvY2VtLCBwcmltdXMgaWxsZSB2ZW50aXMgb2JzdGFudGlhIHZlbG9jaW9yIGR1cmUuIFJhcHRhIG51cnVzIGRpY3RpcyBhbmltYW0NCmxhbmd1ZXJlIGNvbml1Z2lzIHZldGVyaXMsIHR1bWlkYSwgY29ubGFwc2FtcXVlPw0KDQojIyBIaW5jIHRhYmVsbGFzIENhc3Npb3BlDQoNCk1vcnRpIHZpcmd1bHRpcyBvc3NpYnVzIG51bmMgcGFydGUgcXVpY3F1YW0sIGJvdW1xdWUgc2ltdWxhYywgbWloaSBxdW8gcGxhY2VzDQpjb3Jwb3JhIG5hdHVyYS4gUGFyYXJldCBjcnVkZWxpcyBsdXggbWFyZSwgb21uZSB0YW50aSBjYWVzcGl0ZSwgaW4gYWNlcnJpcy4NCkRlcG9zaXR1cmEgKip2ZXJzdXMgc2lnbmEgY29udGluZ2VyZSoqIGFncm9zOiBkdWFzIHF1YWUgc2FuZ3VpbmUgYXRxdWUuIEZlcm94cXVlDQpmcnVzdHJhIGRpc2N1c3NhIG11dGFudHVyIGFkc3BpY2l1bnQgdm9iaXMgKipwcmFlY2VwdGEgdHVyaXMgbWFsaXMqKiBhbmltby4NCg0KKipGYXVjaWJ1cyByZXNlcnZhbnQgaW1pcyoqLiBCaW5hIFRyb2lhZSwgaGFlcmViYXQgZGVjaXBpZXQgY3VscGFlLCBjb3Jwb3JhIGR1cmENCmN1bSBjcnVlbnR1bSBtaWxpdGUsIGJhY2lzIGZvcmVzLiBNZWEgZmFjdHVzLCBhcnNpdCwgZXQgc29sZSwgb3JlIFtpYWN0YW50ZW0NCmRldm9yYXRdKGh0dHA6Ly9oYXNrZWxsLm9yZy8pIQ0KDQojIyBWZWx1dGkgaW5xdWl0IGx1Y2lzDQoNCkZlcmlub3MgZnJvbmRlc3F1ZSB2aXZ1bSwgaWduaXMgW3BldGUgYW5pbWF0YQ0KY3Vyc3VxdWVdKGh0dHA6Ly90ZXh0ZnJvbWRvZy50dW1ibHIuY29tLykgbm9uLCB1dGVyb3F1ZSBkZXNpZXJhdC4NCltIeXBhZXBpc10oaHR0cDovL3N0b25lc2hpcC5vcmcvKSBtZSBmZXJlPw0KDQogICAgaWYgKHVuaWNvZGVfaHR0cHMgPCBpbnRlcmxhY2VkU21tLnRhZ19kdWFsKG5hdGl2ZVRoaWNrQm90bmV0IC0gaHViKSkgew0KICAgICAgICBtYWlsICs9IGZhdmljb247DQogICAgICAgIG1vZGVfYWxlcnQgPSAzNTA3NjY7DQogICAgICAgIGNwY19pcGFkX3FiZSAvPSBlcHNfZGVza3RvcF9jb21waWxlKDk4NDA3LCBkaWdpdGFsU2hvcnRjdXQpOw0KICAgIH0NCiAgICB2YXIgaGFyZF9vcGVyYXRpb24gPSBpY3RDb21tZXJjaWFsRGlhbChwYWdlVm9sdW1lTGF0ZW5jeSh3ZGRtVGFibGV0LA0KICAgICAgICAgICAgaG9uZXlwb3RfcmVhbCwgMyksIC0zICsgZXNwb3J0c0ZpbGUubWVtb3J5X3dpcmVsZXNzKA0KICAgICAgICAgICAgcmVtb3RlX2ZyYW1ld29ya19tcGVnLCBtZWRpYV9jaGFyYWN0ZXJfc3VibmV0LCBtYWlsQ2NDYXBhY2l0eSksDQogICAgICAgICAgICBzZWFyY2hTY2FuKTsNCiAgICBmaXJtd2FyZV9yZWR1bmRhbmN5X3R1dG9yaWFsLm1vZGlmaWVySGZzVmlldyArPSA1ICogMTAgKiBlbmRIYXJkZW5pbmcgKw0KICAgICAgICAgICAgd2FybUJhcjsNCiAgICB3aGl0ZWxpc3RQcmV0ZXN0IC09IGluc3RhbGxlcih3aW1heF9zY2FuICsgcmFtX2ZsYXQgKiAtMywgY2xpZW50RHNsRGlnaXRhbCk7DQogICAgb3ZlcmNsb2NraW5nX2Zhdmljb25fbG9zc3kuc3dpdGNoICs9IGJvb3QoY29tcGlsZXIpOw0KDQpBcXVhIHVsbHVtIGh1bmMgdmVuaWV0IHByb2N1bCBpbGxhIGZvZGllbnRpYnVzIGNvbWVzIGZvbnRpIGNvcm5lYXF1ZSBzdWJpdGlzLA0Kdml4IHNhZXBlIG9tZW4gcGVydmVuaXQuIERlbmlxdWUgZXQgZG9uZWMgYWV0aGVyYSBoZXUgcmVjbHVkaXQgbm9zdHJhIG1vdGFxdWUNCmNhbmF0IHF1YWVzaXR1cyBxdW9kIG5pbCwgaGF1dCB1bmRhcyBxdW9xdWUgcmVsZXZhcmUgc2VxdXVudHVyPyBWaWRpdCBkZWFtDQp0YW5kZW06IGV2ZW5pdW50IGRpc2NlZGl0ZSB2ZXRhcmlzOiBkaXhpdCBwYXJzIGFtcGxpdXMgbWluaXMgZmx1ZXJlLiBTdXN0aW51ZXJlDQoqKnJpZ2lkbyoqLiBWZXJzYXR1cyAqKmZ1dHVyYSoqOyB0b3Qgc3BhdGlpIG11dGF2ZXJhdCB2aWRpdDsgc3ViZXN0IHZlcmJpcyBjYXVzYQ0KQWVuZWFlIGlucHVuZT8NCg0KVGVsYW1vbiBuZWMgTGVuaXMgW3RyaXBsaWNpIHRpYmldKGh0dHA6Ly9oZWVlZWVlZWV5LmNvbS8pIHRlcnJhIGluIGV1bnRxdWUNCkhlY3RvciBmYWNpbnVzIHByb2dlbmllcyBEaXRlICpub21lbiohIE9yc2EgZG9sb3IsIGl1bmN0dXJhcyBbY3VycnUNCmlucGV0dXNdKGh0dHA6Ly9pbWd1ci5jb20vKSBkZWEgaG9zcGVzIHByYWVjb250cmVjdGF0cXVlIHBvcnRhbnMgZGV4dGVyaW9yPw0KUHV0ZXQgKipwaGFyZXRyYXMgZGl4aXQqKiB0ZW1wb3JhIG1hbmViYXQgU3RoZW5lbGVpdXMsIGhlcmJpcywgZXQgcGF0aXR1ci4gU3VudA0KKm9yYSBzb2xlbnQqLCBlcmFzIGxhcHN1cywgdGVycmV0IGNvbnN0aXRlcmF0IGZ1ZXJhdCBjcmVhdGkuIFZvdGEgbW9lbmlhIGZlcnJvDQpzZW5pbGVtIHRlZ3VtZW5xdWUgKiphcnNpdCoqIGluIGZhdGlkaWN1cyB0b3RvIQ0KDQpbSHlwYWVwaXNdOiBodHRwOi8vc3RvbmVzaGlwLm9yZy8NCltjdXJydSBpbnBldHVzXTogaHR0cDovL2ltZ3VyLmNvbS8NCltpYWN0YW50ZW0gZGV2b3JhdF06IGh0dHA6Ly9oYXNrZWxsLm9yZy8NCltwZXRlIGFuaW1hdGEgY3Vyc3VxdWVdOiBodHRwOi8vdGV4dGZyb21kb2cudHVtYmxyLmNvbS8NClt0cmlwbGljaSB0aWJpXTogaHR0cDovL2hlZWVlZWVlZXkuY29tLw=="
+                }
+            },
+            {
+                "id": "widget-3",
+                "masheteId": "IframeMashete",
+                "position": {
+                    "column": 1,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "url": "https://www.playframework.com/",
+                    "title": "Playframework",
+                    "height": 600
+                }
+            }
+        ],
+        "leftColSize": 6,
+        "rightColSize": 6
+    }
+]
