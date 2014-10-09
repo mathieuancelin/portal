@@ -2,6 +2,8 @@ package modules.identity
 
 import play.api.libs.json.{JsObject, Json}
 
+import scala.concurrent.{Future, ExecutionContext}
+
 case class Role(id: String, name: String, description: String)
 
 case class User(id: String, name: String, surname: String, email: String, description: String, roles: Seq[String]) {
@@ -9,7 +11,7 @@ case class User(id: String, name: String, surname: String, email: String, descri
   def toJsObject = User.userFmt.writes(this).as[JsObject]
   def toJsonString = Json.stringify(toJson)
   def isAdmin = roles.contains("ADMINISTRATOR")
-  def actualRoles = roles.map(RolesStore.role).collect { case Some(role) => role }
+  def actualRoles(implicit ec: ExecutionContext) = Future.sequence(roles.map(RolesStore.role).map(_.collect { case Some(role) => role }))
 }
 
 object Role {

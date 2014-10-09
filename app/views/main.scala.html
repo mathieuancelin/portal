@@ -1,4 +1,4 @@
-@(title: String, portalName: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete])(content: Html)
+@(title: String, portalName: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete], subTree: Html)(content: Html)
 
 <!DOCTYPE html>
 
@@ -26,9 +26,7 @@
                 <div class="navbar-collapse collapse">
 
                     <ul class="nav navbar-nav">
-                        @modules.structure.PagesStore.directSubPages(user, modules.structure.PagesStore.root).map { p =>
-                            @Html(p.toHtml(user))
-                        }
+                        @subTree
                     </ul>
 
                     @user match {
