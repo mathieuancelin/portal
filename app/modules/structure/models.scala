@@ -27,7 +27,7 @@ case class Page(
                  rightColSize: Int = play.api.Play.current.configuration.getInt("portal.right-width").getOrElse(6)
        ) {
 
-  def subPages(implicit ec: ExecutionContext): Future[Seq[Page]] = Future.sequence(subPageIds.map(PagesStore.findById)).map(_.collect { case Some(role) => role })
+  def subPages(implicit ec: ExecutionContext): Future[Seq[Page]] = Future.sequence(subPageIds.map(Env.pageStore.findById)).map(_.collect { case Some(role) => role })
   def accessibleByRoles(implicit ec: ExecutionContext): Future[Seq[Role]] = Future.sequence(accessibleByIds.map(Env.roleStore.findById).map(_.collect { case Some(role) => role }))
   def toJson = Page.pageFmt.writes(this)
   def toJsonString = Json.stringify(toJson)

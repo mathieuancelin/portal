@@ -7,7 +7,7 @@ import akka.util.Timeout
 import modules.Env
 import modules.communication.UserActor
 import modules.identity.{AnonymousUser, User}
-import modules.structure.{Page, PagesStore}
+import modules.structure.Page
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.concurrent.Akka
@@ -42,7 +42,7 @@ object Application extends Controller {
         }
       }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser))
       fuser.flatMap { user =>
-        PagesStore.findByUrl(url).flatMap {
+        Env.pageStore.findByUrl(url).flatMap {
           case Some(page) => {
             if (page.accessibleByIds.intersect(user.roles).size > 0) {
               f(rh, user, page)
@@ -60,7 +60,7 @@ object Application extends Controller {
   def index = UserAction("/") {
     case (request, user, page) => {
       for {
-        subTree <- PagesStore.directSubPages(user, page).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
+        subTree <- Env.pageStore.directSubPages(user, page).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- Env.masheteStore.findAll()
       } yield Ok(views.html.index(portalName, user, page, all, subTree))
     }
@@ -69,8 +69,8 @@ object Application extends Controller {
   def page(url: String) = UserAction("/site/" + url) {
     case (request, user, page) => {
       for {
-        root <- PagesStore.findByUrl("/")
-        subTree <- PagesStore.directSubPages(user, root.getOrElse(page)).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
+        root <- Env.pageStore.findByUrl("/")
+        subTree <- Env.pageStore.directSubPages(user, root.getOrElse(page)).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- Env.masheteStore.findAll()
       } yield Ok(views.html.index(portalName, user, page, all, subTree))
     }

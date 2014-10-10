@@ -1,9 +1,10 @@
 package modules.communication
 
 import akka.actor.{Actor, ActorRef}
+import modules.Env
 import modules.identity.User
 import modules.jwt.JsonWebToken
-import modules.structure.{Page, PagesStore}
+import modules.structure.Page
 import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.Codecs
@@ -57,7 +58,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
 
   def defaultTopic(js: JsObject, token: String, userJson: JsValue): Unit = {
     (js \ "command").as[String] match {
-      case "first" => PagesStore.findByUrl((js \ "url").as[String]).map {
+      case "first" => Env.pageStore.findByUrl((js \ "url").as[String]).map {
         case Some(page) => Page.pageFmt.writes(page)
         case _ => Json.obj()
       }.map { result =>
@@ -90,7 +91,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         val page = (js \ "payload" \ "from").as[String]
         for {
           user <- fuser
-          subPages <- PagesStore.subPages(user, page)
+          subPages <- Env.pageStore.subPages(user, page)
           _ <- Future.successful(out ! Json.obj(
             "correlationId" -> (js \ "correlationId"),
             "token" -> token,

@@ -44,6 +44,7 @@ package object users {
   class UserStoreFileActor extends Actor {
 
     implicit val ec = context.dispatcher
+    val syncDuration = Duration(1, TimeUnit.MINUTES)
     val utf8 = Charset.forName("UTF-8")
     val file = play.api.Play.current.getFile("conf/data/users.json")
     val usersFromFile = Json.parse(Files.toString(file, utf8)).as(Reads.seq(User.userFmt))
@@ -52,7 +53,7 @@ package object users {
     users = users ++ usersFromFile.map(u => (u.id, u))
 
     override def preStart(): Unit = {
-      context.system.scheduler.scheduleOnce(Duration(5, TimeUnit.SECONDS))(self ! Sync())
+      context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
     }
 
     override def receive: Receive = {
@@ -64,14 +65,14 @@ package object users {
       }
       case DeleteUser(id) => {
         users = users - id
-        sender() ! ()
+        sender() ! Unit
       }
       case FindAll() => sender() ! users.values.toSeq
       case FindById(id) => sender() ! users.get(id)
       case FindByEmail(email) => sender() ! users.values.find(_.email == email)
       case Sync() => {
         Files.write(Json.stringify(Json.toJson(users.values.toSeq)(Writes.seq(User.userFmt))), file, utf8)
-        context.system.scheduler.scheduleOnce(Duration(5, TimeUnit.SECONDS))(self ! Sync())
+        context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
       }
       case _ =>
     }
@@ -107,6 +108,7 @@ package object roles {
   class RoleStoreFileActor extends Actor {
 
     implicit val ec = context.dispatcher
+    val syncDuration = Duration(1, TimeUnit.MINUTES)
     val utf8 = Charset.forName("UTF-8")
     val file = play.api.Play.current.getFile("conf/data/roles.json")
     val rolesFromFile = Json.parse(Files.toString(file, utf8)).as(Reads.seq(Role.roleFmt))
@@ -115,7 +117,7 @@ package object roles {
     roles = roles ++ rolesFromFile.map(u => (u.id, u))
 
     override def preStart(): Unit = {
-      context.system.scheduler.scheduleOnce(Duration(5, TimeUnit.SECONDS))(self ! Sync())
+      context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
     }
 
     override def receive: Actor.Receive = {
@@ -127,13 +129,13 @@ package object roles {
       }
       case DeleteRole(id) => {
         roles = roles - id
-        sender() ! ()
+        sender() ! Unit
       }
       case FindAll() => sender() ! roles.values.toSeq
       case FindById(id) => sender() ! roles.get(id)
       case Sync() => {
         Files.write(Json.stringify(Json.toJson(roles.values.toSeq)(Writes.seq(Role.roleFmt))), file, utf8)
-        context.system.scheduler.scheduleOnce(Duration(5, TimeUnit.SECONDS))(self ! Sync())
+        context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
       }
       case _ =>
     }
