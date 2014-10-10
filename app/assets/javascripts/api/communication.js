@@ -139,10 +139,12 @@ portal.Socket = portal.Socket || {};
             }
         }
 
-        initWebSocket();
-        setTimeout(function() {
-            initSSE();
-        }, 1000);
+        if (!wsPromise.promise.isFulfilled()) {
+            initWebSocket();
+            setTimeout(function () {
+                initSSE();
+            }, 1000);
+        }
 
         return wsPromise.promise;
     }
