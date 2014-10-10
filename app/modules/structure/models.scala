@@ -2,11 +2,12 @@ package modules.structure
 
 import java.util.concurrent.TimeUnit
 
-import modules.identity.{User, RolesStore, Role}
+import modules.Env
+import modules.identity.{Role, User}
 import play.api.libs.json._
 
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future, ExecutionContext}
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 case class Position(column: Int, line: Int)
 
@@ -27,7 +28,7 @@ case class Page(
        ) {
 
   def subPages(implicit ec: ExecutionContext): Future[Seq[Page]] = Future.sequence(subPageIds.map(PagesStore.findById)).map(_.collect { case Some(role) => role })
-  def accessibleByRoles(implicit ec: ExecutionContext): Future[Seq[Role]] = Future.sequence(accessibleByIds.map(RolesStore.role).map(_.collect { case Some(role) => role }))
+  def accessibleByRoles(implicit ec: ExecutionContext): Future[Seq[Role]] = Future.sequence(accessibleByIds.map(Env.roleStore.findById).map(_.collect { case Some(role) => role }))
   def toJson = Page.pageFmt.writes(this)
   def toJsonString = Json.stringify(toJson)
   def toHtml(user: User): String = {

@@ -1,5 +1,6 @@
 package modules.identity
 
+import modules.Env
 import play.api.libs.json.{JsObject, Json}
 
 import scala.concurrent.{Future, ExecutionContext}
@@ -11,7 +12,7 @@ case class User(id: String, name: String, surname: String, email: String, descri
   def toJsObject = User.userFmt.writes(this).as[JsObject]
   def toJsonString = Json.stringify(toJson)
   def isAdmin = roles.contains(Role.adminId)
-  def actualRoles(implicit ec: ExecutionContext) = Future.sequence(roles.map(RolesStore.role).map(_.collect { case Some(role) => role }))
+  def actualRoles(implicit ec: ExecutionContext) = Future.sequence(roles.map(Env.roleStore.findById).map(_.collect { case Some(role) => role }))
 }
 
 object Role {

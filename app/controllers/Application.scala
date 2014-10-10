@@ -2,25 +2,25 @@ package controllers
 
 import java.util.concurrent.TimeUnit
 
-import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorRef, Props}
 import akka.util.Timeout
+import modules.Env
 import modules.communication.UserActor
-import modules.identity.{AnonymousUser, User, UsersStore}
-import modules.structure.{MashetesStore, Page, PagesStore}
+import modules.identity.{AnonymousUser, User}
+import modules.structure.{Page, PagesStore}
 import play.api.Logger
 import play.api.Play.current
-import play.api.libs.iteratee.Concurrent.Channel
-import play.api.libs.{EventSource, Crypto}
 import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.iteratee.{Concurrent, Enumerator}
-import play.api.libs.json.{Json, JsValue}
+import play.api.libs.iteratee.Concurrent
+import play.api.libs.iteratee.Concurrent.Channel
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.{Crypto, EventSource}
 import play.api.mvc._
 import play.twirl.api.Html
 
-import scala.concurrent.{Promise, Future}
-import scala.util.{Success, Failure}
+import scala.concurrent.{Future, Promise}
+import scala.util.{Failure, Success}
 
 // TODO : mashetes store to add mashetes to pages
 // TODO : add pages management
@@ -38,7 +38,7 @@ object Application extends Controller {
     Action.async { rh =>
       val fuser: Future[User] = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
         cookie.value.split(":::").toList match {
-          case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+          case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         }
       }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser))
       fuser.flatMap { user =>
@@ -61,7 +61,7 @@ object Application extends Controller {
     case (request, user, page) => {
       for {
         subTree <- PagesStore.directSubPages(user, page).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
-        all <- MashetesStore.findAll()
+        all <- Env.masheteStore.findAll()
       } yield Ok(views.html.index(portalName, user, page, all, subTree))
     }
   }
@@ -71,7 +71,7 @@ object Application extends Controller {
       for {
         root <- PagesStore.findByUrl("/")
         subTree <- PagesStore.directSubPages(user, root.getOrElse(page)).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
-        all <- MashetesStore.findAll()
+        all <- Env.masheteStore.findAll()
       } yield Ok(views.html.index(portalName, user, page, all, subTree))
     }
   }
@@ -94,7 +94,7 @@ object Application extends Controller {
   def userStreamWebsocket = WebSocket.acceptWithActor[JsValue, JsValue] { rh =>
     val user: Future[User] = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
-        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
     }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser))
@@ -105,7 +105,7 @@ object Application extends Controller {
   def userStreamSSEFallbackIn(token: String) = Action(parse.text) { rh =>
     rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
-        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
     }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser)).map { user =>
@@ -119,7 +119,7 @@ object Application extends Controller {
   def userStreamSSEFallbackOut(token: String) = Action { rh =>
     val fuser = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
-        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
     }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser))
@@ -142,7 +142,7 @@ object Application extends Controller {
     val promise = Promise[JsValue]()
     val fuser = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
-        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
     }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser)).map { user =>

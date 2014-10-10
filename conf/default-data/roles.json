@@ -1,0 +1,22 @@
+[
+    {
+        "id": "ANONYMOUS",
+        "name": "ANONYMOUS",
+        "description": "An anonymous user"
+    },
+    {
+        "id": "ADMINISTRATOR",
+        "name": "ADMINISTRATOR",
+        "description": "An administrator"
+    },
+    {
+        "id": "WRITER",
+        "name": "WRITER",
+        "description": "A person that can manage content"
+    },
+    {
+        "id": "USER",
+        "name": "USER",
+        "description": "A person that browse content"
+    }
+]

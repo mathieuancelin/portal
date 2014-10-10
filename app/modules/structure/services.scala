@@ -1,18 +1,81 @@
 package modules.structure
 
 import java.nio.charset.Charset
+import java.util.concurrent.TimeUnit
 
+import akka.actor.{Actor, Props}
+import akka.util.Timeout
 import com.google.common.io.Files
 import modules.identity.User
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.concurrent.Akka
+import play.api.libs.json.{Json, Reads, Writes}
 
+import scala.concurrent.duration.Duration
 import scala.concurrent.{ExecutionContext, Future}
 
-object MashetesStore {
+trait MasheteStore {
+  def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Mashete]]
+  def findAll()(implicit ec: ExecutionContext): Future[Seq[Mashete]]
+  def delete(id: String)(implicit ec: ExecutionContext): Future[Unit]
+  def save(mashete: Mashete)(implicit ec: ExecutionContext):Future[Mashete]
+}
 
-  private[this] lazy val mashetes = Json.parse(Files.toString(play.api.Play.current.getFile("conf/data/mashetes.json"), Charset.forName("UTF-8"))).as(Reads.seq(Mashete.masheteFmt))
+package object mashetes {
 
-  def findAll(): Future[Seq[Mashete]] = Future.successful(mashetes)
+  import akka.pattern.ask
+
+  implicit lazy val timeout = Timeout(5, TimeUnit.SECONDS)
+
+  trait MasheteStoreEvent
+  case class Sync() extends MasheteStoreEvent
+  case class SaveMashete(mashete: Mashete) extends MasheteStoreEvent
+  case class DeleteMashete(id: String) extends MasheteStoreEvent
+  case class FindAll() extends MasheteStoreEvent
+  case class FindById(id: String) extends MasheteStoreEvent
+
+  class MasheteStoreFileActor extends Actor {
+
+    implicit val ec = context.dispatcher
+    val utf8 = Charset.forName("UTF-8")
+    val file = play.api.Play.current.getFile("conf/data/mashetes.json")
+    val mashetesFromFile = Json.parse(Files.toString(file, utf8)).as(Reads.seq(Mashete.masheteFmt))
+
+    var mashetes = Map[String, Mashete]()
+
+    mashetes = mashetes ++ mashetesFromFile.map(u => (u.id, u))
+
+    override def receive: Actor.Receive = {
+      case SaveMashete(mashete) => {
+        if (!mashetes.contains(mashete.id)) {
+          mashetes = mashetes + ((mashete.id, mashete))
+        }
+        sender() ! mashete
+      }
+      case DeleteMashete(id) => {
+        mashetes = mashetes - id
+        sender() ! ()
+      }
+      case FindAll() => sender() ! mashetes.values.toSeq
+      case FindById(id) => sender() ! mashetes.get(id)
+      case Sync() => {
+        Files.write(Json.stringify(Json.toJson(mashetes.values.toSeq)(Writes.seq(Mashete.masheteFmt))), file, utf8)
+        context.system.scheduler.scheduleOnce(Duration(5, TimeUnit.SECONDS))(self ! Sync())
+      }
+      case _ =>
+    }
+  }
+
+  object MasheteStoreFile extends MasheteStore {
+    private[this] lazy val ref = Akka.system(play.api.Play.current).actorOf(Props[MasheteStoreFileActor])
+    override def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Mashete]] = (ref ? FindById(id)).mapTo[Option[Mashete]]
+    override def findAll()(implicit ec: ExecutionContext): Future[Seq[Mashete]] =               (ref ? FindAll()).mapTo[Seq[Mashete]]
+    override def delete(id: String)(implicit ec: ExecutionContext): Future[Unit] =              (ref ? DeleteMashete(id)).mapTo[Unit]
+    override def save(mashete: Mashete)(implicit ec: ExecutionContext): Future[Mashete] =       (ref ? SaveMashete(mashete)).mapTo[Mashete]
+  }
+
+  trait MasheteStoreSupport {
+    val masheteStore: MasheteStore = MasheteStoreFile
+  }
 }
 
 object PagesStore {
