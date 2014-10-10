@@ -50,48 +50,64 @@ portal.Socket = portal.Socket || {};
             }
         }
 
-        socket = new WebSocket("ws://" + location.host + "/ws");
-        socket.onopen = function() {
-            socket.send(JSON.stringify({
-                topic: "/portal/topics/default",
-                command: "first",
-                url: window.location.pathname
-            }));
-            console.log("Websocket connection successful");
-        };
-        socket.onerror = function() {
-            console.error("The websocket cannot be initialized");
-            var token = portal.Utils.generateUUID();
-            var feed = new EventSource('/fallback/out/' + token);
-            feed.onmessage = function(event) {
-                onMessage(event);
-            };
-            feed.onerror = function() {
-                wsPromise.reject(new Error("The SSE cannot be initialized"));
-                console.error("The SSE cannot be initialized");
-            };
-            socket = {
-                send: function(message) {
-                    $.ajax({
-                        url: '/fallback/in/' + token,
-                        contentType: 'text/plain',
-                        data: message,
-                        type: 'POST'
-                    });
-                }
-            };
-            setTimeout(function() {
-                socket.send(JSON.stringify({
-                    topic: "/portal/topics/default",
-                    command: "first",
-                    url: window.location.pathname
-                }));
-                console.log("Fallback SSE connection successful");
-            }, 300);
-        };
-        socket.onmessage = function(event) {
-            onMessage(event);
-        };
+        function initSSE() {
+            if (!wsPromise.promise.isFulfilled()) {
+                var token = portal.Utils.generateUUID();
+                var feed = new EventSource('/fallback/out/' + token);
+                feed.onmessage = function (event) {
+                    onMessage(event);
+                };
+                feed.onerror = function () {
+                    wsPromise.reject(new Error("The SSE cannot be initialized"));
+                    console.error("The SSE cannot be initialized");
+                };
+                socket = {
+                    send: function (message) {
+                        $.ajax({
+                            url: '/fallback/in/' + token,
+                            contentType: 'text/plain',
+                            data: message,
+                            type: 'POST'
+                        });
+                    }
+                };
+                setTimeout(function () {
+                    socket.send(JSON.stringify({
+                        topic: "/portal/topics/default",
+                        command: "first",
+                        url: window.location.pathname
+                    }));
+                    console.log("Fallback SSE connection successful");
+                }, 100);
+            }
+        }
+
+        function initWebSocket() {
+            if (!wsPromise.promise.isFulfilled()) {
+                socket = new WebSocket("ws://" + location.host + "/ws");
+                socket.onopen = function () {
+                    socket.send(JSON.stringify({
+                        topic: "/portal/topics/default",
+                        command: "first",
+                        url: window.location.pathname
+                    }));
+                    console.log("Websocket connection successful");
+                };
+                socket.onerror = function () {
+                    console.error("The websocket cannot be initialized");
+                    initSSE();
+                };
+                socket.onmessage = function (event) {
+                    onMessage(event);
+                };
+            }
+        }
+
+        initWebSocket();
+        setTimeout(function() {
+            initSSE();
+        }, 2000);
+
         return wsPromise.promise;
     }
 
