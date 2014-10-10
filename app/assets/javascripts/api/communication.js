@@ -60,6 +60,7 @@ portal.Socket = portal.Socket || {};
                 feed.onerror = function () {
                     wsPromise.reject(new Error("The SSE cannot be initialized"));
                     console.error("The SSE cannot be initialized");
+                    initHttpFallback();
                 };
                 socket = {
                     send: function (message) {
@@ -100,6 +101,37 @@ portal.Socket = portal.Socket || {};
                 socket.onmessage = function (event) {
                     onMessage(event);
                 };
+            }
+        }
+
+        function initHttpFallback() {
+            if (!wsPromise.promise.isFulfilled()) {
+                var token = portal.Utils.generateUUID();
+                socket = {
+                    send: function (message) {
+                        $.ajax({
+                            url: '/fallback/http/' + token,
+                            contentType: 'text/plain',
+                            data: message,
+                            type: 'POST',
+                            success: function(data) {
+                                onMessage({ data : JSON.stringify(data) });
+                            },
+                            error: function() {
+                                var correlationId = JSON.parse(message);
+                                var promise = waitingQueue[correlationId];
+                                promise.reject("Http error");
+                                delete waitingQueue[correlationId];
+                            }
+                        });
+                    }
+                };
+                socket.send(JSON.stringify({
+                    topic: "/portal/topics/default",
+                    command: "first",
+                    url: window.location.pathname
+                }));
+                console.log("Http fallback connection successful");
             }
         }
 

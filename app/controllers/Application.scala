@@ -1,7 +1,10 @@
 package controllers
 
+import java.util.concurrent.TimeUnit
+
 import akka.actor.Actor.Receive
 import akka.actor.{Actor, ActorRef, Props}
+import akka.util.Timeout
 import modules.communication.UserActor
 import modules.identity.{AnonymousUser, User, UsersStore}
 import modules.structure.{MashetesStore, Page, PagesStore}
@@ -16,7 +19,8 @@ import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import play.twirl.api.Html
 
-import scala.concurrent.Future
+import scala.concurrent.{Promise, Future}
+import scala.util.{Success, Failure}
 
 // TODO : mashetes store to add mashetes to pages
 // TODO : add pages management
@@ -87,7 +91,7 @@ object Application extends Controller {
     Redirect("/").discardingCookies(DiscardingCookie(name = "PORTAL_SESSION", path = "/", domain = None))
   }
 
-  def userWebsocket = WebSocket.acceptWithActor[JsValue, JsValue] { rh =>
+  def userStreamWebsocket = WebSocket.acceptWithActor[JsValue, JsValue] { rh =>
     val user: Future[User] = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
@@ -98,21 +102,21 @@ object Application extends Controller {
     builder
   }
 
-  def userWebsocketFallbackIn(token: String) = Action(parse.text) { rh =>
+  def userStreamSSEFallbackIn(token: String) = Action(parse.text) { rh =>
     rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
     }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser)).map { user =>
-      val actor = s"/user/fallback-actor-${user.email}-${token}"
+      val actor = s"/user/fallback-actor-sse-${user.email}-${token}"
       println("fetching actor " + actor)
       Akka.system(play.api.Play.current).actorSelection(actor) ! Json.parse(rh.body)
     }
     Ok
   }
 
-  def userWebsocketFallbackOut(token: String) = Action { rh =>
+  def userStreamSSEFallbackOut(token: String) = Action { rh =>
     val fuser = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
@@ -122,7 +126,7 @@ object Application extends Controller {
     val enumerator = Concurrent.unicast[JsValue] { channel =>
       fuser.map { user =>
         val out = Akka.system(play.api.Play.current).actorOf(Props(classOf[FallbackResponseActor], channel))
-        val actor = s"fallback-actor-${user.email}-${token}"
+        val actor = s"fallback-actor-sse-${user.email}-${token}"
         try {
           Akka.system(play.api.Play.current).actorOf(Props(classOf[UserActor], out, Future.successful(user)), actor)
         } catch{
@@ -133,11 +137,40 @@ object Application extends Controller {
     }
     Ok.feed(enumerator &> EventSource()).as("text/event-stream")
   }
+
+  def userStreamHttpFallbackInOut(token: String) = Action.async(parse.text) { rh =>
+    val promise = Promise[JsValue]()
+    val fuser = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+      cookie.value.split(":::").toList match {
+        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+        case _ => Future.successful(Some(AnonymousUser))
+      }
+    }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser)).map { user =>
+      val actorKey = s"fallback-actor-http-${user.email}-${token}"
+      val actorRef = s"/user/fallback-actor-http-${user.email}-${token}"
+      val out = Akka.system(play.api.Play.current).actorOf(Props(classOf[FallbackHttpResponseActor], promise))
+      Akka.system(play.api.Play.current).actorSelection(actorRef).resolveOne()(Timeout(1, TimeUnit.SECONDS)).onComplete {
+        case Success(ref) => ref ! Json.parse(rh.body)
+        case Failure(e) => {
+          val ref = Akka.system(play.api.Play.current).actorOf(Props(classOf[UserActor], out, Future.successful(user)), actorKey)
+          ref ! Json.parse(rh.body)
+        }
+      }
+    }
+    promise.future.map(p => Ok(p))
+  }
 }
 
 class FallbackResponseActor(channel: Channel[JsValue]) extends Actor {
   override def receive: Receive = {
     case js: JsValue => channel.push(js)
     case _ =>
+  }
+}
+
+class FallbackHttpResponseActor(channel: Promise[JsValue]) extends Actor {
+  override def receive: Receive = {
+    case js: JsValue => channel.trySuccess(js)
+    case _ => channel.tryFailure(new RuntimeException("Bad payload"))
   }
 }
