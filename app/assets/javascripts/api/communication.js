@@ -17,20 +17,8 @@ portal.Socket = portal.Socket || {};
     var lastToken;
 
     function init() {
-        socket = new WebSocket("ws://" + location.host + "/ws");
-        socket.onopen = function() {
-            socket.send(JSON.stringify({
-                topic: "/portal/topics/default",
-                command: "first",
-                url: window.location.pathname
-            }));
-            console.log("Websocket connection successful");
-        };
-        socket.onerror = function() {
-            wsPromise.reject(new Error("The websocket cannot be initialized"));
-            console.error("The websocket cannot be initialized");
-        };
-        socket.onmessage = function(event) {
+
+        function onMessage(event) {
             //console.trace('data received on user websocket : ' + event.data);
             // TODO : handle special messages like : redirect to internal page, add mashete, etc ...
             var data = JSON.parse(event.data);
@@ -60,6 +48,49 @@ portal.Socket = portal.Socket || {};
                     console.error("Correlation " + correlationId + " not in waiting queue");
                 }
             }
+        }
+
+        socket = new WebSocket("ws://" + location.host + "/ws");
+        socket.onopen = function() {
+            socket.send(JSON.stringify({
+                topic: "/portal/topics/default",
+                command: "first",
+                url: window.location.pathname
+            }));
+            console.log("Websocket connection successful");
+        };
+        socket.onerror = function() {
+            console.error("The websocket cannot be initialized");
+            var token = portal.Utils.generateUUID();
+            var feed = new EventSource('/fallback/out/' + token);
+            feed.onmessage = function(event) {
+                onMessage(event);
+            };
+            feed.onerror = function() {
+                wsPromise.reject(new Error("The SSE cannot be initialized"));
+                console.error("The SSE cannot be initialized");
+            };
+            socket = {
+                send: function(message) {
+                    $.ajax({
+                        url: '/fallback/in/' + token,
+                        contentType: 'text/plain',
+                        data: message,
+                        type: 'POST'
+                    });
+                }
+            };
+            setTimeout(function() {
+                socket.send(JSON.stringify({
+                    topic: "/portal/topics/default",
+                    command: "first",
+                    url: window.location.pathname
+                }));
+                console.log("Fallback SSE connection successful");
+            }, 300);
+        };
+        socket.onmessage = function(event) {
+            onMessage(event);
         };
         return wsPromise.promise;
     }

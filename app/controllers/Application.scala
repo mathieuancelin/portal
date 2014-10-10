@@ -1,14 +1,18 @@
 package controllers
 
-import akka.actor.{ActorRef, Props}
+import akka.actor.Actor.Receive
+import akka.actor.{Actor, ActorRef, Props}
 import modules.communication.UserActor
 import modules.identity.{AnonymousUser, User, UsersStore}
 import modules.structure.{MashetesStore, Page, PagesStore}
 import play.api.Logger
 import play.api.Play.current
-import play.api.libs.Crypto
+import play.api.libs.iteratee.Concurrent.Channel
+import play.api.libs.{EventSource, Crypto}
+import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
-import play.api.libs.json.JsValue
+import play.api.libs.iteratee.{Concurrent, Enumerator}
+import play.api.libs.json.{Json, JsValue}
 import play.api.mvc._
 import play.twirl.api.Html
 
@@ -92,5 +96,48 @@ object Application extends Controller {
     }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser))
     def builder(out: ActorRef) = Props(classOf[UserActor], out, user)
     builder
+  }
+
+  def userWebsocketFallbackIn(token: String) = Action(parse.text) { rh =>
+    rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+      cookie.value.split(":::").toList match {
+        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+        case _ => Future.successful(Some(AnonymousUser))
+      }
+    }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser)).map { user =>
+      val actor = s"/user/fallback-actor-${user.email}-${token}"
+      println("fetching actor " + actor)
+      Akka.system(play.api.Play.current).actorSelection(actor) ! Json.parse(rh.body)
+    }
+    Ok
+  }
+
+  def userWebsocketFallbackOut(token: String) = Action { rh =>
+    val fuser = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+      cookie.value.split(":::").toList match {
+        case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => UsersStore.user(userLogin)
+        case _ => Future.successful(Some(AnonymousUser))
+      }
+    }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser))
+    val enumerator = Concurrent.unicast[JsValue] { channel =>
+      fuser.map { user =>
+        val out = Akka.system(play.api.Play.current).actorOf(Props(classOf[FallbackResponseActor], channel))
+        val actor = s"fallback-actor-${user.email}-${token}"
+        try {
+          Akka.system(play.api.Play.current).actorOf(Props(classOf[UserActor], out, Future.successful(user)), actor)
+        } catch{
+          case e: Throwable => e.printStackTrace()
+        }
+        println("created " + actor)
+      }
+    }
+    Ok.feed(enumerator &> EventSource()).as("text/event-stream")
+  }
+}
+
+class FallbackResponseActor(channel: Channel[JsValue]) extends Actor {
+  override def receive: Receive = {
+    case js: JsValue => channel.push(js)
+    case _ =>
   }
 }
