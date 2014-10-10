@@ -42,8 +42,10 @@ portal.Socket = portal.Socket || {};
                 }
                 if (waitingQueue[correlationId]) {
                     var promise = waitingQueue[correlationId];
-                    promise.resolve(data.response);
-                    delete waitingQueue[correlationId];
+                    if (promise) {
+                        promise.resolve(data.response);
+                        delete waitingQueue[correlationId];
+                    }
                 } else {
                     console.error("Correlation " + correlationId + " not in waiting queue");
                 }
@@ -120,8 +122,10 @@ portal.Socket = portal.Socket || {};
                             error: function() {
                                 var correlationId = JSON.parse(message);
                                 var promise = waitingQueue[correlationId];
-                                promise.reject("Http error");
-                                delete waitingQueue[correlationId];
+                                if (promise) {
+                                    promise.reject("Http error");
+                                    delete waitingQueue[correlationId];
+                                }
                             }
                         });
                     }
