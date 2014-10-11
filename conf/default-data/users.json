@@ -1,0 +1,10 @@
+[
+    {
+        "_id" : "1",
+        "name" : "Mathieu",
+        "surname" : "Ancelin",
+        "email" : "mathieu.ancelin@acme.com",
+        "description" : "",
+        "roles" : [ "ADMINISTRATOR", "WRITER" ]
+    }
+]
