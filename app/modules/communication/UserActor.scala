@@ -51,7 +51,6 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         val command = (js \ "payload" \ "command").as[String]
         val slug = js.as[JsObject]
         tokenAndUser().map { tu =>
-          //println(s"$command on $topic for (${tu._2})")
           topics.get(topic) match {
             case Some(fun) => fun(slug, tu._1, tu._2, tu._3)
             case None => Logger.error("Not a valid topic")
@@ -98,12 +97,9 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
   def structureTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
     (js \ "payload" \ "command").as[String] match {
       case "subPages" => {
-        println("before1")
         val page = (js \ "payload" \ "from").as[String]
-        println("before2")
         Env.pageStore.subPages(user, page) onComplete {
           case Success(subPages) => {
-            println("sucessss")
             out ! Json.obj(
               "correlationId" -> (js \ "correlationId"),
               "token" -> token,
