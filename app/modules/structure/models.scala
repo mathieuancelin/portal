@@ -11,12 +11,12 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 
 case class Position(column: Int, line: Int)
 
-case class Mashete(id: String, name: String, description: String, url: String, defaultParam: JsObject)
+case class Mashete(_id: String, name: String, description: String, url: String, defaultParam: JsObject)
 
 case class MasheteInstance(id: String, masheteId: String, position: Position, instanceConfig: JsObject)
 
 case class Page(
-                 id: String,
+                 _id: String,
                  name: String,
                  description: String,
                  url: String,

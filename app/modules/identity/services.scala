@@ -6,6 +6,8 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{Actor, Props}
 import akka.util.Timeout
 import com.google.common.io.Files
+import modules.Env
+import modules.data.GenericElasticSearchCollection
 import play.api.libs.concurrent.Akka
 import play.api.libs.json.{Writes, Json, Reads}
 
@@ -30,6 +32,7 @@ trait RoleStore {
 package object users {
 
   import akka.pattern.ask
+  import akka.pattern.pipe
 
   implicit lazy val timeout = Timeout(5, TimeUnit.SECONDS)
 
@@ -41,7 +44,7 @@ package object users {
   case class FindById(id: String) extends UserStoreEvent
   case class FindByEmail(email: String) extends UserStoreEvent
 
-  class UserStoreFileActor extends Actor {
+  class FileBackedUserStoreActor extends Actor {
 
     implicit val ec = context.dispatcher
     val syncDuration = Duration(1, TimeUnit.MINUTES)
@@ -50,7 +53,7 @@ package object users {
     val usersFromFile = Json.parse(Files.toString(file, utf8)).as(Reads.seq(User.userFmt))
 
     var users = Map[String, User]()
-    users = users ++ usersFromFile.map(u => (u.id, u))
+    users = users ++ usersFromFile.map(u => (u._id, u))
 
     override def preStart(): Unit = {
       context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
@@ -58,8 +61,8 @@ package object users {
 
     override def receive: Receive = {
       case SaveUser(user) => {
-        if (!users.contains(user.id)) {
-          users = users + ((user.id, user))
+        if (!users.contains(user._id)) {
+          users = users + ((user._id, user))
         }
         sender() ! user
       }
@@ -78,8 +81,31 @@ package object users {
     }
   }
 
-  object UserStoreFile extends UserStore {
-    private[this] lazy val ref = Akka.system(play.api.Play.current).actorOf(Props[UserStoreFileActor])
+  class ElasticsearchUserStoreActor extends Actor {
+
+    implicit val ec = context.dispatcher
+    val collection = new GenericElasticSearchCollection[User]("user")(User.userFmt)
+
+    override def receive: Receive = {
+      case SaveUser(user) => {
+        val senderrr = sender()
+        collection.get(user._id).map {
+          case Some(_) => collection.update(user._id, user) pipeTo senderrr
+          case None => collection.insert(user) pipeTo senderrr
+        }
+      }
+      case DeleteUser(id) => collection.delete(id) pipeTo sender()
+      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
+      case FindById(id) => collection.get(id) pipeTo sender()
+      case _ =>
+    }
+  }
+
+  object AsyncUserStore extends UserStore {
+    private[this] lazy val ref = if (Env.fileBacked)
+      Akka.system(play.api.Play.current).actorOf(Props[FileBackedUserStoreActor])
+    else
+      Akka.system(play.api.Play.current).actorOf(Props[ElasticsearchUserStoreActor])
     override def findByEmail(email: String)(implicit ec: ExecutionContext): Future[Option[User]] = (ref ? FindByEmail(email)).mapTo[Option[User]]
     override def findById(id: String)(implicit ec: ExecutionContext): Future[Option[User]] = (ref ? FindById(id)).mapTo[Option[User]]
     override def findAll()(implicit ec: ExecutionContext): Future[Seq[User]] = (ref ? FindAll()).mapTo[Seq[User]]
@@ -88,13 +114,14 @@ package object users {
   }
 
   trait UserStoreSupport {
-    val userStore: UserStore = UserStoreFile
+    val userStore: UserStore = AsyncUserStore
   }
 }
 
 package object roles {
 
   import akka.pattern.ask
+  import akka.pattern.pipe
 
   implicit lazy val timeout = Timeout(5, TimeUnit.SECONDS)
 
@@ -105,7 +132,7 @@ package object roles {
   case class FindAll() extends RoleStoreEvent
   case class FindById(id: String) extends RoleStoreEvent
 
-  class RoleStoreFileActor extends Actor {
+  class FileBackedRoleStoreActor extends Actor {
 
     implicit val ec = context.dispatcher
     val syncDuration = Duration(1, TimeUnit.MINUTES)
@@ -114,7 +141,7 @@ package object roles {
     val rolesFromFile = Json.parse(Files.toString(file, utf8)).as(Reads.seq(Role.roleFmt))
 
     var roles = Map[String, Role]()
-    roles = roles ++ rolesFromFile.map(u => (u.id, u))
+    roles = roles ++ rolesFromFile.map(u => (u._id, u))
 
     override def preStart(): Unit = {
       context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
@@ -122,8 +149,8 @@ package object roles {
 
     override def receive: Actor.Receive = {
       case SaveRole(role) => {
-        if (!roles.contains(role.id)) {
-          roles = roles + ((role.id, role))
+        if (!roles.contains(role._id)) {
+          roles = roles + ((role._id, role))
         }
         sender() ! role
       }
@@ -141,8 +168,32 @@ package object roles {
     }
   }
 
-  object RoleStoreFile extends RoleStore {
-    private[this] lazy val ref = Akka.system(play.api.Play.current).actorOf(Props[RoleStoreFileActor])
+  class ElasticsearchBackedRoleStoreActor extends Actor {
+
+    implicit val ec = context.dispatcher
+    val collection = new GenericElasticSearchCollection[Role]("role")(Role.roleFmt)
+
+    override def receive: Actor.Receive = {
+      case SaveRole(role) => {
+        val senderrr = sender()
+        collection.get(role._id).map {
+          case Some(_) => collection.update(role._id, role) pipeTo senderrr
+          case None => collection.insert(role) pipeTo senderrr
+        }
+      }
+      case DeleteRole(id) => collection.delete(id) pipeTo sender()
+      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
+      case FindById(id) => collection.get(id) pipeTo sender()
+      case _ =>
+    }
+  }
+
+  object AsyncRoleStore extends RoleStore {
+    private[this] lazy val ref = if (Env.fileBacked)
+      Akka.system(play.api.Play.current).actorOf(Props[FileBackedRoleStoreActor])
+    else
+      Akka.system(play.api.Play.current).actorOf(Props[ElasticsearchBackedRoleStoreActor])
+
     override def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Role]] = (ref ? FindById(id)).mapTo[Option[Role]]
     override def findAll()(implicit ec: ExecutionContext): Future[Seq[Role]] =               (ref ? FindAll()).mapTo[Seq[Role]]
     override def delete(id: String)(implicit ec: ExecutionContext): Future[Unit] =           (ref ? DeleteRole(id)).mapTo[Unit]
@@ -150,6 +201,6 @@ package object roles {
   }
 
   trait RoleStoreSupport {
-    val roleStore: RoleStore = RoleStoreFile
+    val roleStore: RoleStore = AsyncRoleStore
   }
 }

@@ -5,9 +5,9 @@ import play.api.libs.json.{JsObject, Json}
 
 import scala.concurrent.{Future, ExecutionContext}
 
-case class Role(id: String, name: String, description: String)
+case class Role(_id: String, name: String, description: String)
 
-case class User(id: String, name: String, surname: String, email: String, description: String, roles: Seq[String]) {
+case class User(_id: String, name: String, surname: String, email: String, description: String, roles: Seq[String]) {
   def toJson = User.userFmt.writes(this)
   def toJsObject = User.userFmt.writes(this).as[JsObject]
   def toJsonString = Json.stringify(toJson)

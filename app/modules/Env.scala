@@ -7,4 +7,5 @@ import modules.structure.pages.PageStoreSupport
 
 object Env extends UserStoreSupport with RoleStoreSupport with MasheteStoreSupport with PageStoreSupport {
 
+  lazy val fileBacked = play.api.Play.current.configuration.getBoolean("portal.file-backed").getOrElse(true)
 }

@@ -36,7 +36,7 @@ trait GenericCollection[T, Id, Error] {
   def findOne(sel: JsObject)(implicit ctx: ExecutionContext): Future[Option[(T, Id)]]
 }
 
-abstract class GenericElasticSearchCollection[T](docType: String)(implicit format: Format[T]) extends GenericCollection[T, String, Done] {
+class GenericElasticSearchCollection[T](docType: String)(implicit format: Format[T]) extends GenericCollection[T, String, Done] {
 
   def client = ElasticsearchClient(docType)
 
@@ -119,28 +119,23 @@ class ElasticSearchClientActor(name: String, esUrl: String, timeout: Long) exten
   implicit val ec = context.dispatcher
 
   override def receive: Receive = {
-    case Index(index, docType, id, doc) => {
+    case Index(index, docType, id, doc) =>
       val theSender = sender()
       WS.url(s"$esUrl/$index/$docType/$id").withRequestTimeout(timeout.toInt).put(doc).map(resp => theSender ! Done(resp.json.as[JsObject]))
-    }
-    case Update(index, docType, id, doc) => {
+    case Update(index, docType, id, doc) =>
       val theSender = sender()
       WS.url(s"$esUrl/$index/$docType/$id/_update").withRequestTimeout(timeout.toInt).post(Json.obj("doc" -> doc)).map(_ => theSender ! Done(Json.obj()))
-    }
-    case Delete(index, docType, id) => {
+    case Delete(index, docType, id) =>
       val theSender = sender()
       WS.url(s"$esUrl/$index/$docType/$id").withRequestTimeout(timeout.toInt).delete().map(resp => theSender ! Done(resp.json.as[JsObject]))
-    }
-    case Get(index, docType, id) => {
+    case Get(index, docType, id) =>
       val theSender = sender()
       WS.url(s"$esUrl/$index/$docType/$id").withRequestTimeout(timeout.toInt).get().map(resp => theSender ! Doc(resp.json.as[JsObject]))
-    }
-    case Search(index, docType, query) => {
+    case Search(index, docType, query) =>
       val theSender = sender()
       WS.url(s"$esUrl${index.map(v => "/" + v).getOrElse("")}${docType.map(v => "/" + v).getOrElse("")}/_search")
         .withRequestTimeout(timeout.toInt).post(query)
         .map(resp => theSender ! Docs((resp.json.as[JsObject] \ "hits" \ "hits").as[JsArray] ))
-    }
     case _ =>
   }
 }

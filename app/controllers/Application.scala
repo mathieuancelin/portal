@@ -1,20 +1,22 @@
 package controllers
 
+import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.util.Timeout
+import com.google.common.io.Files
 import modules.Env
 import modules.communication.UserActor
-import modules.identity.{AnonymousUser, User}
-import modules.structure.Page
+import modules.identity.{Role, AnonymousUser, User}
+import modules.structure.{Mashete, Page}
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.iteratee.Concurrent.Channel
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{Reads, JsValue, Json}
 import play.api.libs.{Crypto, EventSource}
 import play.api.mvc._
 import play.twirl.api.Html
@@ -76,7 +78,7 @@ object Application extends Controller {
     }
   }
 
-  def login = Action {
+  def login = Action { // TODO : CAS style login
     val cookieValue = "mathieu.ancelin@acme.com"
     Redirect("/").withCookies(Cookie(
       name = "PORTAL_SESSION",
@@ -89,6 +91,21 @@ object Application extends Controller {
 
   def logout = Action {
     Redirect("/").discardingCookies(DiscardingCookie(name = "PORTAL_SESSION", path = "/", domain = None))
+  }
+
+  def firstTimeIndex = Action {
+    if (play.api.Play.current.configuration.getBoolean("portal.allow-first-time-index").getOrElse(false)) {
+      val utf8 = Charset.forName("UTF-8")
+      val roles = play.api.Play.current.getFile("conf/default-data/roles.json")
+      val users = play.api.Play.current.getFile("conf/default-data/users.json")
+      val mashetes = play.api.Play.current.getFile("conf/default-data/mashetes.json")
+      val portal = play.api.Play.current.getFile("conf/default-data/portal.json")
+      Json.parse(Files.toString(roles, utf8)).as(Reads.seq(Role.roleFmt)).foreach(Env.roleStore.save)
+      Json.parse(Files.toString(users, utf8)).as(Reads.seq(User.userFmt)).foreach(Env.userStore.save)
+      Json.parse(Files.toString(mashetes, utf8)).as(Reads.seq(Mashete.masheteFmt)).foreach(Env.masheteStore.save)
+      Json.parse(Files.toString(portal, utf8)).as(Reads.seq(Page.pageFmt)).foreach(Env.pageStore.save)
+    }
+    Ok
   }
 
   def userStreamWebsocket = WebSocket.acceptWithActor[JsValue, JsValue] { rh =>

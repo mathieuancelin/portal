@@ -1,19 +1,20 @@
-# Routes
-# This file defines all application routes (Higher priority routes first)
-# ~~~~
+# Portal pages
+GET         /                            controllers.Application.index
+POST        /login                       controllers.Application.login
+POST        /logout                      controllers.Application.logout
+GET         /site/*url                   controllers.Application.page(url)
+# Portal pages
 
-# Home page
-GET         /                           controllers.Application.index
-GET         /ws                         controllers.Application.userStreamWebsocket
-POST        /login                      controllers.Application.login
-POST        /logout                     controllers.Application.logout
+# user channel and fallbacks
+GET         /ws                          controllers.Application.userStreamWebsocket
+GET         /fallback/out/:token         controllers.Application.userStreamSSEFallbackOut(token)
+POST        /fallback/in/:token          controllers.Application.userStreamSSEFallbackIn(token)
+POST        /fallback/http/:token        controllers.Application.userStreamHttpFallbackInOut(token)
+# user channel and fallbacks
 
-GET         /site/*url                  controllers.Application.page(url)
-
-GET         /fallback/out/:token        controllers.Application.userStreamSSEFallbackOut(token)
-POST        /fallback/in/:token         controllers.Application.userStreamSSEFallbackIn(token)
-
-POST        /fallback/http/:token       controllers.Application.userStreamHttpFallbackInOut(token)
+# admin commands
+POST        /private/firstimeindex       controllers.Application.firstTimeIndex
+# admin commands
 
 # Map static resources from the /public folder to the /assets URL path
-GET         /assets/*file               controllers.Assets.at(path="/public", file)
+GET         /assets/*file                controllers.Assets.at(path="/public", file)

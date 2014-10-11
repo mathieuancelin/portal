@@ -1,21 +1,21 @@
 [
     {
-        "id": "ANONYMOUS",
+        "_id": "ANONYMOUS",
         "name": "ANONYMOUS",
         "description": "An anonymous user"
     },
     {
-        "id": "ADMINISTRATOR",
+        "_id": "ADMINISTRATOR",
         "name": "ADMINISTRATOR",
         "description": "An administrator"
     },
     {
-        "id": "WRITER",
+        "_id": "WRITER",
         "name": "WRITER",
         "description": "A person that can manage content"
     },
     {
-        "id": "USER",
+        "_id": "USER",
         "name": "USER",
         "description": "A person that browse content"
     }

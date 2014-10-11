@@ -6,7 +6,9 @@ import java.util.concurrent.TimeUnit
 import akka.actor.{ActorRef, Actor, Props}
 import akka.util.Timeout
 import com.google.common.io.Files
-import modules.identity.User
+import modules.Env
+import modules.data.GenericElasticSearchCollection
+import modules.identity.{Role, User}
 import play.api.libs.concurrent.Akka
 import play.api.libs.json.{Json, Reads, Writes}
 
@@ -35,6 +37,7 @@ trait PageStore {
 package object mashetes {
 
   import akka.pattern.ask
+  import akka.pattern.pipe
 
   implicit lazy val timeout = Timeout(5, TimeUnit.SECONDS)
 
@@ -45,7 +48,7 @@ package object mashetes {
   case class FindAll() extends MasheteStoreEvent
   case class FindById(id: String) extends MasheteStoreEvent
 
-  class MasheteStoreFileActor extends Actor {
+  class FileBackedMasheteStoreActor extends Actor {
 
     implicit val ec = context.dispatcher
     val syncDuration = Duration(1, TimeUnit.MINUTES)
@@ -55,7 +58,7 @@ package object mashetes {
 
     var mashetes = Map[String, Mashete]()
 
-    mashetes = mashetes ++ mashetesFromFile.map(u => (u.id, u))
+    mashetes = mashetes ++ mashetesFromFile.map(u => (u._id, u))
 
     override def preStart(): Unit = {
       context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
@@ -63,8 +66,8 @@ package object mashetes {
 
     override def receive: Actor.Receive = {
       case SaveMashete(mashete) => {
-        if (!mashetes.contains(mashete.id)) {
-          mashetes = mashetes + ((mashete.id, mashete))
+        if (!mashetes.contains(mashete._id)) {
+          mashetes = mashetes + ((mashete._id, mashete))
         }
         sender() ! mashete
       }
@@ -82,8 +85,31 @@ package object mashetes {
     }
   }
 
-  object MasheteStoreFile extends MasheteStore {
-    private[this] lazy val ref = Akka.system(play.api.Play.current).actorOf(Props[MasheteStoreFileActor])
+  class ElasticsearchBackedMasheteStoreActor extends Actor {
+
+    implicit val ec = context.dispatcher
+    val collection = new GenericElasticSearchCollection[Mashete]("mashete")(Mashete.masheteFmt)
+
+    override def receive: Actor.Receive = {
+      case SaveMashete(mashete) => {
+        val senderrr = sender()
+        collection.get(mashete._id).map {
+          case Some(_) => collection.update(mashete._id, mashete) pipeTo senderrr
+          case None => collection.insert(mashete) pipeTo senderrr
+        }
+      }
+      case DeleteMashete(id) => collection.delete(id) pipeTo sender()
+      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
+      case FindById(id) => collection.get(id) pipeTo sender()
+      case _ =>
+    }
+  }
+
+  object AsyncMasheteStore extends MasheteStore {
+    private[this] lazy val ref = if (Env.fileBacked)
+      Akka.system(play.api.Play.current).actorOf(Props[FileBackedMasheteStoreActor])
+    else
+      Akka.system(play.api.Play.current).actorOf(Props[ElasticsearchBackedMasheteStoreActor])
     override def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Mashete]] = (ref ? FindById(id)).mapTo[Option[Mashete]]
     override def findAll()(implicit ec: ExecutionContext): Future[Seq[Mashete]] =               (ref ? FindAll()).mapTo[Seq[Mashete]]
     override def delete(id: String)(implicit ec: ExecutionContext): Future[Unit] =              (ref ? DeleteMashete(id)).mapTo[Unit]
@@ -91,13 +117,14 @@ package object mashetes {
   }
 
   trait MasheteStoreSupport {
-    val masheteStore: MasheteStore = MasheteStoreFile
+    val masheteStore: MasheteStore = AsyncMasheteStore
   }
 }
 
 package object pages {
 
   import akka.pattern.ask
+  import akka.pattern.pipe
 
   implicit lazy val timeout = Timeout(5, TimeUnit.SECONDS)
 
@@ -113,7 +140,7 @@ package object pages {
   case class DirectSubPages(user: User, from: Page) extends PageStoreEvent
   case class SubPages(user: User, from: String) extends PageStoreEvent
 
-  class PageStoreFileActor extends Actor {
+  class FileBackedPageStoreActor extends Actor {
 
     implicit val ec = context.dispatcher
     val syncDuration = Duration(1, TimeUnit.MINUTES)
@@ -123,7 +150,7 @@ package object pages {
 
     var pages = Map[String, Page]()
 
-    pages = pages ++ pagesFromFile.map(u => (u.id, u))
+    pages = pages ++ pagesFromFile.map(u => (u._id, u))
 
     def pagesForUserFrom(ref: ActorRef, from: Page, user: User): Future[Seq[Page]] = (ref ? PagesForUserFrom(user, from)).mapTo[Seq[Page]]
 
@@ -133,8 +160,8 @@ package object pages {
 
     override def receive: Actor.Receive = {
       case SavePage(page) => {
-        if (!pages.contains(page.id)) {
-          pages = pages + ((page.id, page))
+        if (!pages.contains(page._id)) {
+          pages = pages + ((page._id, page))
         }
         sender() ! page
       }
@@ -172,8 +199,64 @@ package object pages {
     }
   }
 
-  object PageStoreFile extends PageStore {
-    private[this] lazy val ref = Akka.system(play.api.Play.current).actorOf(Props[PageStoreFileActor])
+  class ElasticsearchBackedPageStoreActor extends Actor {
+
+    implicit val ec = context.dispatcher
+    val collection = new GenericElasticSearchCollection[Page]("page")(Page.pageFmt)
+
+    def pagesForUserFrom(ref: ActorRef, from: Page, user: User): Future[Seq[Page]] = (ref ? PagesForUserFrom(user, from)).mapTo[Seq[Page]]
+
+    override def receive: Actor.Receive = {
+      case SavePage(page) => {
+        val senderrr = sender()
+        collection.get(page._id).map {
+          case Some(_) => collection.update(page._id, page) pipeTo senderrr
+          case None => collection.insert(page) pipeTo senderrr
+        }
+      }
+      case DeletePage(id) => collection.delete(id) pipeTo sender()
+      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
+      case FindById(id) => collection.get(id) pipeTo sender()
+
+      case PagesForUser(user) => {
+        val senderrr = sender()
+        collection.findAll() map { pages =>
+          senderrr ! pages.toSeq.map(_._1).filter(p => p.accessibleByIds.intersect(user.roles).size > 0)
+        }
+      }
+      case PagesForUserFrom(user, from) => {
+        val senderrr = sender()
+        collection.findAll() map { pages =>
+          sender() ! pages.toSeq.map(_._1).filter(p => p.url.startsWith(from.url))
+        }
+      }
+      case DirectSubPages(user, from) => {
+        val senderr = sender()
+        from.subPages.map(_.filter(_.accessibleByIds.intersect(user.roles).size > 0)).map { p =>
+          senderr ! p
+        }
+      }
+      case SubPages(user, from) => {
+        val senderr = sender()
+        val selff = self
+        val fu = collection.get(from).map {
+          case Some(page) => page._1.subPages.flatMap(c => Future.sequence(c.map(p => pagesForUserFrom(selff, p, user))).map(_.flatten))
+          case _ => Future.successful(Seq())
+        }
+        fu.map { seq =>
+          senderr ! seq
+        }
+      }
+      case _ =>
+    }
+  }
+
+  object AsyncPageStore extends PageStore {
+    private[this] lazy val ref = if (Env.fileBacked)
+      Akka.system(play.api.Play.current).actorOf(Props[FileBackedPageStoreActor])
+    else
+      Akka.system(play.api.Play.current).actorOf(Props[ElasticsearchBackedPageStoreActor])
+
     override def findByUrl(url: String)(implicit ec: ExecutionContext): Future[Option[Page]] =              (ref ? FindByUrl(url)).mapTo[Option[Page]]
     override def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Page]] =                (ref ? FindById(id)).mapTo[Option[Page]]
     override def pages(user: User)(implicit ec: ExecutionContext): Future[Seq[Page]] =                      (ref ? PagesForUser(user)).mapTo[Seq[Page]]
@@ -186,6 +269,6 @@ package object pages {
   }
 
   trait PageStoreSupport {
-    val pageStore: PageStore = PageStoreFile
+    val pageStore: PageStore = AsyncPageStore
   }
 }
