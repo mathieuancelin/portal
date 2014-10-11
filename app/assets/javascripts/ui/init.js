@@ -18,7 +18,7 @@ $(function() {
                     side = 'right';
                 }
                 var hiding = '#' + side + '-row-' + (idx + 1);
-                mashete.instanceConfig.masheteid = mashete.id;
+                mashete.instanceConfig.masheteid = mashete._id;
                 mashete.instanceConfig.closeCallback = function () {
                     $(hiding).hide();
                 };

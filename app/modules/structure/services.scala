@@ -152,8 +152,6 @@ package object pages {
 
     pages = pages ++ pagesFromFile.map(u => (u._id, u))
 
-    def pagesForUserFrom(ref: ActorRef, from: Page, user: User): Future[Seq[Page]] = (ref ? PagesForUserFrom(user, from)).mapTo[Seq[Page]]
-
     override def preStart(): Unit = {
       context.system.scheduler.scheduleOnce(syncDuration)(self ! Sync())
     }
@@ -183,12 +181,9 @@ package object pages {
       case SubPages(user, from) => {
         val senderr = sender()
         val selff = self
-        val fu = pages.get(from) match {
-          case Some(page) => page.subPages.flatMap(c => Future.sequence(c.map(p => pagesForUserFrom(selff, p, user))).map(_.flatten))
-          case _ => Future.successful(Seq())
-        }
-        fu.map { seq =>
-          senderr ! seq
+        pages.get(from) match {
+          case Some(page) => senderr ! pages.values.filter(p => p.url != page.url && p.url.startsWith(page.url))
+          case _ => senderr ! Seq[Page]()
         }
       }
       case Sync() => {
@@ -238,13 +233,11 @@ package object pages {
       }
       case SubPages(user, from) => {
         val senderr = sender()
-        val selff = self
-        val fu = collection.get(from).map {
-          case Some(page) => page._1.subPages.flatMap(c => Future.sequence(c.map(p => pagesForUserFrom(selff, p, user))).map(_.flatten))
-          case _ => Future.successful(Seq())
-        }
-        fu.map { seq =>
-          senderr ! seq
+        collection.findAll().map { pages =>
+          collection.get(from).map {
+            case Some(page) => senderr ! pages.toSeq.map(_._1).filter(p => p.url != page._1.url && p.url.startsWith(page._1.url))
+            case _ => senderr ! Seq[Page]()
+          }
         }
       }
       case _ =>

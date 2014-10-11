@@ -11,11 +11,12 @@ import play.api.libs.Codecs
 import play.api.libs.json._
 
 import scala.concurrent.{Future, Promise}
+import scala.util.{Success, Failure}
 
 // verification with http://jwt.io/
 class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
 
-  val topics = Map[String, (JsObject, String, JsValue) => Unit](
+  val topics = Map[String, (JsObject, String, JsValue, User) => Unit](
     "/portal/topics/identity" -> securityTopic,
     "/portal/topics/structure" -> structureTopic,
     "/portal/topics/default" -> defaultTopic
@@ -24,7 +25,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
   val promise = Promise[Unit]()
   implicit val ec = context.dispatcher
 
-  def tokenAndUser(): Future[(String, JsValue)] = {
+  def tokenAndUser(): Future[(String, JsValue, User)] = {
     fuser.map { user =>
       val userJson = User.userFmt.writes(user).as[JsObject] ++ Json.obj(
         "md5email" -> Codecs.md5(user.email.getBytes)
@@ -35,7 +36,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         "sub" -> user.email
       )
       val token: String = JsonWebToken(userJson).encrypt().toOption.getOrElse("")
-      (token, userJson)
+      (token, userJson, user)
     }
   }
 
@@ -44,9 +45,18 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
       val token = (js \ "token").asOpt[String]
       if (!promise.isCompleted) {
         promise.trySuccess(())
-        tokenAndUser().map(t => defaultTopic(js.as[JsObject], t._1, t._2))
+        tokenAndUser().map(t => defaultTopic(js.as[JsObject], t._1, t._2, t._3))
       } else if (JsonWebToken.validate(token.getOrElse(""))) {
-        tokenAndUser().map(t => topics.get((js \ "topic").as[String]).map(_.apply(js.as[JsObject], t._1, t._2)))
+        val topic = (js \ "topic").as[String]
+        val command = (js \ "payload" \ "command").as[String]
+        val slug = js.as[JsObject]
+        tokenAndUser().map { tu =>
+          //println(s"$command on $topic for (${tu._2})")
+          topics.get(topic) match {
+            case Some(fun) => fun(slug, tu._1, tu._2, tu._3)
+            case None => Logger.error("Not a valid topic")
+          }
+        }
       } else {
         Logger.error(s"Non token request on ${(js \ "topic").as[String]}")
       }
@@ -56,7 +66,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
 
   // TODO : be careful about user rights
 
-  def defaultTopic(js: JsObject, token: String, userJson: JsValue): Unit = {
+  def defaultTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit = {
     (js \ "command").as[String] match {
       case "first" => Env.pageStore.findByUrl((js \ "url").as[String]).map {
         case Some(page) => Page.pageFmt.writes(page)
@@ -72,7 +82,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     }
   }
 
-  def securityTopic(js: JsObject, token: String, userJson: JsValue): Unit  = {
+  def securityTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
     (js \ "payload" \ "command").as[String] match {
       case "WHOAMI" => {
         out ! Json.obj(
@@ -85,19 +95,23 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     }
   }
 
-  def structureTopic(js: JsObject, token: String, userJson: JsValue): Unit  = {
+  def structureTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
     (js \ "payload" \ "command").as[String] match {
       case "subPages" => {
+        println("before1")
         val page = (js \ "payload" \ "from").as[String]
-        for {
-          user <- fuser
-          subPages <- Env.pageStore.subPages(user, page)
-          _ <- Future.successful(out ! Json.obj(
-            "correlationId" -> (js \ "correlationId"),
-            "token" -> token,
-            "response" -> Writes.seq(Page.pageFmt).writes(subPages)
-          ))
-        } yield ()
+        println("before2")
+        Env.pageStore.subPages(user, page) onComplete {
+          case Success(subPages) => {
+            println("sucessss")
+            out ! Json.obj(
+              "correlationId" -> (js \ "correlationId"),
+              "token" -> token,
+              "response" -> Writes.seq(Page.pageFmt).writes(subPages)
+            )
+          }
+          case Failure(e) => e.printStackTrace()
+        }
       }
       case e => Logger.error(s"Unknown security command : $e")
     }
