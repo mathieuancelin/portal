@@ -1,7 +1,8 @@
 package modules.identity
 
 import modules.Env
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.Codecs
+import play.api.libs.json._
 
 import scala.concurrent.{Future, ExecutionContext}
 
@@ -22,7 +23,12 @@ object Role {
 }
 
 object User {
-  implicit val userFmt = Json.format[User]
+  private[this] val actualFormater = Json.format[User]
+  private[this] val writerPlusHash = Json.writes[User].transform(jsv => jsv.as[JsObject] ++ Json.obj("email_hash" -> Codecs.md5((jsv \ "email").as[String].getBytes)))
+  implicit val userFmt: Format[User] = new Format[User] {
+    override def reads(json: JsValue): JsResult[User] = actualFormater.reads(json)
+    override def writes(o: User): JsValue = writerPlusHash.writes(o)
+  }
 }
 
 object AnonymousUser extends User("bHX9WbIcIrS68hD9az6yvSc6a", "John", "Doe", "john.doe@acme.com", "", Seq(Role.anonId))

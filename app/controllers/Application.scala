@@ -8,7 +8,7 @@ import akka.util.Timeout
 import com.google.common.io.Files
 import modules.Env
 import modules.communication.UserActor
-import modules.identity.{Role, AnonymousUser, User}
+import modules.identity.{AnonymousUser, Role, User}
 import modules.structure.{Mashete, Page}
 import play.api.Logger
 import play.api.Play.current
@@ -16,7 +16,7 @@ import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.iteratee.Concurrent.Channel
-import play.api.libs.json.{Reads, JsValue, Json}
+import play.api.libs.json.{JsValue, Json, Reads}
 import play.api.libs.{Crypto, EventSource}
 import play.api.mvc._
 import play.twirl.api.Html

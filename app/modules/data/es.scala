@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit
 import akka.actor.Actor
 import akka.util.Timeout
 import common.IdGenerator
+import play.api.Logger
 import play.api.libs.concurrent.Akka
 import play.api.libs.json._
 import play.api.libs.ws._
@@ -80,7 +81,7 @@ class GenericElasticSearchCollection[T](docType: String)(implicit format: Format
 
   override def find(sel: JsObject)(implicit ctx: ExecutionContext): Future[Traversable[(T, String)]] = {
     client.search(sel).map { result =>
-      result.docs.value.map(d => (d, format.reads(d))).collect { case (d, JsSuccess(value, _)) => (value, (d \ "_id").as[String]) }
+      result.docs.value.map(d => (d, format.reads(d \ "_source"))).collect { case (d, JsSuccess(value, _)) => (value, (d \ "_id").as[String]) }
     }
   }
 
@@ -133,7 +134,8 @@ class ElasticSearchClientActor(name: String, esUrl: String, timeout: Long) exten
       WS.url(s"$esUrl/$index/$docType/$id").withRequestTimeout(timeout.toInt).get().map(resp => theSender ! Doc(resp.json.as[JsObject]))
     case Search(index, docType, query) =>
       val theSender = sender()
-      WS.url(s"$esUrl${index.map(v => "/" + v).getOrElse("")}${docType.map(v => "/" + v).getOrElse("")}/_search")
+      val url = s"$esUrl${index.map(v => "/" + v).getOrElse("")}${docType.map(v => "/" + v).getOrElse("")}/_search"
+      WS.url(url)
         .withRequestTimeout(timeout.toInt).post(query)
         .map(resp => theSender ! Docs((resp.json.as[JsObject] \ "hits" \ "hits").as[JsArray] ))
     case _ =>

@@ -9,6 +9,7 @@ import com.google.common.io.Files
 import modules.Env
 import modules.data.GenericElasticSearchCollection
 import modules.identity.{Role, User}
+import play.api.libs.Codecs
 import play.api.libs.concurrent.Akka
 import play.api.libs.json.{Json, Reads, Writes}
 
@@ -99,8 +100,8 @@ package object mashetes {
         }
       }
       case DeleteMashete(id) => collection.delete(id) pipeTo sender()
-      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
-      case FindById(id) => collection.get(id) pipeTo sender()
+      case FindAll() => collection.findAll().map(_.toSeq.map(_._1)) pipeTo sender()
+      case FindById(id) => collection.get(id).map(_.map(_._1)) pipeTo sender()
       case _ =>
     }
   }
@@ -210,9 +211,9 @@ package object pages {
         }
       }
       case DeletePage(id) => collection.delete(id) pipeTo sender()
-      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
-      case FindById(id) => collection.get(id) pipeTo sender()
-
+      case FindAll() => collection.findAll().map(_.toSeq.map(_._1)) pipeTo sender()
+      case FindById(id) => collection.get(id).map(_.map(_._1)) pipeTo sender()
+      case FindByUrl(url) => collection.findOne(Json.obj("query" -> Json.obj("term" -> Json.obj("url_hash" -> Codecs.md5(url.getBytes))))).map(_.map(_._1)) pipeTo sender() //collection.findAll().map(_.toSeq.map(_._1).find(_.url == url)) pipeTo sender()
       case PagesForUser(user) => {
         val senderrr = sender()
         collection.findAll() map { pages =>
@@ -222,7 +223,7 @@ package object pages {
       case PagesForUserFrom(user, from) => {
         val senderrr = sender()
         collection.findAll() map { pages =>
-          sender() ! pages.toSeq.map(_._1).filter(p => p.url.startsWith(from.url))
+          senderrr ! pages.toSeq.map(_._1).filter(p => p.url.startsWith(from.url))
         }
       }
       case DirectSubPages(user, from) => {

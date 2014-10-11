@@ -4,6 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import modules.Env
 import modules.identity.{Role, User}
+import play.api.libs.Codecs
 import play.api.libs.json._
 
 import scala.concurrent.duration.Duration
@@ -58,5 +59,10 @@ object MasheteInstance {
 }
 
 object Page {
-  implicit val pageFmt = Json.format[Page]
+  private[this] val actualPageFormater = Json.format[Page]
+  private[this] val writerPlusHash = Json.writes[Page].transform(jsv => jsv.as[JsObject] ++ Json.obj("url_hash" -> Codecs.md5((jsv \ "url").as[String].getBytes)))
+  implicit val pageFmt: Format[Page] = new Format[Page] {
+    override def reads(json: JsValue): JsResult[Page] = actualPageFormater.reads(json)
+    override def writes(o: Page): JsValue = writerPlusHash.writes(o)
+  }
 }

@@ -8,6 +8,7 @@ import akka.util.Timeout
 import com.google.common.io.Files
 import modules.Env
 import modules.data.GenericElasticSearchCollection
+import play.api.libs.Codecs
 import play.api.libs.concurrent.Akka
 import play.api.libs.json.{Writes, Json, Reads}
 
@@ -95,8 +96,9 @@ package object users {
         }
       }
       case DeleteUser(id) => collection.delete(id) pipeTo sender()
-      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
-      case FindById(id) => collection.get(id) pipeTo sender()
+      case FindAll() => collection.findAll().map(_.toSeq.map(_._1)) pipeTo sender()
+      case FindById(id) => collection.get(id).map(_.map(_._1)) pipeTo sender()
+      case FindByEmail(email) => collection.findOne(Json.obj("query" -> Json.obj("term" -> Json.obj("email_hash" -> Codecs.md5(email.getBytes))))).map(_.map(_._1)) pipeTo sender()
       case _ =>
     }
   }
@@ -182,8 +184,8 @@ package object roles {
         }
       }
       case DeleteRole(id) => collection.delete(id) pipeTo sender()
-      case FindAll() => collection.findAll().map(_.toSeq) pipeTo sender()
-      case FindById(id) => collection.get(id) pipeTo sender()
+      case FindAll() => collection.findAll().map(_.toSeq.map(_._1)) pipeTo sender()
+      case FindById(id) => collection.get(id).map(_.map(_._1)) pipeTo sender()
       case _ =>
     }
   }
