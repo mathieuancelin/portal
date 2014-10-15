@@ -61,6 +61,13 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
           }
         }
       } else {
+        out ! Json.obj(
+          "correlationId" -> (js \ "correlationId"),
+          "token" -> token,
+          "response" -> Json.obj(
+            "__commandRedirect" -> "/logout"
+          )
+        )
         Logger.error(s"Non token request on ${(js \ "topic").as[String]}")
       }
     }
@@ -124,6 +131,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         }
       }
       case "addMashete" => {
+        if (!user.isAdmin) return
         val fromId = (js \ "payload" \ "from").as[String]
         val masheteId = (js \ "payload" \ "id").as[String]
         Env.pageStore.findById(fromId).map {
@@ -160,6 +168,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         }
       }
       case "removeMashete" => {
+        if (!user.isAdmin) return
         val fromId = (js \ "payload" \ "from").as[String]
         val masheteId = (js \ "payload" \ "id").as[String]
         Env.pageStore.findById(fromId).map {
@@ -184,7 +193,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         }
       }
       case "moveMashete" => {
-        Logger.info(Json.prettyPrint(js \ "payload"))
+        if (!user.isAdmin) return
         val fromId = (js \ "payload" \ "from").as[String]
         val masheteId = (js \ "payload" \ "id").as[String]
         val previousColumn = (js \ "payload" \ "previous" \ "column").as[String].toInt
@@ -245,6 +254,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         }
       }
       case "addPage" => {
+        if (!user.isAdmin) return
         val page = (js \ "payload" \ "page").as[JsObject]
         val parentId = (js \ "payload" \ "from").as[String]
         Env.pageStore.findById(parentId) map {
@@ -288,7 +298,52 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
           case None =>  // TODO : notification failed
         }
       }
-      case e => Logger.error(s"Unknown security command : $e")
+      case "deletePage" => {
+        if (!user.isAdmin) return
+        val fromId = (js \ "payload" \ "from").as[String]
+        Env.pageStore.findById(fromId).map {
+          case None => Logger.error("page not found")// TODO : notification failed
+          case Some(page) => {
+            if (page.url != "/") {
+              Env.pageStore.delete(page._id).andThen {
+                case _ => out ! Json.obj(
+                  "correlationId" -> (js \ "correlationId"),
+                  "token" -> token,
+                  "response" -> Json.obj(
+                    "__commandRedirect" -> "/"
+                  )
+                )
+              }
+            }
+          }
+        }
+      }
+      case "changeMasheteOptions" => {
+        if (!user.isAdmin) return
+        Logger.info(Json.prettyPrint(js \ "payload"))
+        val fromId = (js \ "payload" \ "from").as[String]
+        val masheteId = (js \ "payload" \ "id").as[String]
+        val conf = (js \ "payload" \ "conf").as[JsObject]
+        Env.pageStore.findById(fromId).map {
+          case None => Logger.error("page not found")// TODO : notification failed
+          case Some(page) => {
+            val instance = page.mashetes.find(_.id == masheteId).get
+            val mashetes = page.mashetes.filterNot(_.id == masheteId)
+            Logger.info(Json.prettyPrint(instance.instanceConfig.deepMerge(conf)))
+            val newInstance = instance.copy(instanceConfig = instance.instanceConfig.deepMerge(conf))
+            Env.pageStore.save(page.copy(mashetes = mashetes :+ newInstance)).andThen {
+              case _ =>  out ! Json.obj(
+                "correlationId" -> (js \ "correlationId"),
+                "token" -> token,
+                "response" -> Json.obj(
+                  "__commandRedirect" -> page.url
+                )
+              )
+            }
+          }
+        }
+      }
+      case e => Logger.error(s"Unknown structure command : $e")
     }
   }
 }

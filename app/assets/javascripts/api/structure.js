@@ -40,8 +40,31 @@ portal.Structure = portal.Structure || {};
             }
         });
     }
+    function deleteCurrentPage() {
+        return portal.Socket.ask({
+            topic: '/portal/topics/structure',
+            payload: {
+                command: 'deletePage',
+                from: portal.Location.current._id
+            }
+        });
+    }
+    function saveMasheteOptions(id, conf) {
+        return portal.Socket.ask({
+            topic: '/portal/topics/structure',
+            payload: {
+                command: 'changeMasheteOptions',
+                id: id,
+                conf: conf,
+                from: portal.Location.current._id
+            }
+        });
+    }
+
     exports.subPages = subPages;
     exports.createPage = createPage;
     exports.moveMashete = moveMashete;
     exports.getAllRoles = getAllRoles;
+    exports.deleteCurrentPage = deleteCurrentPage;
+    exports.saveMasheteOptions = saveMasheteOptions;
 })(portal.Structure);

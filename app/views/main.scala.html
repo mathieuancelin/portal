@@ -56,11 +56,12 @@
                                 </ul>
 
                                 <form class="navbar-form navbar-right" action="/logout" method="POST" role="form">
+                                    <button type="button" id="delete" class="btn btn-danger"><span class="glyphicon glyphicon-trash"></span></button>
                                     @* TODO : link to account and user icon *@
                                     &nbsp;&nbsp;<a href="#" id="userinfo" style="color : white"></a>&nbsp;&nbsp;
                                     <img id="useravatar" src=""/>
                                     <button type="submit" class="btn btn-danger">Log out</button>
-                                    <button type="button" id="showCss" class="btn btn-inverse">CSS</button>
+                                    @* <button type="button" id="showCss" class="btn btn-inverse">CSS</button> *@
                                 </form>
                             </div>
                         }
@@ -175,6 +176,10 @@
                         url: $('#inputUrl').val(),
                         accessibleByIds: roles
                     });
+                });
+                $('#delete').click(function(e) {
+                    e.preventDefault();
+                    portal.Structure.deleteCurrentPage();
                 });
             })
         </script>

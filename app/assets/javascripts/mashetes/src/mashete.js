@@ -37,9 +37,15 @@ portal.Mashetes = portal.Mashetes || {};
 
     exports.Mashete = React.createClass({
         getInitialState: function() {
+            var config = _.extend({}, this.props.config);
+            delete config.mashete;
+            delete config.masheteid;
+            delete config.position;
             return {
                 hide: false,
-                edit: false
+                edit: false,
+                originalContent: JSON.stringify(config, null, 2),
+                optionsContent: JSON.stringify(config, null, 2)
             };
         },
         hide: function(e) {
@@ -62,11 +68,17 @@ portal.Mashetes = portal.Mashetes || {};
             this.setState({edit: !this.state.edit});
         },
         cancelAndHideOptions: function(e) {
-            this.setState({edit: false});
+            this.setState({
+                edit: false,
+                optionsContent: this.state.originalContent
+            });
         },
         saveAndHideOptions: function(e) {
             this.setState({edit: false});
-            // TODO : call server to change options value
+            portal.Structure.saveMasheteOptions(this.props.config.masheteid, JSON.parse(this.state.optionsContent));
+        },
+        changeConfig: function(e) {
+            this.setState({optionsContent: e.target.value})
         },
         render: function() {
             if (this.state.hide) {
@@ -77,7 +89,7 @@ portal.Mashetes = portal.Mashetes || {};
                 content = (
                     <div>
                         <div className="row">
-                            <textarea className="largeText">{JSON.stringify(this.props.config, null, 2)}</textarea>
+                            <textarea onChange={this.changeConfig} className="largeText" value={this.state.optionsContent}></textarea>
                         </div>
                         <div className="row">
                             <div className="btn-group pull-right">

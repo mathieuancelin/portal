@@ -2,6 +2,7 @@
 GET         /                             controllers.Application.index
 POST        /login                        controllers.Application.login
 POST        /logout                       controllers.Application.logout
+GET         /logout                       controllers.Application.logout
 GET         /site/*url                    controllers.Application.page(url)
 # Portal pages
 
