@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/portal -Dhttp.port=${PORT} -Dconfig.file=conf/application-prod.conf
+web: target/universal/stage/bin/portal -Dhttp.port=${PORT} -Dconfig.file=conf/application-prod.conf -Dmongodb.credentials.username=${MONGO_USER} -Dmongodb.credentials.password=${MONGO_PASSWORD} -Dmongodb.server="[\"${MONGO_URL}\"]"
