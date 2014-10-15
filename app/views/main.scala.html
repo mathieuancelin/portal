@@ -61,6 +61,7 @@
                                     &nbsp;&nbsp;<a href="#" id="userinfo" style="color : white"></a>&nbsp;&nbsp;
                                     <img id="useravatar" src=""/>
                                     <button type="submit" class="btn btn-danger">Log out</button>
+                                    <button type="button" id="reset" class="btn btn-danger">Reset</button>
                                     @* <button type="button" id="showCss" class="btn btn-inverse">CSS</button> *@
                                 </form>
                             </div>
@@ -180,6 +181,12 @@
                 $('#delete').click(function(e) {
                     e.preventDefault();
                     portal.Structure.deleteCurrentPage();
+                });
+                $('#reset').click(function(e) {
+                    e.preventDefault();
+                    $.post('/private/firstimeindex', function() {
+                        window.location.href = "/";
+                    });
                 });
             })
         </script>

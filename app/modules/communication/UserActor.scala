@@ -320,7 +320,6 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
       }
       case "changeMasheteOptions" => {
         if (!user.isAdmin) return
-        Logger.info(Json.prettyPrint(js \ "payload"))
         val fromId = (js \ "payload" \ "from").as[String]
         val masheteId = (js \ "payload" \ "id").as[String]
         val conf = (js \ "payload" \ "conf").as[JsObject]
