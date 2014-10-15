@@ -1,1 +1,1 @@
-[{"_id":"1","name":"Mathieu","surname":"Ancelin","email":"mathieu.ancelin@acme.com","description":"","roles":["ADMINISTRATOR","WRITER"]}]
+[{"_id":"1","name":"Mathieu","surname":"Ancelin","email":"mathieu.ancelin@acme.com","description":"","roles":["ADMINISTRATOR","WRITER"],"email_hash":"6627a77497cba2adc0561d4f1530e38f"}]

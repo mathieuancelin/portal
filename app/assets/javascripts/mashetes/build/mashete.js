@@ -16,12 +16,22 @@ portal.Mashetes = portal.Mashetes || {};
         '</div>';
         $('#left').prepend(template);
         conf.masheteid = id;
+        conf.mashete = masheteId;
         conf.closeCallback = function () {
             $(hiding).hide();
         };
-        React.renderComponent(
-            new portal.MashetesStore[masheteId](conf), document.getElementById("left-" + id)
-        );
+        portal.Socket.ask({
+            topic: '/portal/topics/structure',
+            payload: {
+                command: 'addMashete',
+                from: portal.Location.current._id,
+                id: masheteId
+            }
+        }).then(function() {
+            React.renderComponent(
+                new portal.MashetesStore[masheteId](conf), document.getElementById("left-" + id)
+            );
+        })
     };
 
     exports.Mashete = React.createClass({displayName: 'Mashete',
@@ -32,6 +42,15 @@ portal.Mashetes = portal.Mashetes || {};
             };
         },
         hide: function(e) {
+            portal.Socket.ask({
+                topic: '/portal/topics/structure',
+                payload: {
+                    command: 'removeMashete',
+                    from: portal.Location.current._id,
+                    id: this.props.config.masheteid,
+                    instance: this.props.config.mashete
+                }
+            });
             this.setState({hide: true});
             this.props.config.closeCallback();
         },

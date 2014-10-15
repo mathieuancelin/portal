@@ -7,7 +7,7 @@ portal.MashetesStore = portal.MashetesStore || {};
         render: function() {
             return (
                 portal.Mashetes.Mashete({title: "Fallback", config: this.props}, 
-                    React.DOM.h3(null, "Something went wrong ... ")
+                    React.DOM.h3(null, "Mashete kills ... ")
                 )
             );
         }

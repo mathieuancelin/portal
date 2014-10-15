@@ -20,7 +20,7 @@ portal.Socket = portal.Socket || {};
 
         function onMessage(event) {
             //console.trace('data received on user websocket : ' + event.data);
-            // TODO : handle special messages like : redirect to internal page, add mashete, etc ...
+            // TODO : handle special messages like : add mashete, etc ...
             var data = JSON.parse(event.data);
             if (data.firstConnection) {
                 portal.Location.current = portal.Location.current || data.page;
@@ -43,7 +43,17 @@ portal.Socket = portal.Socket || {};
                 if (waitingQueue[correlationId]) {
                     var promise = waitingQueue[correlationId];
                     if (promise) {
-                        promise.resolve(data.response);
+                        if (data.response.__commandRedirect) {
+                            promise.resolve({});
+                            setTimeout(function() {
+                                var url = window.location.protocol + "//" + window.location.host + data.response.__commandRedirect;
+                                console.log( data.response.__commandRedirect);
+                                console.log(url);
+                                window.location.href = url;
+                            }, 1);
+                        } else {
+                            promise.resolve(data.response);
+                        }
                         delete waitingQueue[correlationId];
                     }
                 } else {

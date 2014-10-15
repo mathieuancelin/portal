@@ -21,7 +21,8 @@ import play.api.libs.{Crypto, EventSource}
 import play.api.mvc._
 import play.twirl.api.Html
 
-import scala.concurrent.{Future, Promise}
+import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future, Promise}
 import scala.util.{Failure, Success}
 
 // TODO : mashetes store to add mashetes to pages
@@ -78,6 +79,10 @@ object Application extends Controller {
     }
   }
 
+  def loginPage(service: String) = Action {
+    Ok
+  }
+
   def login = Action { // TODO : CAS style login
     val cookieValue = "mathieu.ancelin@acme.com"
     Redirect("/").withCookies(Cookie(
@@ -100,10 +105,17 @@ object Application extends Controller {
       val users = play.api.Play.current.getFile("conf/default-data/users.json")
       val mashetes = play.api.Play.current.getFile("conf/default-data/mashetes.json")
       val portal = play.api.Play.current.getFile("conf/default-data/portal.json")
-      Json.parse(Files.toString(roles, utf8)).as(Reads.seq(Role.roleFmt)).foreach(Env.roleStore.save)
-      Json.parse(Files.toString(users, utf8)).as(Reads.seq(User.userFmt)).foreach(Env.userStore.save)
-      Json.parse(Files.toString(mashetes, utf8)).as(Reads.seq(Mashete.masheteFmt)).foreach(Env.masheteStore.save)
-      Json.parse(Files.toString(portal, utf8)).as(Reads.seq(Page.pageFmt)).foreach(Env.pageStore.save)
+      val future = for {
+        _ <- Env.pageStore.deleteAll()
+        _ <- Env.userStore.deleteAll()
+        _ <- Env.roleStore.deleteAll()
+        _ <- Env.masheteStore.deleteAll()
+        _ <- Future.sequence(Json.parse(Files.toString(roles, utf8)).as(Reads.seq(Role.roleFmt)).map(Env.roleStore.save))
+        _ <- Future.sequence(Json.parse(Files.toString(users, utf8)).as(Reads.seq(User.userFmt)).map(Env.userStore.save))
+        _ <- Future.sequence(Json.parse(Files.toString(mashetes, utf8)).as(Reads.seq(Mashete.masheteFmt)).map(Env.masheteStore.save))
+        _ <- Future.sequence(Json.parse(Files.toString(portal, utf8)).as(Reads.seq(Page.pageFmt)).map(Env.pageStore.save))
+      } yield ()
+      Await.result(future, Duration(1, TimeUnit.MINUTES))
     }
     Ok
   }
