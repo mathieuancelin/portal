@@ -17,6 +17,7 @@ portal.Mashetes = portal.Mashetes || {};
         $('#left').prepend(template);
         conf.masheteid = id;
         conf.mashete = masheteId;
+        conf.position = {column: 0, line: 0};
         conf.closeCallback = function () {
             $(hiding).hide();
         };

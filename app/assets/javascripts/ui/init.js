@@ -20,6 +20,7 @@ $(function() {
                 var hiding = '#' + side + '-row-' + (idx + 1);
                 mashete.instanceConfig.masheteid = mashete.id;
                 mashete.instanceConfig.mashete = mashete.masheteId;
+                mashete.instanceConfig.position = mashete.position;
                 mashete.instanceConfig.closeCallback = function () {
                     $(hiding).hide();
                 };
@@ -50,6 +51,8 @@ $(function() {
         function registerDragAndDrop() {
             function dragIt(e) {
                 e.originalEvent.dataTransfer.setData("dragged-element", $(e.target).parent().attr('id'));
+                e.originalEvent.dataTransfer.setData("previous-position", $(e.target).parent().data('position'));
+                e.originalEvent.dataTransfer.setData("mashete-id", $(e.target).parent().data('masheteid'));
             }
 
             function dropIt(e) {
@@ -58,7 +61,19 @@ $(function() {
                     $(this).height('20px');
                 });
                 var theData = e.originalEvent.dataTransfer.getData("dragged-element");
+                var previousPosition = e.originalEvent.dataTransfer.getData("previous-position");
+                var masheteId = e.originalEvent.dataTransfer.getData("mashete-id");
+                var currentPosition = $(e.originalEvent.target).parent().data("position");
+                var previous = {
+                    column: previousPosition.split(":")[0],
+                    line: previousPosition.split(":")[1]
+                };
+                var current = {
+                    column: currentPosition.split(":")[0],
+                    line: currentPosition.split(":")[1]
+                };
                 var thePos = $(this).data('pos');
+                console.log(thePos);
                 var theDraggedElement = document.getElementById(theData);
                 if (thePos === 'start') {
                     $(e.originalEvent.target).parent().before(theDraggedElement);
@@ -67,6 +82,7 @@ $(function() {
                 }
                 e.originalEvent.preventDefault();
                 // TODO : call services to change mashete position
+                portal.Structure.moveMashete(masheteId, previous, current);
             }
 
             $('.draggable').on('dragstart', dragIt);
@@ -87,6 +103,11 @@ $(function() {
         }
 
         registerDragAndDrop();
+        portal.Structure.getAllRoles().then(function(roles) {
+            var portal = portal || {};
+            portal.Roles = portal.Roles || {};
+            portal.Roles.all = roles;
+        });
     }
 
     portal.Socket.init().then(function() {

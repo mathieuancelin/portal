@@ -5,13 +5,13 @@ import play.api.{Application, GlobalSettings}
 
 object Global extends GlobalSettings {
   override def onStart(app: Application): Unit = {
-    Akka.system(app).actorOf(
-      Props(classOf[ElasticSearchClientActor],
-        ElasticsearchClient.actorName,
-        ElasticsearchClient.esUrl,
-        ElasticsearchClient.wsTimeout.duration.toMillis
-      ),
-      ElasticsearchClient.actorName
-    )
+    //Akka.system(app).actorOf(
+    //  Props(classOf[ElasticSearchClientActor],
+    //    ElasticsearchClient.actorName,
+    //    ElasticsearchClient.esUrl,
+    //    ElasticsearchClient.wsTimeout.duration.toMillis
+    //  ),
+    //  ElasticsearchClient.actorName
+    //)
   }
 }

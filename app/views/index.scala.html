@@ -1,29 +1,33 @@
-@(portalName: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete], subTree: Html)
+@(portalName: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete], subTree: Html, roles: Seq[modules.identity.Role])
 
-@main(page.name, portalName, user, page, mashetes, subTree) {
+@main(page.name, portalName, user, page, mashetes, subTree, roles) {
 
     <div class="row">
         <div class="col-md-@page.leftColSize" id="left">
-            @page.mashetes.filter(_.position.column == 0).zipWithIndex.map(_._2 + 1).map { i =>
-                <div class="row" id="left-row-@i">
-                    <div class="row droppable" id="left-drop-start-@i" data-pos="start"></div>
-                    <div class="col-md-12 draggable" id="left-@i" draggable="@user.isAdmin" ondragover="event.preventDefault();"></div>
-                    <div class="row droppable" id="left-drop-stop-@i" data-pos="stop"></div>
-                </div>
+            @page.mashetes.filter(_.position.column == 0).zipWithIndex.map(tuple => (tuple._1, tuple._2 + 1)).map {
+                case (mashete, i) => {
+                    <div class="row" id="left-row-@i" data-position="0:@(i - 1)" data-masheteid="@mashete.id">
+                        <div class="row droppable" id="left-drop-start-@i" data-pos="start"></div>
+                        <div class="col-md-12 draggable" id="left-@i" draggable="@user.isAdmin" ondragover="event.preventDefault();"></div>
+                        <div class="row droppable" id="left-drop-stop-@i" data-pos="stop"></div>
+                    </div>
+                }
             }
-            <div class="row" id="left-row-new">
+            <div class="row" id="left-row-new" data-position="0:@page.mashetes.count(_.position.column == 0)">
                 <div class="row droppable" id="left-drop-new" data-pos="start"></div>
             </div>
         </div>
         <div class="col-md-@page.rightColSize" id="right">
-            @page.mashetes.filter(_.position.column == 1).zipWithIndex.map(_._2 + 1).map { i =>
-                <div class="row" id="right-row-@i">
-                    <div class="row droppable" id="right-drop-start-@i" data-pos="start"></div>
-                    <div class="col-md-12 draggable" id="right-@i" draggable="@user.isAdmin" ondragover="event.preventDefault();"></div>
-                    <div class="row droppable" id="right-drop-stop-@i" data-pos="stop"></div>
-                </div>
+            @page.mashetes.filter(_.position.column == 1).zipWithIndex.map(tuple => (tuple._1, tuple._2 + 1)).map {
+                case (mashete, i) => {
+                    <div class="row" id="right-row-@i" data-position="1:@(i - 1)" data-masheteid="@mashete.id">
+                        <div class="row droppable" id="right-drop-start-@i" data-pos="start"></div>
+                        <div class="col-md-12 draggable" id="right-@i" draggable="@user.isAdmin" ondragover="event.preventDefault();"></div>
+                        <div class="row droppable" id="right-drop-stop-@i" data-pos="stop"></div>
+                    </div>
+                }
             }
-            <div class="row" id="right-row-new">
+            <div class="row" id="right-row-new" data-position="1:@(page.mashetes.count(_.position.column == 1))">
                 <div class="row droppable" id="right-drop-new" data-pos="start"></div>
             </div>
         </div>

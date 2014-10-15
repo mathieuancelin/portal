@@ -65,7 +65,8 @@ object Application extends Controller {
       for {
         subTree <- Env.pageStore.directSubPages(user, page).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- Env.masheteStore.findAll()
-      } yield Ok(views.html.index(portalName, user, page, all, subTree))
+        roles <- Env.roleStore.findAll()
+      } yield Ok(views.html.index(portalName, user, page, all, subTree, roles))
     }
   }
 
@@ -75,7 +76,8 @@ object Application extends Controller {
         root <- Env.pageStore.findByUrl("/")
         subTree <- Env.pageStore.directSubPages(user, root.getOrElse(page)).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- Env.masheteStore.findAll()
-      } yield Ok(views.html.index(portalName, user, page, all, subTree))
+        roles <- Env.roleStore.findAll()
+      } yield Ok(views.html.index(portalName, user, page, all, subTree, roles))
     }
   }
 

@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/portal -Dhttp.port=${PORT} -Dconfig.file=conf/application.conf
+web: target/universal/stage/bin/portal -Dhttp.port=${PORT} -Dconfig.file=conf/application-prod.conf

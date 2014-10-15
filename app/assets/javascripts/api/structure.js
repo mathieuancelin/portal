@@ -11,12 +11,6 @@ portal.Structure = portal.Structure || {};
         });
     }
     function createPage(page) {
-        page = {
-            name: "My New Page yeah !!!",
-            description: "A dynamically created page",
-            url: "newpage",
-            accessibleByIds: ["USER", "WRITER", "ANONYMOUS", "ADMINISTRATOR"]
-        };
         return portal.Socket.ask({
             topic: '/portal/topics/structure',
             payload: {
@@ -26,6 +20,28 @@ portal.Structure = portal.Structure || {};
             }
         });
     }
+    function moveMashete(masheteId, previous, current) {
+        return portal.Socket.ask({
+            topic: '/portal/topics/structure',
+            payload: {
+                command: 'moveMashete',
+                from: portal.Location.current._id,
+                id: masheteId,
+                previous: previous,
+                current: current
+            }
+        });
+    }
+    function getAllRoles() {
+        return portal.Socket.ask({
+            topic: '/portal/topics/structure',
+            payload: {
+                command: 'allRoles'
+            }
+        });
+    }
     exports.subPages = subPages;
     exports.createPage = createPage;
+    exports.moveMashete = moveMashete;
+    exports.getAllRoles = getAllRoles;
 })(portal.Structure);

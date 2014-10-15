@@ -1,5 +1,7 @@
 package modules.communication
 
+import java.util
+
 import akka.actor.{Actor, ActorRef}
 import common.IdGenerator
 import modules.Env
@@ -99,6 +101,15 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
   def structureTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
     Logger.info("Command is " + (js \ "payload" \ "command").as[String])
     (js \ "payload" \ "command").as[String] match {
+      case "allRoles" => {
+        Env.roleStore.findAll().map { roles =>
+          out ! Json.obj(
+            "correlationId" -> (js \ "correlationId"),
+            "token" -> token,
+            "response" -> Writes.seq[String].writes(roles.map(_._id))
+          )
+        }
+      }
       case "subPages" => {
         val page = (js \ "payload" \ "from").as[String]
         Env.pageStore.subPages(user, page) onComplete {
@@ -154,10 +165,15 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         Env.pageStore.findById(fromId).map {
           case None => Logger.error("page not found")// TODO : notification failed
           case Some(page) => {
-            // TODO : move other mashetes
-            val newMashetes = page.mashetes.filterNot(_.id == masheteId)
-
-            Env.pageStore.save(page.copy(mashetes = page.mashetes.filterNot(_.id == masheteId))).map { page =>
+            val mashete = page.mashetes.find(_.id == masheteId).get
+            val newMashetes = page.mashetes.filterNot(_.id == masheteId).map { instance =>
+              if (instance.position.column == mashete.position.column && instance.position.line > mashete.position.line) {
+                instance.copy(position = instance.position.copy(line = instance.position.line - 1))
+              } else {
+                instance
+              }
+            }
+            Env.pageStore.save(page.copy(mashetes = newMashetes)).map { page =>
               out ! Json.obj(
                 "correlationId" -> (js \ "correlationId"),
                 "token" -> token,
@@ -168,12 +184,65 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         }
       }
       case "moveMashete" => {
+        Logger.info(Json.prettyPrint(js \ "payload"))
         val fromId = (js \ "payload" \ "from").as[String]
         val masheteId = (js \ "payload" \ "id").as[String]
-        val previousColumn = (js \ "payload" \ "previous" \ "column").as[Int]
-        val previousLine = (js \ "payload" \ "previous" \ "line").as[Int]
-        val currentColumn = (js \ "payload" \ "current" \ "column").as[Int]
-        val currentLine = (js \ "payload" \ "current" \ "line").as[Int]
+        val previousColumn = (js \ "payload" \ "previous" \ "column").as[String].toInt
+        val previousLine = (js \ "payload" \ "previous" \ "line").as[String].toInt
+        val currentColumn = (js \ "payload" \ "current" \ "column").as[String].toInt
+        val currentLine = (js \ "payload" \ "current" \ "line").as[String].toInt
+        Env.pageStore.findById(fromId).map {
+          case None => Logger.error("page not found")// TODO : notification failed
+          case Some(page) => {
+            //Logger.info(s"id       : $masheteId   " )
+            //Logger.info(s"previous : $previousColumn : $previousLine")
+            //Logger.info(s"current  : $currentColumn : $currentLine")
+            //Logger.info("old : " + page.mashetes.map(t => (t.id, t.position)))
+            try {
+              val left: java.util.ArrayList[MasheteInstance] = new util.ArrayList[MasheteInstance]()
+              val right: java.util.ArrayList[MasheteInstance] = new util.ArrayList[MasheteInstance]()
+              page.mashetes.filter(_.position.column == 0).sortBy(_.position.line).toList.foreach(left.add)
+              page.mashetes.filter(_.position.column == 1).sortBy(_.position.line).toList.foreach(right.add)
+              val mashete: MasheteInstance = page.mashetes.find(_.id == masheteId).get
+              if (previousColumn == 0) {
+                left.remove(mashete)
+              } else {
+                right.remove(mashete)
+              }
+              if (currentColumn == 0) {
+                left.add(currentLine, mashete)
+              } else {
+                right.add(currentLine, mashete)
+              }
+              var leftSeq = Seq[MasheteInstance]()
+              var rightSeq = Seq[MasheteInstance]()
+              import collection.JavaConversions._
+              for (item <- left) {
+                leftSeq = leftSeq :+ item
+              }
+              for (item <- right) {
+                rightSeq = rightSeq :+ item
+              }
+              leftSeq = leftSeq.zipWithIndex.map { tuple =>
+                tuple._1.copy(position = Position(0, tuple._2))
+              }
+              rightSeq = rightSeq.zipWithIndex.map { tuple =>
+                tuple._1.copy(position = Position(1, tuple._2))
+              }
+              val newMashetes = leftSeq ++ rightSeq
+              //Logger.info("new : " + newMashetes.map(t => (t.id, t.position)))
+              Env.pageStore.save(page.copy(mashetes = newMashetes)).map { page =>
+                out ! Json.obj(
+                  "correlationId" -> (js \ "correlationId"),
+                  "token" -> token,
+                  "response" -> Json.obj()
+                )
+              }
+            } catch {
+              case e: Throwable => e.printStackTrace()
+            }
+          }
+        }
       }
       case "addPage" => {
         val page = (js \ "payload" \ "page").as[JsObject]
