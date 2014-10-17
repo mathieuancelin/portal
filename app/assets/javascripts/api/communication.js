@@ -20,7 +20,7 @@ portal.Socket = portal.Socket || {};
 
         function onMessage(event) {
             //console.trace('data received on user websocket : ' + event.data);
-            // TODO : handle special messages like : add mashete, etc ...
+            // TODO : handle special messages like : etc ...
             var data = JSON.parse(event.data);
             if (data.firstConnection) {
                 portal.Location.current = portal.Location.current || data.page;
@@ -34,6 +34,8 @@ portal.Socket = portal.Socket || {};
                 lastToken = data.token;
                 console.log("Successful first exchange");
                 wsPromise.resolve({});
+            } else if (data.response.__commandNotification) {
+                portal.EventBus.notifyBrowser(data.response.__commandNotification);
             } else {
                 lastToken = data.token;
                 var correlationId = data.correlationId;

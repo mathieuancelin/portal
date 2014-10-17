@@ -2,6 +2,7 @@
 
 @main(page.name, portalName, user, page, mashetes, subTree, roles) {
 
+    @* TODO : handle many columns *@
     <div class="row">
         <div class="col-md-@page.leftColSize" id="left">
             @page.mashetes.filter(_.position.column == 0).zipWithIndex.map(tuple => (tuple._1, tuple._2 + 1)).map {

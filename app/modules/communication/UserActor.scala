@@ -17,6 +17,20 @@ import reactivemongo.bson.BSONObjectID
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
+trait NotificationType {
+  def name: String
+}
+
+case object SuccessNotification extends NotificationType {
+  def name = "success"
+}
+case object ErrorNotification extends NotificationType {
+  def name = "error"
+}
+case object InfoNotification extends NotificationType {
+  def name = "info"
+}
+
 // verification with http://jwt.io/
 class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
 
@@ -44,6 +58,55 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     }
   }
 
+  override def preStart(): Unit = {
+    context.system.eventStream.subscribe(self, classOf[BroadcastMessage])
+  }
+
+  def redirect(to: String, in: JsValue, token: String) = {
+    Logger.info(s"Sending redirection to $to")
+    out ! Json.obj(
+      "correlationId" -> (in \ "correlationId"),
+      "token" -> token,
+      "response" -> Json.obj(
+        "__commandRedirect" -> to
+      )
+    )
+  }
+
+  def notifyUser(notificationType: NotificationType, title: String, message: String, in: JsValue, token: String) = {
+    // TODO : log
+    out ! Json.obj(
+      "correlationId" -> (in \ "correlationId"),
+      "token" -> token,
+      "response" -> Json.obj(
+        "__commandNotification" -> Json.obj(
+          "title" -> title,
+          "message" -> message,
+          "notifcationType" -> notificationType.name
+        )
+      )
+    )
+  }
+
+  def notifyError(e: Throwable, in: JsValue, token: String) = {
+    e.printStackTrace()
+    notifyUser(ErrorNotification, "Error", e.getMessage, in, token)
+  }
+
+  def notifyError(e: String, in: JsValue, token: String) = {
+    Logger.error(e)
+    notifyUser(ErrorNotification, "Error", e, in, token)
+  }
+
+  def respond(what: JsValue, token: String, in: JsValue) {
+    // TODO : log
+    out ! Json.obj(
+      "correlationId" -> (in \ "correlationId"),
+      "token" -> token,
+      "response" -> what
+    )
+  }
+
   override def receive: Receive = {
     case js: JsValue => {
       val token = (js \ "token").asOpt[String]
@@ -61,14 +124,16 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
           }
         }
       } else {
-        out ! Json.obj(
-          "correlationId" -> (js \ "correlationId"),
-          "token" -> token,
-          "response" -> Json.obj(
-            "__commandRedirect" -> "/logout"
-          )
-        )
+        redirect("/logout", js, token.get)
         Logger.error(s"Non token request on ${(js \ "topic").as[String]}")
+      }
+    }
+    case BroadcastMessage() => // TODO : handle
+    case UnicastMessage(userId) => {
+      fuser.map { user =>
+        if (user.email == userId) {
+          // TODO : handle
+        }
       }
     }
     case e => Logger.error(s"User actor received weird message $e")
@@ -94,13 +159,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
 
   def securityTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
     (js \ "payload" \ "command").as[String] match {
-      case "WHOAMI" => {
-        out ! Json.obj(
-          "correlationId" -> (js \ "correlationId"),
-          "token" -> token,
-          "response" -> userJson
-        )
-      }
+      case "WHOAMI" => respond(userJson, token, js)
       case e => Logger.error(s"Unknown security command : $e")
     }
   }
@@ -110,24 +169,14 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     (js \ "payload" \ "command").as[String] match {
       case "allRoles" => {
         Env.roleStore.findAll().map { roles =>
-          out ! Json.obj(
-            "correlationId" -> (js \ "correlationId"),
-            "token" -> token,
-            "response" -> Writes.seq[String].writes(roles.map(_._id))
-          )
+          respond(Writes.seq[String].writes(roles.map(_._id)), token, js)
         }
       }
       case "subPages" => {
         val page = (js \ "payload" \ "from").as[String]
         Env.pageStore.subPages(user, page) onComplete {
-          case Success(subPages) => {
-            out ! Json.obj(
-              "correlationId" -> (js \ "correlationId"),
-              "token" -> token,
-              "response" -> Writes.seq(Page.pageFmt).writes(subPages)
-            )
-          }
-          case Failure(e) => e.printStackTrace()
+          case Success(subPages) => respond(Writes.seq(Page.pageFmt).writes(subPages), token, js)
+          case Failure(e) => notifyError(e, js, token)
         }
       }
       case "addMashete" => {
@@ -135,10 +184,10 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         val fromId = (js \ "payload" \ "from").as[String]
         val masheteId = (js \ "payload" \ "id").as[String]
         Env.pageStore.findById(fromId).map {
-          case None => Logger.error("page not found")// TODO : notification failed
+          case None => notifyError("page not found", js, token)
           case Some(page) => {
             Env.masheteStore.findById(masheteId).map {
-              case None =>  Logger.error("mashete not found")// TODO : notification failed
+              case None =>  notifyError("mashete not found", js, token)
               case Some(mashete) => {
                 val masheteInstance = MasheteInstance(
                   BSONObjectID.generate.stringify,
@@ -154,13 +203,9 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
                   }
                 })
                 Env.pageStore.save(newPage.copy(mashetes = newPage.mashetes :+ masheteInstance)).map { page =>
-                  out ! Json.obj(
-                    "correlationId" -> (js \ "correlationId"),
-                    "token" -> token,
-                    "response" -> Json.obj()
-                  )
+                  respond(Json.obj(), token, js)
                 }.onFailure {
-                  case e => Logger.error("fail to save", e)
+                  case e => notifyError(s"fail to save page", js, token)
                 }
               }
             }
@@ -172,7 +217,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         val fromId = (js \ "payload" \ "from").as[String]
         val masheteId = (js \ "payload" \ "id").as[String]
         Env.pageStore.findById(fromId).map {
-          case None => Logger.error("page not found")// TODO : notification failed
+          case None => notifyError("page not found", js, token)
           case Some(page) => {
             val mashete = page.mashetes.find(_.id == masheteId).get
             val newMashetes = page.mashetes.filterNot(_.id == masheteId).map { instance =>
@@ -183,11 +228,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
               }
             }
             Env.pageStore.save(page.copy(mashetes = newMashetes)).map { page =>
-              out ! Json.obj(
-                "correlationId" -> (js \ "correlationId"),
-                "token" -> token,
-                "response" -> Json.obj()
-              )
+              respond(Json.obj(), token, js)
             }
           }
         }
@@ -201,12 +242,8 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         val currentColumn = (js \ "payload" \ "current" \ "column").as[String].toInt
         val currentLine = (js \ "payload" \ "current" \ "line").as[String].toInt
         Env.pageStore.findById(fromId).map {
-          case None => Logger.error("page not found")// TODO : notification failed
+          case None => notifyError("page not found", js, token)
           case Some(page) => {
-            //Logger.info(s"id       : $masheteId   " )
-            //Logger.info(s"previous : $previousColumn : $previousLine")
-            //Logger.info(s"current  : $currentColumn : $currentLine")
-            //Logger.info("old : " + page.mashetes.map(t => (t.id, t.position)))
             try {
               val left: java.util.ArrayList[MasheteInstance] = new util.ArrayList[MasheteInstance]()
               val right: java.util.ArrayList[MasheteInstance] = new util.ArrayList[MasheteInstance]()
@@ -239,16 +276,11 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
                 tuple._1.copy(position = Position(1, tuple._2))
               }
               val newMashetes = leftSeq ++ rightSeq
-              //Logger.info("new : " + newMashetes.map(t => (t.id, t.position)))
               Env.pageStore.save(page.copy(mashetes = newMashetes)).map { page =>
-                out ! Json.obj(
-                  "correlationId" -> (js \ "correlationId"),
-                  "token" -> token,
-                  "response" -> Json.obj()
-                )
+                respond(Json.obj(), token, js)
               }
             } catch {
-              case e: Throwable => e.printStackTrace()
+              case e: Throwable => notifyError(e, js, token)
             }
           }
         }
@@ -279,41 +311,28 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
 
             val newParentPage = parentPage.copy(subPageIds = parentPage.subPageIds :+ actualPage._id)
             Env.pageStore.save(newParentPage).onComplete {
-              case Failure(e) => e.printStackTrace()// TODO : notification failed
-              case Success(_) =>
-            }
-            Env.pageStore.save(actualPage).onComplete {
-              case Success(_) => {
-                out ! Json.obj(
-                  "correlationId" -> (js \ "correlationId"),
-                  "token" -> token,
-                  "response" -> Json.obj(
-                    "__commandRedirect" -> actualPage.url
-                  )
-                )
+              case Failure(e) => notifyError(e, js, token)
+              case Success(_) => Env.pageStore.save(actualPage).onComplete {
+                case Success(_) => redirect(actualPage.url, js, token)
+                case Failure(e) => notifyError(e, js, token)
               }
-              case Failure(e) => e.printStackTrace()// TODO : notification failed
             }
           }
-          case None =>  // TODO : notification failed
+          case None =>  notifyError("Page not found", js, token)
         }
       }
       case "deletePage" => {
         if (!user.isAdmin) return
         val fromId = (js \ "payload" \ "from").as[String]
         Env.pageStore.findById(fromId).map {
-          case None => Logger.error("page not found")// TODO : notification failed
+          case None => notifyError("page not found", js, token)
           case Some(page) => {
             if (page.url != "/") {
               Env.pageStore.delete(page._id).andThen {
-                case _ => out ! Json.obj(
-                  "correlationId" -> (js \ "correlationId"),
-                  "token" -> token,
-                  "response" -> Json.obj(
-                    "__commandRedirect" -> "/"
-                  )
-                )
+                case _ => redirect("/", js, token)
               }
+            } else {
+              notifyError("You can't delete the root page.", js, token)
             }
           }
         }
@@ -325,24 +344,19 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
           val masheteId = (js \ "payload" \ "id").as[String]
           val conf = (js \ "payload" \ "conf").as[JsObject]
           Env.pageStore.findById(fromId).map {
-            case None => Logger.error("page not found") // TODO : notification failed
+            case None => notifyError("page not found", js, token)
             case Some(page) => {
               val instance = page.mashetes.find(_.id == masheteId).get
               val mashetes = page.mashetes.filterNot(_.id == masheteId)
-              //Logger.info(Json.prettyPrint(instance.instanceConfig.deepMerge(conf)))
-              val newConfig = instance.instanceConfig.deepMerge(conf);
+              val newConfig = instance.instanceConfig.deepMerge(conf)
               val newInstance = instance.copy(instanceConfig = newConfig)
               Env.pageStore.save(page.copy(mashetes = mashetes :+ newInstance)).andThen {
-                case _ => out ! Json.obj(
-                  "correlationId" -> (js \ "correlationId"),
-                  "token" -> token,
-                  "response" -> newConfig
-                )
+                case _ => respond(newConfig, token, js)
               }
             }
           }
         } catch {
-          case e: Throwable => e.printStackTrace()
+          case e: Throwable => notifyError(e, js, token)
         }
       }
       case e => Logger.error(s"Unknown structure command : $e")

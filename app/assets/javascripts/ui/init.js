@@ -43,7 +43,7 @@ $(function() {
         $('.addmashete').click(function (e) {
             e.preventDefault();
             var id = $(this).data('mid');
-            var conf = JSON.parse($(this).data('conf').decodeBase64()); // TODO : server side
+            var conf = JSON.parse($(this).data('conf').decodeBase64()); // TODO : server side, from default config
             portal.Mashetes.add(id, conf, portal.User.current.isAdmin() + "");
             registerDragAndDrop();
         });
@@ -81,7 +81,6 @@ $(function() {
                     $(e.originalEvent.target).parent().after(theDraggedElement);
                 }
                 e.originalEvent.preventDefault();
-                // TODO : call services to change mashete position
                 portal.Structure.moveMashete(masheteId, previous, current);
             }
 

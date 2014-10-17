@@ -6,7 +6,6 @@ portal.Mashetes = portal.Mashetes || {};
 
     exports.add = function(masheteId, conf, isAdmin) {
         // TODO : so ugly ...
-        // TODO : add it server side
         var id = portal.Utils.generateUUID();
         var hiding = '#left-row-' + id ;
         var template = '<div class="row" id="left-row-' + id + '">' +

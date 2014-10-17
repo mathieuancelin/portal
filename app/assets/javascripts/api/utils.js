@@ -12,5 +12,4 @@ portal.Utils = portal.Utils || {};
     exports.generateUUID = generateUUID;
     // TODO : extract params from URL
     // TODO : hook into history API
-    // TODO : handle user notifications
 })(portal.Utils);
