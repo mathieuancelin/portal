@@ -35,9 +35,9 @@ portal.Socket = portal.Socket || {};
                 console.log("Successful first exchange");
                 wsPromise.resolve({});
             } else if (data.response.__commandNotification) {
-                portal.EventBus.userNotification(data.response.__commandNotification);
+                portal.Utils.clientNotification(data.response.__commandNotification);
             } else if (data.response.__commandEventBus) {
-                portal.EventBus.publishClientOnly(data.response.__commandEventBus.channel, data.response.__commandEventBus.payload);
+                portal.EventBus.Browser.publish(data.response.__commandEventBus.channel, data.response.__commandEventBus.payload);
             } else if (data.correlationId) {
                 lastToken = data.token;
                 var correlationId = data.correlationId;

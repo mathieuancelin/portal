@@ -139,10 +139,17 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         )
       )
     }
-    case UnicastMessage(userId) => {
+    case UnicastMessage(userId, channel, payload) => {
       fuser.map { user =>
         if (user.email == userId) {
-          // TODO : handle
+          out ! Json.obj(
+            "response" -> Json.obj(
+              "__commandEventBus" -> Json.obj(
+                "channel" -> channel,
+                "payload" -> payload
+              )
+            )
+          )
         }
       }
     }
@@ -176,11 +183,17 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
 
   def eventBusTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
     (js \ "payload" \ "command").as[String] match {
-      case "publish" => {
+      case "broadcast" => {
         val channel = (js \ "payload" \ "channel").as[String]
         val payload = (js \ "payload" \ "payload").as[JsObject]
         // TODO : make it work in a distributed environement
         context.system.eventStream.publish(new BroadcastMessage(channel, payload))
+      }
+      case "public" => {
+        val channel = (js \ "payload" \ "channel").as[String]
+        val payload = (js \ "payload" \ "payload").as[JsObject]
+        // TODO : make it work in a distributed environement
+        context.system.eventStream.publish(new UnicastMessage(user.email, channel, payload))
       }
       case e => Logger.error(s"Unknown security command : $e")
     }

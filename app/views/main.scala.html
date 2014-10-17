@@ -145,7 +145,7 @@
         <script src="@routes.Assets.at("javascripts/mashetes/build/mashete.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/mashetes/build/fallback.js")" type="text/javascript"></script>
 
-        @for(mashete <- mashetes) {
+        @for(mashete <- mashetes.toSet[modules.structure.Mashete]) {
             @if(mashete.url.contains("${ASSET}")) {
                 <script src="@routes.Assets.at(mashete.url.replace("${ASSET}", ""))" type="text/javascript"></script>
             } else {

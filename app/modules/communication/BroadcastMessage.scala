@@ -6,6 +6,6 @@ case class BroadcastMessage(channel: String, payload: JsObject) {
 
 }
 
-case class UnicastMessage(userId: String) {
+case class UnicastMessage(userId: String, channel: String, payload: JsObject) {
 
 }

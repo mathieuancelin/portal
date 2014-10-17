@@ -9,6 +9,10 @@ portal.Utils = portal.Utils || {};
             return (c=='x' ? r : (r&0x7|0x8)).toString(16);
         });
     }
+    function userNotification(hash) {
+        $.notify(hash.message, hash.notifcationType);
+    }
+    exports.clientNotification = userNotification;
     exports.generateUUID = generateUUID;
     // TODO : extract params from URL
     // TODO : hook into history API

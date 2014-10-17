@@ -4,32 +4,22 @@ portal.EventBus = portal.EventBus || {};
 
     var inBrowserBus = _.extend({}, Backbone.Events);
 
-    function userNotification(hash) {
-        $.notify(hash.message, hash.notifcationType);
-
-        //$('#mainNavBar').notify(hash.message, {
-        //    clickToHide: true,
-        //    autoHide: true,
-        //    autoHideDelay: 5000,
-        //    arrowShow: false,
-        //    arrowSize: 5,
-        //    elementPosition: 'bottom right',
-        //    globalPosition: 'top right',
-        //    style: 'bootstrap',
-        //    className: hash.notifcationType,
-        //    showAnimation: 'slideDown',
-        //    showDuration: 400,
-        //    hideAnimation: 'slideUp',
-        //    hideDuration: 200,
-        //    gap: 2
-        //});
-    }
-
     function publishClientOnly(channel, payload) {
         inBrowserBus.trigger(channel, payload);
     }
 
-    function publishServerOnly(channel, payload) {
+    function broadcast(channel, payload) {
+        portal.Socket.tell({
+            topic: "/portal/topics/eventbus",
+            payload: {
+                command: 'broadcast',
+                channel: channel,
+                payload: payload
+            }
+        });
+    }
+
+    function publish(channel, payload) {
         portal.Socket.tell({
             topic: "/portal/topics/eventbus",
             payload: {
@@ -40,18 +30,18 @@ portal.EventBus = portal.EventBus || {};
         });
     }
 
-    function publish() {
-        publishServerOnly();
-        publishClientOnly();
-    }
-
     function on(channel, callback) {
         inBrowserBus.on(channel, callback);
     }
 
-    exports.userNotification = userNotification;
-    exports.publish = publish;
-    exports.publishClientOnly = publishClientOnly;
-    exports.publishServerOnly = publishServerOnly;
+    exports.User = {
+        publish: publish
+    };
+    exports.Browser = {
+        publish: publishClientOnly
+    };
+    exports.Broadcast = {
+        publish: broadcast
+    };
     exports.on = on;
 })(portal.EventBus);

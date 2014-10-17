@@ -6,11 +6,11 @@ portal.MashetesStore = portal.MashetesStore || {};
     exports.PingMashete = React.createClass({displayName: 'PingMashete',
         getInitialState: function() {
             setTimeout(function() {
-                portal.EventBus.publishClientOnly('pong', {});
+                portal.EventBus.Browser.publish('pong', {});
             }, 10);
             portal.EventBus.on('pong', function() {
                 setTimeout(function() {
-                    portal.EventBus.publishClientOnly('ping', {});
+                    portal.EventBus.Browser.publish('ping', {});
                     this.setState({ show: '&nbsp;' });
                 }.bind(this), 1000);
                 this.setState({ show: 'Ping' });
@@ -32,7 +32,7 @@ portal.MashetesStore = portal.MashetesStore || {};
         getInitialState: function() {
             portal.EventBus.on('ping', function() {
                 setTimeout(function() {
-                    portal.EventBus.publishClientOnly('pong', {});
+                    portal.EventBus.Browser.publish('pong', {});
                     this.setState({ show: '&nbsp;' });
                 }.bind(this), 1000);
                 this.setState({ show: 'Pong' });
