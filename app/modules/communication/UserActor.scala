@@ -37,6 +37,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
   val topics = Map[String, (JsObject, String, JsValue, User) => Unit](
     "/portal/topics/identity" -> securityTopic,
     "/portal/topics/structure" -> structureTopic,
+    "/portal/topics/eventbus" -> eventBusTopic,
     "/portal/topics/default" -> defaultTopic
   )
 
@@ -120,7 +121,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         tokenAndUser().map { tu =>
           topics.get(topic) match {
             case Some(fun) => fun(slug, tu._1, tu._2, tu._3)
-            case None => Logger.error("Not a valid topic")
+            case None => Logger.error(s"Not a valid topic : $topic")
           }
         }
       } else {
@@ -128,7 +129,16 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         Logger.error(s"Non token request on ${(js \ "topic").as[String]}")
       }
     }
-    case BroadcastMessage() => // TODO : handle
+    case BroadcastMessage(channel, payload) => {
+      out ! Json.obj(
+        "response" -> Json.obj(
+          "__commandEventBus" -> Json.obj(
+            "channel" -> channel,
+            "payload" -> payload
+          )
+        )
+      )
+    }
     case UnicastMessage(userId) => {
       fuser.map { user =>
         if (user.email == userId) {
@@ -160,6 +170,18 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
   def securityTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
     (js \ "payload" \ "command").as[String] match {
       case "WHOAMI" => respond(userJson, token, js)
+      case e => Logger.error(s"Unknown security command : $e")
+    }
+  }
+
+  def eventBusTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
+    (js \ "payload" \ "command").as[String] match {
+      case "publish" => {
+        val channel = (js \ "payload" \ "channel").as[String]
+        val payload = (js \ "payload" \ "payload").as[JsObject]
+        // TODO : make it work in a distributed environement
+        context.system.eventStream.publish(new BroadcastMessage(channel, payload))
+      }
       case e => Logger.error(s"Unknown security command : $e")
     }
   }

@@ -181,6 +181,48 @@
         "rightColSize": 6
     },
     {
+        "_id": "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb4",
+        "name": "Event Bus Example",
+        "description": "",
+        "url": "/site/public/pingpong",
+        "accessibleByIds": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
+        "subPageIds": [ ],
+        "mashetes": [
+            {
+                "id": "widget-1",
+                "masheteId": "PingMashete",
+                "position": {
+                    "column": 1,
+                    "line": 0
+                },
+                "instanceConfig": { "title": "Ping" }
+            },
+            {
+                "id": "widget-2",
+                "masheteId": "PongMashete",
+                "position": {
+                    "column": 1,
+                    "line": 1
+                },
+                "instanceConfig": { "title": "Pong" }
+            },
+            {
+                "id": "widget-3",
+                "masheteId": "MarkdownMashete",
+                "position": {
+                    "column": 0,
+                    "line": 0
+                },
+                "instanceConfig": {
+                    "title": "Description",
+                    "markdown": "IyBFdmVudCBCdXMKCllvdSBjYW4gcmVhbGx5IHNpbXBseSBtYWtlIG1hc2hldGVzIGluc3RhbmNlcyBjb21tdW5pY2F0ZSwgZWl0aGVyIHRoZSBzYW1lIHBhZ2Ugb3IgZXZlbiBpbiBkaWZmZXJlbnQgYnJvd3Nlci4KCiMjIFRoZSBwaW5nLXBvbmcgZXhhbXBsZQoKVGhlIGZvbGxvd2luZyBtYXNoZXRlcyBpbnN0YW5jZXMgYXJlIGFuIGV4YW1wbGUgb2YgbWFzaGV0ZXMgbWFraW5nIHVzZSBvZiB0aGUgRXZlbnRidXM="
+                }
+            }
+        ],
+        "leftColSize": 6,
+        "rightColSize": 6
+    },
+    {
         "_id": "cbdb951b5-3795-4d52-9380-9aad0e514a4a",
         "name": "Private root",
         "description": "",
@@ -210,7 +252,7 @@
         "url": "/site/public",
         "accessibleByIds": ["ANONYMOUS", "ADMINISTRATOR", "WRITER", "USER"],
         "subPageIds": [
-            "771841d45-19e2-4918-904c-c5e281cce9d4", "10e370ec3-0aaa-4328-a11b-e9ada3149079", "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb5"
+            "771841d45-19e2-4918-904c-c5e281cce9d4", "10e370ec3-0aaa-4328-a11b-e9ada3149079", "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb5", "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb4"
         ],
         "mashetes": [
             {

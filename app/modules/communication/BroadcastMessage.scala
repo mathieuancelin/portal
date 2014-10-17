@@ -1,9 +1,8 @@
 package modules.communication
 
-/**
- * Created by mathieuancelin on 17/10/2014.
- */
-case class BroadcastMessage() {
+import play.api.libs.json.JsObject
+
+case class BroadcastMessage(channel: String, payload: JsObject) {
 
 }
 

@@ -35,5 +35,23 @@
             "title": "Wikipedia",
             "height": 400
         }
+    },
+    {
+        "_id": "PingMashete",
+        "name": "Ping Mashete",
+        "description": "Display Ping",
+        "url": "${ASSET}/javascripts/mashetes/build/pingpong.js",
+        "defaultParam": {
+            "title": "Ping"
+        }
+    },
+    {
+        "_id": "PongMashete",
+        "name": "Pong Mashete",
+        "description": "Display Pong",
+        "url": "${ASSET}/javascripts/mashetes/build/pingpong.js",
+        "defaultParam": {
+            "title": "Pong"
+        }
     }
 ]

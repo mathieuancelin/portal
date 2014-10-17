@@ -142,6 +142,7 @@ object Application extends Controller {
     }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser)).map { user =>
       val actor = s"/user/fallback-actor-sse-${user.email}-${token}"
       println("fetching actor " + actor)
+      // TODO : make it work in a distributed environement
       Akka.system(play.api.Play.current).actorSelection(actor) ! Json.parse(rh.body)
     }
     Ok

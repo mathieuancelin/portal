@@ -24,12 +24,15 @@ $(function() {
                 mashete.instanceConfig.closeCallback = function () {
                     $(hiding).hide();
                 };
+                console.log("try to instanciate " + mashete.masheteId);
                 if (portal.MashetesStore[mashete.masheteId]) {
+                    console.log("Success !!!");
                     React.renderComponent(
                         new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig),
                         document.getElementById(side + '-' + (idx + 1))
                     );
                 } else {
+                    console.log("Fail !!!");
                     React.renderComponent(
                         new portal.MashetesStore.FallbackMashete({}),
                         document.getElementById(side + '-' + (idx + 1))

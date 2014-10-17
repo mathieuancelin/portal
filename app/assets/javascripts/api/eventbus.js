@@ -1,7 +1,10 @@
 var portal = portal || {};
 portal.EventBus = portal.EventBus || {};
 (function(exports) {
-    function notifyBrowser(hash) {
+
+    var inBrowserBus = _.extend({}, Backbone.Events);
+
+    function userNotification(hash) {
         $.notify(hash.message, hash.notifcationType);
 
         //$('#mainNavBar').notify(hash.message, {
@@ -21,5 +24,34 @@ portal.EventBus = portal.EventBus || {};
         //    gap: 2
         //});
     }
-    exports.notifyBrowser = notifyBrowser;
+
+    function publishClientOnly(channel, payload) {
+        inBrowserBus.trigger(channel, payload);
+    }
+
+    function publishServerOnly(channel, payload) {
+        portal.Socket.tell({
+            topic: "/portal/topics/eventbus",
+            payload: {
+                command: 'publish',
+                channel: channel,
+                payload: payload
+            }
+        });
+    }
+
+    function publish() {
+        publishServerOnly();
+        publishClientOnly();
+    }
+
+    function on(channel, callback) {
+        inBrowserBus.on(channel, callback);
+    }
+
+    exports.userNotification = userNotification;
+    exports.publish = publish;
+    exports.publishClientOnly = publishClientOnly;
+    exports.publishServerOnly = publishServerOnly;
+    exports.on = on;
 })(portal.EventBus);

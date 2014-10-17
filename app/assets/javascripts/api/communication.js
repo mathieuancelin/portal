@@ -35,8 +35,10 @@ portal.Socket = portal.Socket || {};
                 console.log("Successful first exchange");
                 wsPromise.resolve({});
             } else if (data.response.__commandNotification) {
-                portal.EventBus.notifyBrowser(data.response.__commandNotification);
-            } else {
+                portal.EventBus.userNotification(data.response.__commandNotification);
+            } else if (data.response.__commandEventBus) {
+                portal.EventBus.publishClientOnly(data.response.__commandEventBus.channel, data.response.__commandEventBus.payload);
+            } else if (data.correlationId) {
                 lastToken = data.token;
                 var correlationId = data.correlationId;
                 if (!data.token) {
@@ -61,6 +63,9 @@ portal.Socket = portal.Socket || {};
                 } else {
                     console.error("Correlation " + correlationId + " not in waiting queue");
                 }
+            } else {
+                console.error("Unknown message");
+                console.log(data);
             }
         }
 
