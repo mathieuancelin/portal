@@ -35,13 +35,18 @@ portal.MashetesStore = portal.MashetesStore || {};
         }
     });
     exports.MarkdownMashete = React.createClass({
+        getInitialState: function() {
+            return {
+                displayedTitle: this.props.title
+            };
+        },
         render: function() {
             var rawMarkup = converter.makeHtml(this.props.markdown.decodeBase64());
             var panel = function(outterProps, stateGetter, save) {
                 return new MarkdownMasheteOptionsPanel({ outterProps: outterProps, stateGetter: stateGetter, save: save });
             };
             return (
-                <portal.Mashetes.Mashete title={this.props.title} config={this.props} customOptionsPanelFactory={panel}>
+                <portal.Mashetes.Mashete title={this.state.displayedTitle} config={this.props} customOptionsPanelFactory={panel}>
                     <div>
                         <span dangerouslySetInnerHTML={{__html: rawMarkup}} />
                     </div>

@@ -4,9 +4,14 @@ var portal = portal || {};
 portal.MashetesStore = portal.MashetesStore || {};
 (function(exports) {
     exports.TitleMashete = React.createClass({displayName: 'TitleMashete',
+        getInitialState: function() {
+            return {
+                displayedTitle: this.props.title
+            };
+        },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.props.title, config: this.props}, 
+                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props}, 
                     React.DOM.h1(null, portal.Location.current.name), 
                     React.DOM.p(null, portal.Location.current.description)
                 )
@@ -14,11 +19,17 @@ portal.MashetesStore = portal.MashetesStore || {};
         }
     })
     exports.CustomTitleMashete = React.createClass({displayName: 'CustomTitleMashete',
+        getInitialState: function() {
+            return {
+                displayedDescription: this.props.description,
+                displayedTitle: this.props.title
+            };
+        },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.props.title, config: this.props}, 
-                    React.DOM.h1(null, this.props.title), 
-                    React.DOM.p(null, this.props.description)
+                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props}, 
+                    React.DOM.h1(null, this.state.displayedTitle), 
+                    React.DOM.p(null, this.state.displayedDescription)
                 )
             );
         }

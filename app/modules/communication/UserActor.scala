@@ -320,26 +320,29 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
       }
       case "changeMasheteOptions" => {
         if (!user.isAdmin) return
-        val fromId = (js \ "payload" \ "from").as[String]
-        val masheteId = (js \ "payload" \ "id").as[String]
-        val conf = (js \ "payload" \ "conf").as[JsObject]
-        Env.pageStore.findById(fromId).map {
-          case None => Logger.error("page not found")// TODO : notification failed
-          case Some(page) => {
-            val instance = page.mashetes.find(_.id == masheteId).get
-            val mashetes = page.mashetes.filterNot(_.id == masheteId)
-            Logger.info(Json.prettyPrint(instance.instanceConfig.deepMerge(conf)))
-            val newInstance = instance.copy(instanceConfig = instance.instanceConfig.deepMerge(conf))
-            Env.pageStore.save(page.copy(mashetes = mashetes :+ newInstance)).andThen {
-              case _ =>  out ! Json.obj(
-                "correlationId" -> (js \ "correlationId"),
-                "token" -> token,
-                "response" -> Json.obj(
-                  "__commandRedirect" -> page.url
+        try {
+          val fromId = (js \ "payload" \ "from").as[String]
+          val masheteId = (js \ "payload" \ "id").as[String]
+          val conf = (js \ "payload" \ "conf").as[JsObject]
+          Env.pageStore.findById(fromId).map {
+            case None => Logger.error("page not found") // TODO : notification failed
+            case Some(page) => {
+              val instance = page.mashetes.find(_.id == masheteId).get
+              val mashetes = page.mashetes.filterNot(_.id == masheteId)
+              //Logger.info(Json.prettyPrint(instance.instanceConfig.deepMerge(conf)))
+              val newConfig = instance.instanceConfig.deepMerge(conf);
+              val newInstance = instance.copy(instanceConfig = newConfig)
+              Env.pageStore.save(page.copy(mashetes = mashetes :+ newInstance)).andThen {
+                case _ => out ! Json.obj(
+                  "correlationId" -> (js \ "correlationId"),
+                  "token" -> token,
+                  "response" -> newConfig
                 )
-              )
+              }
             }
           }
+        } catch {
+          case e: Throwable => e.printStackTrace()
         }
       }
       case e => Logger.error(s"Unknown structure command : $e")

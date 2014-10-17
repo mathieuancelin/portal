@@ -52,6 +52,7 @@ portal.Structure = portal.Structure || {};
     function saveMasheteOptions(id, conf) {
         return portal.Socket.ask({
             topic: '/portal/topics/structure',
+            timeout: 2000,
             payload: {
                 command: 'changeMasheteOptions',
                 id: id,

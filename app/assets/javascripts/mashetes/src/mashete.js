@@ -74,8 +74,30 @@ portal.Mashetes = portal.Mashetes || {};
             });
         },
         saveAndHideOptions: function(e) {
-            this.setState({edit: false});
-            portal.Structure.saveMasheteOptions(this.props.config.masheteid, JSON.parse(this.state.optionsContent));
+            var masheteThis = this;
+            portal.Structure.saveMasheteOptions(this.props.config.masheteid, JSON.parse(this.state.optionsContent)).then(function(newConfig) {
+                masheteThis.setState({edit: false});
+                setTimeout(function() {
+                    // TODO : common code => see init.js line 15
+                    var idx = this.props.config.position.line;
+                    var side = 'left';
+                    if (this.props.config.position.column === 1) {
+                        side = 'right';
+                    }
+                    var hiding = '#' + side + '-row-' + (idx + 1);
+                    React.unmountComponentAtNode(document.getElementById(side + '-' + (idx + 1)));
+                    newConfig.masheteid = this.props.config.masheteid;
+                    newConfig.mashete = this.props.config.mashete;
+                    newConfig.position = this.props.config.position;
+                    newConfig.closeCallback = function () {
+                        $(hiding).hide();
+                    };
+                    React.renderComponent(
+                        new portal.MashetesStore[this.props.config.mashete](newConfig),
+                        document.getElementById(side + '-' + (idx + 1))
+                    );
+                }.bind(masheteThis), 100);
+            });
         },
         changeConfig: function(e) {
             this.setState({optionsContent: e.target.value})
@@ -97,7 +119,7 @@ portal.Mashetes = portal.Mashetes || {};
                             this.setState({
                                 edit: false
                             });
-                        });
+                        }.bind(this));
                     }.bind(this);
                     var instance = this.props.customOptionsPanelFactory(this.props, stateGetter, save);
                     content = (<div>{instance}</div>);
