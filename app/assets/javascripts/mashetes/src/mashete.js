@@ -86,19 +86,36 @@ portal.Mashetes = portal.Mashetes || {};
             }
             var content = this.props.children;
             if (this.state.edit) {
-                content = (
-                    <div>
-                        <div className="row">
-                            <textarea onChange={this.changeConfig} className="largeText" value={this.state.optionsContent}></textarea>
-                        </div>
-                        <div className="row">
-                            <div className="btn-group pull-right">
-                                <button type="button" onClick={this.cancelAndHideOptions} className="btn btn-sm btn-danger">Cancel</button>
-                                <button type="button" onClick={this.saveAndHideOptions} className="btn btn-sm btn-primary">Ok</button>
+                if (this.props.customOptionsPanelFactory) {
+                    var stateGetter = function() {
+                        return this.state;
+                    }.bind(this);
+                    var save = function(what) {
+                        var newProps = _.extend({}, this.props.config);
+                        newProps = _.extend(newProps, what);
+                        portal.Structure.saveMasheteOptions(this.props.config.masheteid, newProps).then(function() {
+                            this.setState({
+                                edit: false
+                            });
+                        });
+                    }.bind(this);
+                    var instance = this.props.customOptionsPanelFactory(this.props, stateGetter, save);
+                    content = (<div>{instance}</div>);
+                } else {
+                    content = (
+                        <div>
+                            <div className="row">
+                                <textarea onChange={this.changeConfig} className="largeText" value={this.state.optionsContent}></textarea>
+                            </div>
+                            <div className="row">
+                                <div className="btn-group pull-right">
+                                    <button type="button" onClick={this.cancelAndHideOptions} className="btn btn-sm btn-danger">Cancel</button>
+                                    <button type="button" onClick={this.saveAndHideOptions} className="btn btn-sm btn-primary">Ok</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                );
+                        );
+                }
             }
             var AdminBar = (
                 <div className="row mashete-bar">

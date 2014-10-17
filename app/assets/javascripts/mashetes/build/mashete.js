@@ -86,19 +86,36 @@ portal.Mashetes = portal.Mashetes || {};
             }
             var content = this.props.children;
             if (this.state.edit) {
-                content = (
-                    React.DOM.div(null, 
-                        React.DOM.div({className: "row"}, 
-                            React.DOM.textarea({onChange: this.changeConfig, className: "largeText", value: this.state.optionsContent})
-                        ), 
-                        React.DOM.div({className: "row"}, 
-                            React.DOM.div({className: "btn-group pull-right"}, 
-                                React.DOM.button({type: "button", onClick: this.cancelAndHideOptions, className: "btn btn-sm btn-danger"}, "Cancel"), 
-                                React.DOM.button({type: "button", onClick: this.saveAndHideOptions, className: "btn btn-sm btn-primary"}, "Ok")
+                if (this.props.customOptionsPanelFactory) {
+                    var stateGetter = function() {
+                        return this.state;
+                    }.bind(this);
+                    var save = function(what) {
+                        var newProps = _.extend({}, this.props.config);
+                        newProps = _.extend(newProps, what);
+                        portal.Structure.saveMasheteOptions(this.props.config.masheteid, newProps).then(function() {
+                            this.setState({
+                                edit: false
+                            });
+                        });
+                    }.bind(this);
+                    var instance = this.props.customOptionsPanelFactory(this.props, stateGetter, save);
+                    content = (React.DOM.div(null, instance));
+                } else {
+                    content = (
+                        React.DOM.div(null, 
+                            React.DOM.div({className: "row"}, 
+                                React.DOM.textarea({onChange: this.changeConfig, className: "largeText", value: this.state.optionsContent})
+                            ), 
+                            React.DOM.div({className: "row"}, 
+                                React.DOM.div({className: "btn-group pull-right"}, 
+                                    React.DOM.button({type: "button", onClick: this.cancelAndHideOptions, className: "btn btn-sm btn-danger"}, "Cancel"), 
+                                    React.DOM.button({type: "button", onClick: this.saveAndHideOptions, className: "btn btn-sm btn-primary"}, "Ok")
+                                )
                             )
                         )
-                    )
-                );
+                        );
+                }
             }
             var AdminBar = (
                 React.DOM.div({className: "row mashete-bar"}, 
