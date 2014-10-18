@@ -33,7 +33,11 @@
         "defaultParam": {
             "url": "http://fr.m.wikipedia.org/",
             "title": "Wikipedia",
-            "height": 400
+            "height": "400px",
+            "width": "100%",
+            "allowTransparency": true,
+            "class": "",
+            "frameborder": "0"
         }
     },
     {

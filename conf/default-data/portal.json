@@ -316,9 +316,12 @@
                     "line": 0
                 },
                 "instanceConfig": {
-                    "url": "https://www.playframework.com/",
-                    "title": "Playframework",
-                    "height": 600
+                    "url": "http://en.lichess.org/tv/frame?bg=light&theme=wood&embed=fr.lichess.org",
+                    "title": "Lichess live TV",
+                    "height": "276px",
+                    "width": "226px",
+                    "allowTransparency": true,
+                    "frameborder": "0"
                 }
             }
         ],
