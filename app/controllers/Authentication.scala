@@ -46,7 +46,7 @@ object Authentication extends Controller {
     rh.cookies.get(cookieName).map { cookie: Cookie =>
       Crypto.decryptAES(cookie.value).split(":::").toList match {
         case hash :: login :: Nil if Crypto.sign(login) == hash => {
-          Env.userStore.findById(login).flatMap {
+          Env.userStore.findByEmail(login).flatMap {
             case None => Future.successful(Ok(views.html.login(Application.portalName, service)).discardingCookies(discard:_*))
             case Some(user) => {
               val ticket = IdGenerator.uuid
