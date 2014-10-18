@@ -39,6 +39,14 @@ trait RoleStore {
   def deleteAll()(implicit ec: ExecutionContext): Future[Unit]
 }
 
+trait CredentialStore {
+  def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Credential]]
+  def findAll()(implicit ec: ExecutionContext): Future[Seq[Credential]]
+  def delete(id: String)(implicit ec: ExecutionContext): Future[Unit]
+  def save(credential: Credential)(implicit ec: ExecutionContext):Future[Credential]
+  def deleteAll()(implicit ec: ExecutionContext): Future[Unit]
+}
+
 package object users {
 
   import akka.pattern.{ask, pipe}
@@ -315,5 +323,41 @@ package object roles {
 
   trait RoleStoreSupport {
     val roleStore: RoleStore = MongoRoleStore
+  }
+}
+
+package object credentials {
+
+  object MongoCredentialsStore extends CredentialStore {
+    lazy val collection = ReactiveMongoPlugin.db.collection[JSONCollection]("credential")
+
+    override def deleteAll()(implicit ec: ExecutionContext): Future[Unit] = collection.remove(Json.obj()).map(_ => ())
+    override def findById(id: String)(implicit ec: ExecutionContext): Future[Option[Credential]] = collection.find(Json.obj("_id" -> id)).cursor[JsObject].headOption.map(_.map( js => js.as[Credential]))
+    override def findAll()(implicit ec: ExecutionContext): Future[Seq[Credential]] = collection.find(Json.obj()).cursor[JsObject].collect[Seq]().map(_.map(_.as[Credential]))
+    override def delete(id: String)(implicit ec: ExecutionContext): Future[Unit] = collection.remove(Json.obj("_id" -> id)).map(_ => ())
+    override def save(credential: Credential)(implicit ec: ExecutionContext): Future[Credential] = {
+      findById(credential._id).flatMap {
+        case Some(m) => {
+          collection.update(
+            Json.obj("_id" -> credential._id),
+            Json.obj("$set" -> Credential.credentialFmt.writes(credential).as[JsObject].-("_id"))
+          ).map{ _ => credential }
+        }
+        case None => {
+          val id = BSONObjectID.generate.stringify
+          val obj = Credential.credentialFmt.writes(credential).as[JsObject]
+          obj \ "_id" match {
+            case _: JsUndefined => collection.insert(obj ++ Json.obj("_id" -> id)).map { _ => credential }
+            case JsObject(Seq((_, JsString(oid)))) => collection.insert(obj).map{ _ => credential }
+            case JsString(oid) => collection.insert(obj).map{ _ => credential }
+            case f => sys.error(s"Could not parse _id field: $f")
+          }
+        }
+      }
+    }
+  }
+
+  trait CredentialsStoreSupport {
+    val credentialsStore: CredentialStore = MongoCredentialsStore
   }
 }

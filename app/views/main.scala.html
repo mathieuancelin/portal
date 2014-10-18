@@ -1,4 +1,4 @@
-@(title: String, portalName: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete], subTree: Html, roles: Seq[modules.identity.Role])(content: Html)
+@(title: String, portalName: String, service: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete], subTree: Html, roles: Seq[modules.identity.Role])(content: Html)
 
 <!DOCTYPE html>
 
@@ -32,8 +32,8 @@
                     @user match {
                         case modules.identity.AnonymousUser => {
                             <div class="pull-right">
-                                <form class="navbar-form navbar-right" action="/login" method="POST" role="form">
-                                    <button type="submit" class="btn btn-success">Log in</button>
+                                <form class="navbar-form navbar-right" role="form">
+                                    <a href="/login?service=@service" class="btn btn-success">Log in</a>
                                 </form>
                             </div>
                         }
@@ -73,7 +73,7 @@
             @content
             <hr>
             <footer>
-                <p>© Machete 2014</p>
+                <p>© Mashete Portal 2014</p>
             </footer>
         </div> <!-- /container -->
 

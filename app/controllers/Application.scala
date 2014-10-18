@@ -1,28 +1,26 @@
 package controllers
 
-import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.util.Timeout
-import com.google.common.io.Files
 import modules.Env
 import modules.communication.UserActor
-import modules.identity.{AnonymousUser, Role, User}
-import modules.structure.{Mashete, Page}
+import modules.identity.{Credential, AnonymousUser, User}
+import modules.structure.Page
 import play.api.Logger
 import play.api.Play.current
 import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.iteratee.Concurrent.Channel
-import play.api.libs.json.{JsValue, Json, Reads}
+import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.WS
 import play.api.libs.{Crypto, EventSource}
 import play.api.mvc._
 import play.twirl.api.Html
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, Future, Promise}
+import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 // TODO : mashetes store to add mashetes to pages
@@ -34,14 +32,21 @@ import scala.util.{Failure, Success}
 
 object Application extends Controller {
 
+  lazy val cookieName = "PORTAL_SESSION"
   lazy val portalName = play.api.Play.current.configuration.getString("portal.name").getOrElse("Portal")
+  lazy val portalCallbackUrl = play.api.Play.current.configuration.getString("portal.service-url").getOrElse("http://localhost:9000/callback")
+  lazy val portalSSOServiceUrl = play.api.Play.current.configuration.getString("portal.sso-service-url").getOrElse("http://localhost:9000/validate")
+  lazy val discard = Seq(
+    DiscardingCookie(name = cookieName, path = "/", domain = None)
+  )
 
   def UserAction(url: String)(f: ((Request[AnyContent], User, Page)) => Future[Result]) = {
     Logger.trace(s"Accessing secured url : $url")
     Action.async { rh =>
-      val fuser: Future[User] = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+      val fuser: Future[User] = rh.cookies.get(cookieName).map { cookie: Cookie =>
         cookie.value.split(":::").toList match {
           case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
+          case _ => Future.successful(None)
         }
       }.getOrElse(Future.successful(Some(AnonymousUser))).map(_.getOrElse(AnonymousUser))
       fuser.flatMap { user =>
@@ -50,8 +55,7 @@ object Application extends Controller {
             if (page.accessibleByIds.intersect(user.roles).size > 0) {
               f(rh, user, page)
             } else {
-              // TODO : redirect to login page
-              Future.successful(InternalServerError("Not accessible moron"))
+              Future.successful(Redirect(routes.Authentication.loginPage(portalCallbackUrl)))
             }
           }
           case None => Future.successful(NotFound("Page not found :'("))
@@ -60,13 +64,33 @@ object Application extends Controller {
     }
   }
 
+  def buildCookie(login: String) = {
+    Cookie(
+      name = cookieName,
+      value = s"${Crypto.sign(login)}:::$login",
+      maxAge = Some(2592000),
+      path = "/",
+      domain = None
+    )
+  }
+
+  def callback(ticket: String) = Action.async {
+    WS.url(portalSSOServiceUrl).withQueryString("ticket" -> ticket).get().map { response =>
+      val login = (response.json \ "email").as[String]
+      Redirect("/").withCookies(buildCookie(login))
+    }.recover {
+      case _ => Redirect("/").discardingCookies(discard:_*)
+    }
+  }
+
   def index = UserAction("/") {
     case (request, user, page) => {
+      println(Credential("demo@acme.com", "demo").encrypt)
       for {
         subTree <- Env.pageStore.directSubPages(user, page).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- Env.masheteStore.findAll()
         roles <- Env.roleStore.findAll()
-      } yield Ok(views.html.index(portalName, user, page, all, subTree, roles))
+      } yield Ok(views.html.index(portalName, portalCallbackUrl, user, page, all, subTree, roles))
     }
   }
 
@@ -77,53 +101,12 @@ object Application extends Controller {
         subTree <- Env.pageStore.directSubPages(user, root.getOrElse(page)).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- Env.masheteStore.findAll()
         roles <- Env.roleStore.findAll()
-      } yield Ok(views.html.index(portalName, user, page, all, subTree, roles))
+      } yield Ok(views.html.index(portalName, portalCallbackUrl, user, page, all, subTree, roles))
     }
-  }
-
-  def loginPage(service: String) = Action {
-    Ok
-  }
-
-  def login = Action { // TODO : CAS style login
-    val cookieValue = "mathieu.ancelin@acme.com"
-    Redirect("/").withCookies(Cookie(
-      name = "PORTAL_SESSION",
-      value = s"${Crypto.sign(cookieValue)}:::$cookieValue",
-      maxAge = Some(2592000),
-      path = "/",
-      domain = None
-    ))
-  }
-
-  def logout = Action {
-    Redirect("/").discardingCookies(DiscardingCookie(name = "PORTAL_SESSION", path = "/", domain = None))
-  }
-
-  def firstTimeIndex = Action {
-    if (play.api.Play.current.configuration.getBoolean("portal.allow-first-time-index").getOrElse(false)) {
-      val utf8 = Charset.forName("UTF-8")
-      val roles = play.api.Play.current.getFile("conf/default-data/roles.json")
-      val users = play.api.Play.current.getFile("conf/default-data/users.json")
-      val mashetes = play.api.Play.current.getFile("conf/default-data/mashetes.json")
-      val portal = play.api.Play.current.getFile("conf/default-data/portal.json")
-      val future = for {
-        _ <- Env.pageStore.deleteAll()
-        _ <- Env.userStore.deleteAll()
-        _ <- Env.roleStore.deleteAll()
-        _ <- Env.masheteStore.deleteAll()
-        _ <- Future.sequence(Json.parse(Files.toString(roles, utf8)).as(Reads.seq(Role.roleFmt)).map(Env.roleStore.save))
-        _ <- Future.sequence(Json.parse(Files.toString(users, utf8)).as(Reads.seq(User.userFmt)).map(Env.userStore.save))
-        _ <- Future.sequence(Json.parse(Files.toString(mashetes, utf8)).as(Reads.seq(Mashete.masheteFmt)).map(Env.masheteStore.save))
-        _ <- Future.sequence(Json.parse(Files.toString(portal, utf8)).as(Reads.seq(Page.pageFmt)).map(Env.pageStore.save))
-      } yield ()
-      Await.result(future, Duration(1, TimeUnit.MINUTES))
-    }
-    Ok
   }
 
   def userStreamWebsocket = WebSocket.acceptWithActor[JsValue, JsValue] { rh =>
-    val user: Future[User] = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+    val user: Future[User] = rh.cookies.get(cookieName).map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
@@ -134,7 +117,7 @@ object Application extends Controller {
   }
 
   def userStreamSSEFallbackIn(token: String) = Action(parse.text) { rh =>
-    rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+    rh.cookies.get(cookieName).map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
@@ -149,7 +132,7 @@ object Application extends Controller {
   }
 
   def userStreamSSEFallbackOut(token: String) = Action { rh =>
-    val fuser = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+    val fuser = rh.cookies.get(cookieName).map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
@@ -172,7 +155,7 @@ object Application extends Controller {
 
   def userStreamHttpFallbackInOut(token: String) = Action.async(parse.text) { rh =>
     val promise = Promise[JsValue]()
-    val fuser = rh.cookies.get("PORTAL_SESSION").map { cookie: Cookie =>
+    val fuser = rh.cookies.get(cookieName).map { cookie: Cookie =>
       cookie.value.split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))

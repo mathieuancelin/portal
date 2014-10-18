@@ -1,6 +1,6 @@
-@(portalName: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete], subTree: Html, roles: Seq[modules.identity.Role])
+@(portalName: String, service: String, user: modules.identity.User, page: modules.structure.Page, mashetes: Seq[modules.structure.Mashete], subTree: Html, roles: Seq[modules.identity.Role])
 
-@main(page.name, portalName, user, page, mashetes, subTree, roles) {
+@main(page.name, portalName, service, user, page, mashetes, subTree, roles) {
 
     @* TODO : handle many columns *@
     <div class="row">

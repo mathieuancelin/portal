@@ -1,8 +1,12 @@
 # Portal pages
 GET         /                             controllers.Application.index
-POST        /login                        controllers.Application.login
-POST        /logout                       controllers.Application.logout
-GET         /logout                       controllers.Application.logout
+GET         /callback                     controllers.Application.callback(ticket)
+GET         /login                        controllers.Authentication.loginPage(service)
+POST        /login                        controllers.Authentication.login
+POST        /logout                       controllers.Authentication.logout
+GET         /logout                       controllers.Authentication.logout
+GET         /validate                     controllers.Authentication.validate(ticket)
+GET         /error                        controllers.Authentication.error
 GET         /site/*url                    controllers.Application.page(url)
 # Portal pages
 
@@ -14,7 +18,7 @@ POST        /fallback/http/:token         controllers.Application.userStreamHttp
 # user channel and fallbacks
 
 # admin commands
-POST        /private/firstimeindex        controllers.Application.firstTimeIndex
+POST        /private/firstimeindex        controllers.Services.firstTimeIndex
 # admin commands
 
 # Map static resources from the /public folder to the /assets URL path

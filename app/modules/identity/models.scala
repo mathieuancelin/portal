@@ -1,10 +1,17 @@
 package modules.identity
 
 import modules.Env
-import play.api.libs.Codecs
+import play.api.libs.{Crypto, Codecs}
 import play.api.libs.json._
 
 import scala.concurrent.{Future, ExecutionContext}
+
+case class Credential(_id: String, password: String) {
+  def encrypt: Credential = {
+    val salted = s"$password:::${Credential.salt}"
+    Credential(_id, Crypto.sign(salted))
+  }
+}
 
 case class Role(_id: String, name: String, description: String)
 
@@ -29,6 +36,14 @@ object User {
     override def reads(json: JsValue): JsResult[User] = actualFormater.reads(json)
     override def writes(o: User): JsValue = writerPlusHash.writes(o)
   }
+}
+
+object Credential {
+
+  implicit val credentialFmt = Json.format[Credential]
+  lazy val salt = play.api.Play.current.configuration.getString("portal.salt").getOrElse("jUpWoLiv7GBgNoUJ0IPLZTZa3IXsv5DSEn5A5Fw0HDSwAAj2lv2lxFOTc5BehK6x")
+
+
 }
 
 object AnonymousUser extends User("bHX9WbIcIrS68hD9az6yvSc6a", "John", "Doe", "john.doe@acme.com", "", Seq(Role.anonId))

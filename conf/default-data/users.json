@@ -1,10 +1,10 @@
 [
     {
         "_id" : "1",
-        "name" : "Mathieu",
-        "surname" : "Ancelin",
-        "email" : "mathieu.ancelin@acme.com",
-        "description" : "",
+        "name" : "Billy",
+        "surname" : "Doe",
+        "email" : "demo@acme.com",
+        "description" : "Demo user",
         "roles" : [ "ADMINISTRATOR", "WRITER" ]
     }
 ]
