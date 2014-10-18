@@ -44,7 +44,7 @@ object Application extends Controller {
     Logger.trace(s"Accessing secured url : $url")
     Action.async { rh =>
       val fuser: Future[User] = rh.cookies.get(cookieName).map { cookie: Cookie =>
-        cookie.value.split(":::").toList match {
+        Crypto.decryptAES(cookie.value).split(":::").toList match {
           case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
           case _ => Future.successful(None)
         }
@@ -67,7 +67,7 @@ object Application extends Controller {
   def buildCookie(login: String) = {
     Cookie(
       name = cookieName,
-      value = s"${Crypto.sign(login)}:::$login",
+      value = Crypto.encryptAES(s"${Crypto.sign(login)}:::$login"),
       maxAge = Some(2592000),
       path = "/",
       domain = None
@@ -85,7 +85,6 @@ object Application extends Controller {
 
   def index = UserAction("/") {
     case (request, user, page) => {
-      println(Credential("demo@acme.com", "demo").encrypt)
       for {
         subTree <- Env.pageStore.directSubPages(user, page).map(ps => Html(ps.map(p => p.toHtml(user)).mkString("")))
         all <- Env.masheteStore.findAll()
@@ -107,7 +106,7 @@ object Application extends Controller {
 
   def userStreamWebsocket = WebSocket.acceptWithActor[JsValue, JsValue] { rh =>
     val user: Future[User] = rh.cookies.get(cookieName).map { cookie: Cookie =>
-      cookie.value.split(":::").toList match {
+      Crypto.decryptAES(cookie.value).split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
@@ -118,7 +117,7 @@ object Application extends Controller {
 
   def userStreamSSEFallbackIn(token: String) = Action(parse.text) { rh =>
     rh.cookies.get(cookieName).map { cookie: Cookie =>
-      cookie.value.split(":::").toList match {
+      Crypto.decryptAES(cookie.value).split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
@@ -133,7 +132,7 @@ object Application extends Controller {
 
   def userStreamSSEFallbackOut(token: String) = Action { rh =>
     val fuser = rh.cookies.get(cookieName).map { cookie: Cookie =>
-      cookie.value.split(":::").toList match {
+      Crypto.decryptAES(cookie.value).split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }
@@ -156,7 +155,7 @@ object Application extends Controller {
   def userStreamHttpFallbackInOut(token: String) = Action.async(parse.text) { rh =>
     val promise = Promise[JsValue]()
     val fuser = rh.cookies.get(cookieName).map { cookie: Cookie =>
-      cookie.value.split(":::").toList match {
+      Crypto.decryptAES(cookie.value).split(":::").toList match {
         case hash :: userLogin :: Nil if Crypto.sign(userLogin) == hash => Env.userStore.findByEmail(userLogin)
         case _ => Future.successful(Some(AnonymousUser))
       }

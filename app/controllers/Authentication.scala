@@ -35,7 +35,7 @@ object Authentication extends Controller {
   def buildCookie(login: String) = {
     Cookie(
       name = cookieName,
-      value = s"${Crypto.sign(login)}:::$login",
+      value = Crypto.encryptAES(s"${Crypto.sign(login)}:::$login"),
       maxAge = Some(2592000),
       path = "/",
       domain = None
@@ -44,17 +44,18 @@ object Authentication extends Controller {
 
   def loginPage(service: String) = Action.async { rh =>
     rh.cookies.get(cookieName).map { cookie: Cookie =>
-      cookie.value.split(":::").toList match {
+      Crypto.decryptAES(cookie.value).split(":::").toList match {
         case hash :: login :: Nil if Crypto.sign(login) == hash => {
           Env.userStore.findById(login).flatMap {
             case None => Future.successful(Ok(views.html.login(Application.portalName, service)).discardingCookies(discard:_*))
             case Some(user) => {
               val ticket = IdGenerator.uuid
+              // Ticket is only available for the next 60 seconds
               Cache.set(s"ticket-$ticket", Json.stringify(user.toJson), Duration(60, TimeUnit.SECONDS))
               if (service.contains("?")) {
-                Future.successful(Redirect(service + "&ticket=" + ticket).withCookies(buildCookie(login)))
+                Future.successful(Redirect(service + "&ticket=" + Crypto.encryptAES(ticket)).withCookies(buildCookie(login)))
               } else {
-                Future.successful(Redirect(service + "?ticket=" + ticket).withCookies(buildCookie(login)))
+                Future.successful(Redirect(service + "?ticket=" + Crypto.encryptAES(ticket)).withCookies(buildCookie(login)))
               }
             }
           }
@@ -65,7 +66,7 @@ object Authentication extends Controller {
   }
 
   def validate(ticket: String) = Action {
-    Cache.getAs[String](s"ticket-$ticket") match {
+    Cache.getAs[String](s"ticket-${Crypto.decryptAES(ticket)}") match {
       case None => NotFound
       case Some(infos) => {
         Cache.remove(s"ticket-$ticket")
@@ -95,11 +96,12 @@ object Authentication extends Controller {
             }
             case Some(user) => {
               val ticket = IdGenerator.uuid
+              // Ticket is only available for the next 60 seconds
               Cache.set(s"ticket-$ticket", Json.stringify(user.toJson), Duration(60, TimeUnit.SECONDS))
               if (service.contains("?")) {
-                Future.successful(Redirect(service + "&ticket=" + ticket).withCookies(buildCookie(login)))
+                Future.successful(Redirect(service + "&ticket=" + Crypto.encryptAES(ticket)).withCookies(buildCookie(login)))
               } else {
-                Future.successful(Redirect(service + "?ticket=" + ticket).withCookies(buildCookie(login)))
+                Future.successful(Redirect(service + "?ticket=" + Crypto.encryptAES(ticket)).withCookies(buildCookie(login)))
               }
             }
           }
