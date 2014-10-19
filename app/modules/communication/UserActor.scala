@@ -156,8 +156,6 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     case e => Logger.error(s"User actor received weird message $e")
   }
 
-  // TODO : be careful about user rights
-
   def defaultTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit = {
     (js \ "command").as[String] match {
       case "first" => Env.pageStore.findByUrl((js \ "url").as[String]).map {

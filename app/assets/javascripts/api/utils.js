@@ -16,4 +16,6 @@ portal.Utils = portal.Utils || {};
     exports.generateUUID = generateUUID;
     // TODO : extract params from URL
     // TODO : hook into history API
+    // TODO : history API hooks for mashetes
+    // TODO : url management API for mashetes (with #)
 })(portal.Utils);

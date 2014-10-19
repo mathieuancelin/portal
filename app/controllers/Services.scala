@@ -40,4 +40,11 @@ object Services extends Controller {
     }
     Ok
   }
+
+  // TODO : add service and page to upload global JSON structure for quick bootstrap
+
+  // TODO : services for external apps (with tokens):
+  // TODO :   - ask for user infos
+  // TODO :   - service to push on broadcast channel
+  // TODO :   - service to push on user channel
 }

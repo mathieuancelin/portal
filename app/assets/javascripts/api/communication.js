@@ -20,7 +20,6 @@ portal.Socket = portal.Socket || {};
 
         function onMessage(event) {
             //console.trace('data received on user websocket : ' + event.data);
-            // TODO : handle special messages like : etc ...
             var data = JSON.parse(event.data);
             if (data.firstConnection) {
                 portal.Location.current = portal.Location.current || data.page;

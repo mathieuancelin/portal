@@ -1,5 +1,13 @@
 /** @jsx React.DOM */
 
+// TODO : weather mashete
+// TODO : calculator mashete
+// TODO : stocks mashete
+// TODO : clock mashete
+// TODO : user profile mashete
+
+// TODO : notepad mashete (need storage)
+// TODO : todo mashete (need storage)
 var portal = portal || {};
 portal.Mashetes = portal.Mashetes || {};
 (function(exports) {

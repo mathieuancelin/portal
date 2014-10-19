@@ -6,7 +6,7 @@ import akka.actor.{Actor, ActorRef, Props}
 import akka.util.Timeout
 import modules.Env
 import modules.communication.UserActor
-import modules.identity.{Credential, AnonymousUser, User}
+import modules.identity.{AnonymousUser, User}
 import modules.structure.Page
 import play.api.Logger
 import play.api.Play.current
@@ -23,12 +23,19 @@ import play.twirl.api.Html
 import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
-// TODO : mashetes store to add mashetes to pages
-// TODO : add pages management
-// TODO : add users management page
-// TODO : add account management page
-// TODO : history API hooks for mashetes
-// TODO : url management API for mashetes (with #)
+// TODO : multitenant ????
+
+// TODO : provide local dev tools (simulates APIs ???)
+
+// TODO : add account management page for one user
+
+// TODO : add portal management page with
+// TODO :   - external consumer tokens
+// TODO :   - allowed SSO domains
+// TODO :   - mashetes store to add mashetes to the portal from urls
+// TODO :   - users management page
+// TODO :   - LDAP mapping
+// TODO :   - add pages management, in a global way (site map)
 
 object Application extends Controller {
 
@@ -153,6 +160,7 @@ object Application extends Controller {
   }
 
   def userStreamHttpFallbackInOut(token: String) = Action.async(parse.text) { rh =>
+    // TODO : cannot work with server push
     val promise = Promise[JsValue]()
     val fuser = rh.cookies.get(cookieName).map { cookie: Cookie =>
       Crypto.decryptAES(cookie.value).split(":::").toList match {

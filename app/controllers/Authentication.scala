@@ -17,6 +17,9 @@ import play.api.Play.current
 import play.api.data._
 import play.api.data.Forms._
 
+// TODO : oauth2 authentication builtin ???
+// TODO : delegate authentication cascade style
+// TODO : notify external system about authentfication/login
 object Authentication extends Controller {
 
   val cookieName = "PORTAL_SSO"
