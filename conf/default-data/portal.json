@@ -323,6 +323,15 @@
                     "allowTransparency": true,
                     "frameborder": "0"
                 }
+            },
+            {
+                "id": "widget-5",
+                "masheteId": "ForecastMashete",
+                "position": {
+                    "column": 1,
+                    "line": 1
+                },
+                "instanceConfig": {}
             }
         ],
         "leftColSize": 6,

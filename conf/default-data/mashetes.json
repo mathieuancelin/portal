@@ -57,5 +57,28 @@
         "defaultParam": {
             "title": "Pong"
         }
+    },
+    {
+        "_id": "ForecastMashete",
+        "name": "Forecast Mashete",
+        "description": "Display forecast infos",
+        "url": "${ASSET}/javascripts/mashetes/build/forecast.js",
+        "defaultParam": {}
+    },
+    {
+        "_id": "StocksMashete",
+        "name": "Stocks Mashete",
+        "description": "Display stocks infos",
+        "url": "${ASSET}/javascripts/mashetes/build/stocks.js",
+        "defaultParam": {
+            "stock": "AAPL"
+        }
+    },
+    {
+        "_id": "ClockMashete",
+        "name": "Clock Mashete",
+        "description": "Display clock",
+        "url": "${ASSET}/javascripts/mashetes/build/clock.js",
+        "defaultParam": {}
     }
 ]

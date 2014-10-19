@@ -1,6 +1,5 @@
 /** @jsx React.DOM */
 
-// TODO : weather mashete
 // TODO : calculator mashete
 // TODO : stocks mashete
 // TODO : clock mashete
