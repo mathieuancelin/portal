@@ -16,6 +16,14 @@
     padding-top: 10px;
 }
 
+.pushTop20 {
+    padding-top: 20px;
+}
+
+.pushTop30 {
+    padding-top: 30px;
+}
+
 iframe {
     border: none;
     padding-top: 10px;

@@ -71,7 +71,7 @@
         "description": "Display stocks infos",
         "url": "${ASSET}/javascripts/mashetes/build/stocks.js",
         "defaultParam": {
-            "stock": "AAPL"
+            "stocks": ["NASDAQ:MSFT", "NASDAQ:YHOO", "NASDAQ:AAPL", "NASDAQ:EBAY", "NASDAQ:GOOG", "NASDAQ:AMZN"]
         }
     },
     {

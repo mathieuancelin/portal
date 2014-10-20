@@ -12,10 +12,12 @@ import org.joda.time.DateTime
 import play.api.Logger
 import play.api.libs.Codecs
 import play.api.libs.json._
+import play.api.libs.ws.WS
 import reactivemongo.bson.BSONObjectID
+import play.api.Play.current
 
 import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success}
+import scala.util.{Try, Failure, Success}
 
 trait NotificationType {
   def name: String
@@ -38,6 +40,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     "/portal/topics/identity" -> securityTopic,
     "/portal/topics/structure" -> structureTopic,
     "/portal/topics/eventbus" -> eventBusTopic,
+    "/portal/topics/httpclient" -> httpClientTopic,
     "/portal/topics/default" -> defaultTopic
   )
 
@@ -192,6 +195,67 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         val payload = (js \ "payload" \ "payload").as[JsObject]
         // TODO : make it work in a distributed environement
         context.system.eventStream.publish(new UnicastMessage(user.email, channel, payload))
+      }
+      case e => Logger.error(s"Unknown security command : $e")
+    }
+  }
+
+  def httpClientTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
+    println(Json.prettyPrint(js \ "payload"))
+    (js \ "payload" \ "command").as[String] match {
+      case "execute" => {
+        val options = (js \ "payload" \ "options").as[JsObject]
+        val url = (options \ "url").as[String]
+        val method = (options \ "method").as[String]
+        val optParams = (options \ "params").asOpt[JsArray].map(_.value.map(_.as[String]).map(header => (header.split("=")(0), header.split("=")(1))))
+        val optTimeout = (options \ "timeout").asOpt[Int]
+        val optMediaType = (options \ "mediaType").asOpt[String]
+        val optJsonBody = (options \ "body").asOpt[JsValue]
+        val optStringBody = (options \ "body").asOpt[String]
+        val optHeaders = (options \ "headers").asOpt[JsArray].map(_.value.map(_.as[String]).map(header => (header.split("=")(0), header.split("=")(1))))
+        var holder = WS.url(url).withMethod(method)
+        if (optParams.isDefined) {
+          holder = holder.withQueryString(optParams.get:_*)
+        }
+        if (optTimeout.isDefined) {
+          holder = holder.withRequestTimeout(optTimeout.get)
+        }
+        if (optMediaType.isDefined) {
+          holder = holder.withHeaders("Media-Type" -> optMediaType.get)
+        }
+        if (optJsonBody.isDefined) {
+          holder = holder.withBody(optJsonBody.get)
+        }
+        if (optStringBody.isDefined) {
+          holder = holder.withBody(optStringBody.get)
+        }
+        if (optHeaders.isDefined) {
+          holder = holder.withHeaders(optHeaders.get:_*)
+        }
+        println(holder)
+        holder.execute().onComplete {
+          case Success(response) => {
+            val json: JsValue = if (response.body.startsWith("\n// ")) Try(Json.parse(response.body.substring(3))).toOption.getOrElse(Json.obj()) else Try(response.json).toOption.getOrElse(Json.obj())
+            respond(Json.obj(
+              "status" -> "success",
+              "success" -> true,
+              "status" -> response.status,
+              "statusText" -> response.statusText,
+              "response" -> Json.obj(
+                "raw" -> response.body,
+                "json" -> json
+              )
+            ), token, js)
+          }
+          case Failure(e) => {
+            e.printStackTrace()
+            respond(Json.obj(
+              "status" -> "failure",
+              "success" -> false,
+              "error" -> e.getMessage
+            ), token, js)
+          }
+        }
       }
       case e => Logger.error(s"Unknown security command : $e")
     }
