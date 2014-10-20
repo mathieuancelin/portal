@@ -1,5 +1,6 @@
 /** @jsx React.DOM */
 
+// TODO : custom location
 var portal = portal || {};
 portal.MashetesStore = portal.MashetesStore || {};
 (function(exports) {
