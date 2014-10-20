@@ -121,11 +121,30 @@ portal.Mashetes = portal.Mashetes || {};
                     var save = function(what) {
                         var newProps = _.extend({}, this.props.config);
                         newProps = _.extend(newProps, what);
-                        portal.Structure.saveMasheteOptions(this.props.config.masheteid, newProps).then(function() {
-                            this.setState({
-                                edit: false
-                            });
-                        }.bind(this));
+                        var masheteThis = this;
+                        portal.Structure.saveMasheteOptions(this.props.config.masheteid, newProps).then(function(newConfig) {
+                            masheteThis.setState({edit: false});
+                            setTimeout(function() {
+                                // TODO : common code => see init.js line 15
+                                var idx = this.props.config.position.line;
+                                var side = 'left';
+                                if (this.props.config.position.column === 1) {
+                                    side = 'right';
+                                }
+                                var hiding = '#' + side + '-row-' + (idx + 1);
+                                React.unmountComponentAtNode(document.getElementById(side + '-' + (idx + 1)));
+                                newConfig.masheteid = this.props.config.masheteid;
+                                newConfig.mashete = this.props.config.mashete;
+                                newConfig.position = this.props.config.position;
+                                newConfig.closeCallback = function () {
+                                    $(hiding).hide();
+                                };
+                                React.renderComponent(
+                                    new portal.MashetesStore[this.props.config.mashete](newConfig),
+                                    document.getElementById(side + '-' + (idx + 1))
+                                );
+                            }.bind(masheteThis), 100);
+                        });
                     }.bind(this);
                     var instance = this.props.customOptionsPanelFactory(this.props, stateGetter, save);
                     content = (React.DOM.div(null, instance));
