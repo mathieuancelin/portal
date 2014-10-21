@@ -6,10 +6,14 @@ portal.MashetesStore = portal.MashetesStore || {};
 
     var StockItem = React.createClass({
         getInitialState: function() {
+            this.props.bus.on('unselect', function() {
+                 this.setState({active: false})
+            }.bind(this));
             return { active: false };
         },
         onClick: function() {
             this.props.itemSelected(this.props.item);
+            this.setState({active: true});
         },
         render: function() {
             var clzz = this.props.item.progression < 0 ? 'list-group-item list-group-item-danger' : 'list-group-item list-group-item-success';
@@ -54,7 +58,8 @@ portal.MashetesStore = portal.MashetesStore || {};
             refresh();
             return {
                 stocks: [],
-                selected: stocks[0].split(':')[1]
+                selected: stocks[0].split(':')[1],
+                bus: _.extend({}, Backbone.Events)
             };
         },
         getTitle: function() {
@@ -65,17 +70,19 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             var comp = this;
+            var stocks = [];
             function itemSelected(item) {
+                comp.state.bus.trigger('unselect', {});
                 comp.setState({ selected: item.name });
             }
-            var stocksLi = _.map(this.state.stocks, function(item) {
-                return (<StockItem item={item} itemSelected={itemSelected} />);
+            _.map(this.state.stocks, function(item) {
+                stocks.push(<StockItem item={item} itemSelected={itemSelected} bus={this.state.bus}/>);
             }.bind(this));
             return (
                 <portal.Mashetes.Mashete title="Stocks" config={this.props}>
                     <div className="pushTop20">
                         <ul className="list-group">
-                        {stocksLi}
+                        {stocks}
                         </ul>
                         <div className="centeredText">
                             <img src={this.getImage(this.state.selected)}/>
