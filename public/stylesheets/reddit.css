@@ -1,0 +1,63 @@
+
+.redditmashete {
+    font-weight: 300;
+}
+
+.redditmashete h1 {
+    font-weight: 300;
+    text-transform: uppercase;
+    font-size: 42px;
+}
+
+.redditmashete .navigation {
+    width: 200px;
+    text-transform: uppercase;
+    float: right;
+}
+
+.redditmashete .navigation ul {
+    cursor: pointer;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+}
+
+.redditmashete .navigation .header {
+    padding: 15px;
+    color: #afb3b9;
+}
+
+.redditmashete .navigation li {
+    padding: 15px;
+}
+
+.redditmashete .navigation .selected {
+    background-color: #9061b2;
+}
+
+.redditmashete .score {
+    font-size: 25px;
+    margin: 15px;
+    color: #afb3b9;
+}
+
+.redditmashete .title {
+    font-size: 18px;
+}
+
+.redditmashete .title a {
+    text-decoration: none;
+}
+
+.redditmashete .author {
+    font-size: 16px;
+}
+
+/**
+ * Changed to a <b> because React wraps text nodes in
+ * <span> elements if they have non-text-node siblings.
+ */
+.redditmashete .author b {
+    color: #afb3b9;
+}

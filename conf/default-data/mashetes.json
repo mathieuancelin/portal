@@ -80,5 +80,12 @@
         "description": "Display clock",
         "url": "${ASSET}/javascripts/mashetes/build/clock.js",
         "defaultParam": {}
+    },
+    {
+        "_id": "RedditMashete",
+        "name": "Reddit Mashete",
+        "description": "Display reddit",
+        "url": "${ASSET}/javascripts/mashetes/build/reddit.js",
+        "defaultParam": {}
     }
 ]

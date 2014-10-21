@@ -70,13 +70,12 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             var comp = this;
-            var stocks = [];
             function itemSelected(item) {
                 comp.state.bus.trigger('unselect', {});
                 comp.setState({ selected: item.name });
             }
-            _.map(this.state.stocks, function(item) {
-                stocks.push(StockItem({item: item, itemSelected: itemSelected, bus: this.state.bus}));
+            var stocks = _.map(this.state.stocks, function(item) {
+                return (StockItem({item: item, itemSelected: itemSelected, bus: this.state.bus}));
             }.bind(this));
             return (
                 portal.Mashetes.Mashete({title: "Stocks", config: this.props}, 
