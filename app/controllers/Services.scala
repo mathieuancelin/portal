@@ -36,7 +36,7 @@ object Services extends Controller {
         _ <- Future.sequence(Json.parse(Files.toString(mashetes, utf8)).as(Reads.seq(Mashete.masheteFmt)).map(Env.masheteStore.save))
         _ <- Future.sequence(Json.parse(Files.toString(portal, utf8)).as(Reads.seq(Page.pageFmt)).map(Env.pageStore.save))
       } yield ()
-      Await.result(future, Duration(1, TimeUnit.MINUTES))
+      Await.result(future, Duration(1, TimeUnit.MINUTES))  // Hell yeah
     }
     Ok
   }
@@ -47,4 +47,5 @@ object Services extends Controller {
   // TODO :   - ask for user infos
   // TODO :   - service to push on broadcast channel
   // TODO :   - service to push on user channel
+  // TODO :   - service to push data in user store
 }

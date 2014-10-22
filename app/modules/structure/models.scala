@@ -20,7 +20,7 @@ case class Page(
                  _id: String,
                  name: String,
                  description: String,
-                 url: String,
+                 url: String,      // TODO : add CSS urls
                  accessibleByIds: Seq[String],
                  subPageIds: Seq[String],
                  mashetes: Seq[MasheteInstance],
