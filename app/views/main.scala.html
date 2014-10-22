@@ -11,6 +11,7 @@
     </head>
 
     <body>
+        @* TODO : Configurable bar *@
         <div id="mainNavBar" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
@@ -24,11 +25,11 @@
 
                 </div>
                 <div class="navbar-collapse collapse">
-
+                    @* TODO : as a provided mashete or user mashete *@
                     <ul class="nav navbar-nav">
                         @subTree
                     </ul>
-
+                    @* TODO : as a provided mashete or user mashete *@
                     @user match {
                         case modules.identity.AnonymousUser => {
                             <div class="pull-right">

@@ -89,10 +89,10 @@
         "defaultParam": {}
     },
     {
-        "_id": "MongoMashete",
-        "name": "Mongo Mashete",
-        "description": "Display mongo",
-        "url": "${ASSET}/javascripts/mashetes/build/repo.js",
+        "_id": "TodoMashete",
+        "name": "Todo Mashete",
+        "description": "Todo list",
+        "url": "${ASSET}/javascripts/mashetes/build/todo.js",
         "defaultParam": {}
     }
 ]
