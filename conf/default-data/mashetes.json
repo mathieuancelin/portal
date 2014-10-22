@@ -87,5 +87,12 @@
         "description": "Display reddit",
         "url": "${ASSET}/javascripts/mashetes/build/reddit.js",
         "defaultParam": {}
+    },
+    {
+        "_id": "MongoMashete",
+        "name": "Mongo Mashete",
+        "description": "Display mongo",
+        "url": "${ASSET}/javascripts/mashetes/build/repo.js",
+        "defaultParam": {}
     }
 ]

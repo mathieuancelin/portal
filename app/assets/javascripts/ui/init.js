@@ -115,6 +115,7 @@ $(function() {
     portal.Socket.init().then(function() {
         try {
             console.log('Init UI ...');
+            React.initializeTouchEvents(true);
             setTimeout(startUi, 0);
         } catch(e) {
             console.error(e);

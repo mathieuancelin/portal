@@ -5,6 +5,7 @@ import java.util
 import akka.actor.{Actor, ActorRef}
 import common.IdGenerator
 import modules.Env
+import modules.data.UserRepo
 import modules.identity.User
 import modules.jwt.JsonWebToken
 import modules.structure._
@@ -41,6 +42,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     "/portal/topics/structure" -> structureTopic,
     "/portal/topics/eventbus" -> eventBusTopic,
     "/portal/topics/httpclient" -> httpClientTopic,
+    "/portal/topics/repo" -> repoTopic,
     "/portal/topics/default" -> defaultTopic
   )
 
@@ -179,6 +181,33 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
     (js \ "payload" \ "command").as[String] match {
       case "WHOAMI" => respond(userJson, token, js)
       case e => Logger.error(s"Unknown security command : $e")
+    }
+  }
+  def repoTopic(js: JsObject, token: String, userJson: JsValue, user: User): Unit  = {
+    (js \ "payload" \ "command").as[String] match {
+      case "deleteAll" => {
+        UserRepo.deleteAll(user.email).map(_ => respond(Json.obj(), token, js))
+      }
+      case "findById"  => {
+        val _id = (js \ "payload" \ "_id").as[String]
+        UserRepo.findById(user.email, _id).map(doc => respond(doc.getOrElse(Json.obj()), token, js))
+      }
+      case "findAll"   => {
+        UserRepo.findAll(user.email).map(seq => respond(JsArray(seq), token, js))
+      }
+      case "search"    => {
+        val query = (js \ "payload" \ "query").as[JsObject]
+        UserRepo.search(user.email, query).map(seq => respond(JsArray(seq), token, js))
+      }
+      case "delete"    => {
+        val _id = (js \ "payload" \ "_id").as[String]
+        UserRepo.delete(user.email, _id).map(_ => respond(Json.obj(), token, js))
+      }
+      case "save"      => {
+        val doc = (js \ "payload" \ "doc").as[JsObject]
+        UserRepo.save(user.email, doc).map(d => respond(d, token, js))
+      }
+      case e => Logger.error(s"Unknown repo command : $e")
     }
   }
 
