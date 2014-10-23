@@ -4,7 +4,7 @@ var portal = portal || {};
 portal.MashetesStore = portal.MashetesStore || {};
 (function(exports) {
 
-    var DOC_TYPE = 'com.foo.bar.TodoMashete.tasks';
+    var DOC_TYPE = 'com.foo.bar.TodoMashete.Task';
 
     var TaskItem =  React.createClass({displayName: 'TaskItem',
         getInitialState: function () {
@@ -47,9 +47,7 @@ portal.MashetesStore = portal.MashetesStore || {};
             };
         },
         componentDidMount: function() {
-            portal.Repository.search({ docType: DOC_TYPE }).then(function(data) {
-                this.setState({tasks: data || []});
-            }.bind(this));
+            this.reloadList();
         },
         updateName: function(e) {
             this.setState({taskName: e.target.value});

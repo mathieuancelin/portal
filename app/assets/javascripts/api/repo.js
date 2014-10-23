@@ -1,5 +1,6 @@
 var portal = portal || {};
 portal.Repository = portal.Repository || {};
+// TODO : filter by doc type
 (function(exports) {
     function deleteAll() {
         return portal.Socket.ask({
