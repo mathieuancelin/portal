@@ -9,6 +9,7 @@ import play.modules.reactivemongo.json.BSONFormats._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+// TODO : filter by mashete instance + url
 object UserRepo {
 
   lazy val collection = ReactiveMongoPlugin.db.collection[JSONCollection]("userstore")
@@ -34,6 +35,17 @@ object UserRepo {
   }
   def delete(user: String, id: String)(implicit ec: ExecutionContext): Future[Unit] = {
     collection.remove(Json.obj("_id" -> id, "__user" -> user)).map(_ => ())
+  }
+  def delete(user: String, query: JsObject)(implicit ec: ExecutionContext): Future[Unit] = {
+    val actualQuery = query \ "__user" match {
+      case JsUndefined() => query ++ Json.obj("__user" -> user)
+      case _ => {
+        val tmp = query - "__user"
+        tmp ++ Json.obj("__user" -> user)
+      }
+    }
+    println("removing " + Json.prettyPrint(actualQuery))
+    collection.remove(actualQuery).map(_ => ())
   }
   def save(user: String, obj: JsObject)(implicit ec: ExecutionContext): Future[JsObject] = {
     val actualObj: JsObject = obj \ "__user" match {

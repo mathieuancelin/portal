@@ -44,6 +44,15 @@ portal.Repository = portal.Repository || {};
             }
         });
     }
+    function removeSelection(query) {
+        return portal.Socket.ask({
+            topic: "/portal/topics/repo",
+            payload: {
+                command: "deleteSelection",
+                query: query
+            }
+        });
+    }
     function save(doc) {
         return portal.Socket.ask({
             topic: "/portal/topics/repo",
@@ -59,4 +68,5 @@ portal.Repository = portal.Repository || {};
     exports.search    = search;
     exports.remove    = remove;
     exports.save      = save;
+    exports.removeSelection      = removeSelection;
 })(portal.Repository);

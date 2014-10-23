@@ -4,7 +4,7 @@ var portal = portal || {};
 portal.MashetesStore = portal.MashetesStore || {};
 (function(exports) {
 
-    var DATA_NAME = 'com.foo.bar.TodoMashete.tasks';
+    var DOC_TYPE = 'com.foo.bar.TodoMashete.tasks';
 
     var TaskItem =  React.createClass({
         getInitialState: function () {
@@ -18,12 +18,12 @@ portal.MashetesStore = portal.MashetesStore || {};
             }.bind(this));
         },
         render: function () {
-            var classes = 'label ';
-            if (this.state.done) {
-                classes = classes + 'label-success'
-            } else {
-                classes = classes + 'label-default'
-            }
+            var cx = React.addons.classSet;
+            var classes = cx({
+                'label': true,
+                'label-success': this.state.done,
+                'label-default': !this.state.done
+            });
             return (
                 <li className="list-group-item">
                     <div className="row">
@@ -39,7 +39,6 @@ portal.MashetesStore = portal.MashetesStore || {};
         }
     });
 
-
     exports.TodoMashete = React.createClass({
         getInitialState: function() {
             return {
@@ -48,58 +47,46 @@ portal.MashetesStore = portal.MashetesStore || {};
             };
         },
         componentDidMount: function() {
-            portal.Repository.findById(DATA_NAME).then(function(data) {
-                this.setState({tasks: data.tasks || []});
+            portal.Repository.search({ docType: DOC_TYPE }).then(function(data) {
+                this.setState({tasks: data || []});
             }.bind(this));
         },
         updateName: function(e) {
             this.setState({taskName: e.target.value});
         },
+        reloadList: function() {
+            portal.Repository.search({ docType: DOC_TYPE }).then(function(data) {
+                this.setState({tasks: data || []});
+            }.bind(this));
+        },
         save: function() {
-            var tasks = this.state.tasks;
-            var name = this.state.taskName;
             var task = {
-                name: name,
+                name: this.state.taskName,
                 done: false,
-                _id: portal.Utils.generateUUID()
+                docType: DOC_TYPE
             };
-            tasks.push(task);
-            this.setState({tasks: tasks}, function() {
-                portal.Repository.save({
-                    _id: DATA_NAME,
-                    tasks: tasks
-                }).then(function(data) {
-                    this.setState({tasks: data.tasks, taskName: ''});
-                }.bind(this));
+            portal.Repository.save(task).then(function() {
+                this.reloadList();
             }.bind(this));
         },
         deleteAll: function() {
-            var tasks = this.state.tasks;
-            var newTasks = _.filter(tasks, function(task) { return !task.done; });
-            portal.Repository.save({
-                _id: DATA_NAME,
-                tasks: newTasks
-            }).then(function(data) {
-                this.setState({tasks: data.tasks});
+            portal.Repository.removeSelection({
+                docType: DOC_TYPE,
+                done: true
+            }).then(function() {
+                this.reloadList();
             }.bind(this));
         },
         render: function() {
             var _this = this;
             var displayedTasks = _.map(this.state.tasks, function(item) {
                 function change(id, done) {
-                    var tasks = _.map(_this.state.tasks, function(task) {
-                        if (id === task._id) {
-                            var newTask = _.extend({}, task);
-                            newTask.done = done;
-                            return newTask;
-                        }
-                        return task;
-                    });
                     portal.Repository.save({
-                        _id: DATA_NAME,
-                        tasks: tasks
-                    }).then(function(data) {
-                        this.setState({tasks: data.tasks});
+                        docType: DOC_TYPE,
+                        _id: id,
+                        done: done
+                    }).then(function() {
+                        _this.reloadList();
                     }.bind(_this));
                 }
                 return (<TaskItem task={item} updateDone={change}/>);
@@ -126,7 +113,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                     {displayedTasks}
                     </ul>
                 </portal.Mashetes.Mashete>
-                );
+            );
         }
     });
 })(portal.MashetesStore);

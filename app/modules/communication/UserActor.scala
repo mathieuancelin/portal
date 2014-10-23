@@ -203,6 +203,10 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         val _id = (js \ "payload" \ "_id").as[String]
         UserRepo.delete(user.email, _id).map(_ => respond(Json.obj(), token, js))
       }
+      case "deleteSelection"    => {
+        val query = (js \ "payload" \ "query").as[JsObject]
+        UserRepo.delete(user.email, query).map(_ => respond(Json.obj(), token, js))
+      }
       case "save"      => {
         val doc = (js \ "payload" \ "doc").as[JsObject]
         UserRepo.save(user.email, doc).map(d => respond(d, token, js))
