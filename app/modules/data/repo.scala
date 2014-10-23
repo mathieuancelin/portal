@@ -9,7 +9,7 @@ import play.modules.reactivemongo.json.BSONFormats._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-// TODO : filter by mashete instance + url
+// TODO : filter by mashete type
 object UserRepo {
 
   lazy val collection = ReactiveMongoPlugin.db.collection[JSONCollection]("userstore")

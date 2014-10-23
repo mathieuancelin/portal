@@ -4,7 +4,9 @@ var portal = portal || {};
 portal.MashetesStore = portal.MashetesStore || {};
 (function(exports) {
 
-    var DOC_TYPE = 'com.foo.bar.TodoMashete.Task';
+    var SANDBOX = 'com.foo.bar.TodoMashete';
+    var DOC_TYPE = 'TodoMashete.Task';
+    var repository = portal.Repository.of(SANDBOX);
 
     var TaskItem =  React.createClass({
         getInitialState: function () {
@@ -53,7 +55,7 @@ portal.MashetesStore = portal.MashetesStore || {};
             this.setState({taskName: e.target.value});
         },
         reloadList: function() {
-            portal.Repository.search({ docType: DOC_TYPE }).then(function(data) {
+            repository.search({ docType: DOC_TYPE }).then(function(data) {
                 this.setState({tasks: data || []});
             }.bind(this));
         },
@@ -63,12 +65,16 @@ portal.MashetesStore = portal.MashetesStore || {};
                 done: false,
                 docType: DOC_TYPE
             };
-            portal.Repository.save(task).then(function() {
+            var fakeTasks = this.state.tasks;
+            fakeTasks.push(task);
+            this.setState({tasks: fakeTasks}); // for user responsiveness
+            repository.save(task).then(function() {
                 this.reloadList();
+                this.setState({taskName: ''});
             }.bind(this));
         },
         deleteAll: function() {
-            portal.Repository.removeSelection({
+            repository.removeSelection({
                 docType: DOC_TYPE,
                 done: true
             }).then(function() {
@@ -79,7 +85,7 @@ portal.MashetesStore = portal.MashetesStore || {};
             var _this = this;
             var displayedTasks = _.map(this.state.tasks, function(item) {
                 function change(id, done) {
-                    portal.Repository.save({
+                    repository.save({
                         docType: DOC_TYPE,
                         _id: id,
                         done: done

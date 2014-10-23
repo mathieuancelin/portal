@@ -265,7 +265,6 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
         if (optHeaders.isDefined) {
           holder = holder.withHeaders(optHeaders.get:_*)
         }
-        println(holder)
         holder.execute().onComplete {
           case Success(response) => {
             val json: JsValue = if (response.body.startsWith("\n// ")) Try(Json.parse(response.body.substring(3))).toOption.getOrElse(Json.obj()) else Try(response.json).toOption.getOrElse(Json.obj())
