@@ -11,9 +11,9 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props}, 
-                    React.DOM.h1(null, portal.Location.current.name), 
-                    React.DOM.p(null, portal.Location.current.description)
+                React.createElement(portal.Mashetes.Mashete, {title: this.state.displayedTitle, config: this.props}, 
+                    React.createElement("h1", null, portal.Location.current.name), 
+                    React.createElement("p", null, portal.Location.current.description)
                 )
             );
         }
@@ -27,9 +27,9 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props}, 
-                    React.DOM.h1(null, this.state.displayedTitle), 
-                    React.DOM.p(null, this.state.displayedDescription)
+                React.createElement(portal.Mashetes.Mashete, {title: this.state.displayedTitle, config: this.props}, 
+                    React.createElement("h1", null, this.state.displayedTitle), 
+                    React.createElement("p", null, this.state.displayedDescription)
                 )
             );
         }

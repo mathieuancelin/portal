@@ -25,16 +25,17 @@ $(function() {
                     $(hiding).hide();
                 };
                 console.log("try to instanciate " + mashete.masheteId);
+                React.initializeTouchEvents(true);
                 if (portal.MashetesStore[mashete.masheteId]) {
-                    console.log("Success !!!");
-                    React.renderComponent(
-                        new portal.MashetesStore[mashete.masheteId](mashete.instanceConfig),
+                    React.render(
+                        React.createElement(portal.MashetesStore[mashete.masheteId], mashete.instanceConfig),
                         document.getElementById(side + '-' + (idx + 1))
                     );
+                    console.log("Success !!!");
                 } else {
                     console.log("Fail !!!");
-                    React.renderComponent(
-                        new portal.MashetesStore.FallbackMashete({}),
+                    React.render(
+                        React.createElement(portal.MashetesStore.FallbackMashete, {}),
                         document.getElementById(side + '-' + (idx + 1))
                     );
                 }
@@ -115,7 +116,6 @@ $(function() {
     portal.Socket.init().then(function() {
         try {
             console.log('Init UI ...');
-            React.initializeTouchEvents(true);
             setTimeout(startUi, 0);
         } catch(e) {
             console.error(e);

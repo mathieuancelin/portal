@@ -19,9 +19,9 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: "Forecast", config: this.props}, 
-                    React.DOM.div({className: "centeredText"}, 
-                        React.DOM.iframe({frameborder: "0", height: "245", width: "100%", src: this.state.displayedUrl}, " ")
+                React.createElement(portal.Mashetes.Mashete, {title: "Forecast", config: this.props}, 
+                    React.createElement("div", {className: "centeredText"}, 
+                        React.createElement("iframe", {frameBorder: "0", height: "245", width: "100%", src: this.state.displayedUrl}, " ")
                     )
                 )
                 );

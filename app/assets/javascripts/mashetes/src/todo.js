@@ -93,14 +93,14 @@ portal.MashetesStore = portal.MashetesStore || {};
                         _this.reloadList();
                     }.bind(_this));
                 }
-                return (<TaskItem task={item} updateDone={change}/>);
+                return (<TaskItem key={item._id} task={item} updateDone={change}/>);
             });
             return (
                 <portal.Mashetes.Mashete title="Todo list" config={this.props}>
                     <h3>Todo List</h3>
                     <div>
                         <div className="row">
-                            <form class="form-inline" role="form">
+                            <form role="form">
                                 <div className="form-group col-md-10">
                                     <input placeholder="What do you have to do ?" type="text" className="form-control" value={this.state.taskName} onChange={this.updateName}/>
                                 </div>

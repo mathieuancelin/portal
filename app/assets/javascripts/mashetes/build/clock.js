@@ -14,9 +14,9 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: "Clock", config: this.props}, 
-                    React.DOM.div({className: "centeredText"}, 
-                        React.DOM.h3(null, this.state.displayedDate)
+                React.createElement(portal.Mashetes.Mashete, {title: "Clock", config: this.props}, 
+                    React.createElement("div", {className: "centeredText"}, 
+                        React.createElement("h3", null, this.state.displayedDate)
                     )
                 )
                 );

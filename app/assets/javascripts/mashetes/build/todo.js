@@ -27,13 +27,13 @@ portal.MashetesStore = portal.MashetesStore || {};
                 'label-default': !this.state.done
             });
             return (
-                React.DOM.li({className: "list-group-item"}, 
-                    React.DOM.div({className: "row"}, 
-                        React.DOM.div({className: "col-md-10"}, 
+                React.createElement("li", {className: "list-group-item"}, 
+                    React.createElement("div", {className: "row"}, 
+                        React.createElement("div", {className: "col-md-10"}, 
                             this.props.task.name
                         ), 
-                        React.DOM.div({className: "col-md-2"}, 
-                            React.DOM.span({onClick: this.change, className: classes}, "Done")
+                        React.createElement("div", {className: "col-md-2"}, 
+                            React.createElement("span", {onClick: this.change, className: classes}, "Done")
                         )
                     )
                 )
@@ -65,6 +65,9 @@ portal.MashetesStore = portal.MashetesStore || {};
                 done: false,
                 docType: DOC_TYPE
             };
+            var fakeTasks = this.state.tasks;
+            fakeTasks.push(task);
+            this.setState({tasks: fakeTasks}); // for user responsiveness
             repository.save(task).then(function() {
                 this.reloadList();
                 this.setState({taskName: ''});
@@ -90,27 +93,27 @@ portal.MashetesStore = portal.MashetesStore || {};
                         _this.reloadList();
                     }.bind(_this));
                 }
-                return (TaskItem({task: item, updateDone: change}));
+                return (React.createElement(TaskItem, {key: item._id, task: item, updateDone: change}));
             });
             return (
-                portal.Mashetes.Mashete({title: "Todo list", config: this.props}, 
-                    React.DOM.h3(null, "Todo List"), 
-                    React.DOM.div(null, 
-                        React.DOM.div({className: "row"}, 
-                            React.DOM.form({class: "form-inline", role: "form"}, 
-                                React.DOM.div({className: "form-group col-md-10"}, 
-                                    React.DOM.input({placeholder: "What do you have to do ?", type: "text", className: "form-control", value: this.state.taskName, onChange: this.updateName})
+                React.createElement(portal.Mashetes.Mashete, {title: "Todo list", config: this.props}, 
+                    React.createElement("h3", null, "Todo List"), 
+                    React.createElement("div", null, 
+                        React.createElement("div", {className: "row"}, 
+                            React.createElement("form", {role: "form"}, 
+                                React.createElement("div", {className: "form-group col-md-10"}, 
+                                    React.createElement("input", {placeholder: "What do you have to do ?", type: "text", className: "form-control", value: this.state.taskName, onChange: this.updateName})
                                 ), 
-                                React.DOM.div({className: "form-group"}, 
-                                    React.DOM.div({className: "btn-group"}, 
-                                        React.DOM.button({type: "button", onClick: this.save, className: "btn btn-success"}, React.DOM.span({className: "glyphicon glyphicon-floppy-saved"})), 
-                                        React.DOM.button({type: "button", onClick: this.deleteAll, className: "btn btn-danger"}, React.DOM.span({className: "glyphicon glyphicon-trash"}))
+                                React.createElement("div", {className: "form-group"}, 
+                                    React.createElement("div", {className: "btn-group"}, 
+                                        React.createElement("button", {type: "button", onClick: this.save, className: "btn btn-success"}, React.createElement("span", {className: "glyphicon glyphicon-floppy-saved"})), 
+                                        React.createElement("button", {type: "button", onClick: this.deleteAll, className: "btn btn-danger"}, React.createElement("span", {className: "glyphicon glyphicon-trash"}))
                                     )
                                 )
                             )
                         )
                     ), 
-                    React.DOM.ul({className: "list-group"}, 
+                    React.createElement("ul", {className: "list-group"}, 
                     displayedTasks
                     )
                 )

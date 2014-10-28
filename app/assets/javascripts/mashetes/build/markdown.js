@@ -20,14 +20,14 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                React.DOM.div(null, 
-                    React.DOM.div({className: "row"}, 
-                        React.DOM.textarea({onChange: this.changeConfig, className: "largeText", rows: "200", value: this.state.optionsContent})
+                React.createElement("div", null, 
+                    React.createElement("div", {className: "row"}, 
+                        React.createElement("textarea", {onChange: this.changeConfig, className: "largeText", rows: "200", value: this.state.optionsContent})
                     ), 
-                    React.DOM.div({className: "row"}, 
-                        React.DOM.div({className: "btn-group pull-right"}, 
-                            React.DOM.button({type: "button", onClick: this.cancelAndHideOptions, className: "btn btn-sm btn-danger"}, "Cancel"), 
-                            React.DOM.button({type: "button", onClick: this.saveAndHideOptions, className: "btn btn-sm btn-primary"}, "Ok")
+                    React.createElement("div", {className: "row"}, 
+                        React.createElement("div", {className: "btn-group pull-right"}, 
+                            React.createElement("button", {type: "button", onClick: this.cancelAndHideOptions, className: "btn btn-sm btn-danger"}, "Cancel"), 
+                            React.createElement("button", {type: "button", onClick: this.saveAndHideOptions, className: "btn btn-sm btn-primary"}, "Ok")
                         )
                     )
                 )
@@ -46,9 +46,9 @@ portal.MashetesStore = portal.MashetesStore || {};
                 return new MarkdownMasheteOptionsPanel({ outterProps: outterProps, stateGetter: stateGetter, save: save });
             };
             return (
-                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props, customOptionsPanelFactory: panel}, 
-                    React.DOM.div(null, 
-                        React.DOM.span({dangerouslySetInnerHTML: {__html: rawMarkup}})
+                React.createElement(portal.Mashetes.Mashete, {title: this.state.displayedTitle, config: this.props, customOptionsPanelFactory: panel}, 
+                    React.createElement("div", null, 
+                        React.createElement("span", {dangerouslySetInnerHTML: {__html: rawMarkup}})
                     )
                 )
             );

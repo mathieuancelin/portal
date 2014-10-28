@@ -35,8 +35,8 @@ portal.Mashetes = portal.Mashetes || {};
                 id: masheteId
             }
         }).then(function() {
-            React.renderComponent(
-                new portal.MashetesStore[masheteId](conf), document.getElementById("left-" + id)
+            React.render(
+                React.createElement(portal.MashetesStore[masheteId], conf), document.getElementById("left-" + id)
             );
         })
     };
@@ -98,8 +98,8 @@ portal.Mashetes = portal.Mashetes || {};
                     newConfig.closeCallback = function () {
                         $(hiding).hide();
                     };
-                    React.renderComponent(
-                        new portal.MashetesStore[this.props.config.mashete](newConfig),
+                    React.render(
+                        React.createElement(portal.MashetesStore[this.props.config.mashete], newConfig),
                         document.getElementById(side + '-' + (idx + 1))
                     );
                 }.bind(masheteThis), 100);
@@ -110,7 +110,7 @@ portal.Mashetes = portal.Mashetes || {};
         },
         render: function() {
             if (this.state.hide) {
-                return (React.DOM.div(null));
+                return (React.createElement("div", null));
             }
             var content = this.props.children;
             if (this.state.edit) {
@@ -139,25 +139,25 @@ portal.Mashetes = portal.Mashetes || {};
                                 newConfig.closeCallback = function () {
                                     $(hiding).hide();
                                 };
-                                React.renderComponent(
-                                    new portal.MashetesStore[this.props.config.mashete](newConfig),
+                                React.render(
+                                    React.createElement(portal.MashetesStore[this.props.config.mashete], newConfig),
                                     document.getElementById(side + '-' + (idx + 1))
                                 );
                             }.bind(masheteThis), 100);
                         });
                     }.bind(this);
                     var instance = this.props.customOptionsPanelFactory(this.props, stateGetter, save);
-                    content = (React.DOM.div(null, instance));
+                    content = (React.createElement("div", null, instance));
                 } else {
                     content = (
-                        React.DOM.div(null, 
-                            React.DOM.div({className: "row"}, 
-                                React.DOM.textarea({onChange: this.changeConfig, className: "largeText", value: this.state.optionsContent})
+                        React.createElement("div", null, 
+                            React.createElement("div", {className: "row"}, 
+                                React.createElement("textarea", {onChange: this.changeConfig, className: "largeText", value: this.state.optionsContent})
                             ), 
-                            React.DOM.div({className: "row"}, 
-                                React.DOM.div({className: "btn-group pull-right"}, 
-                                    React.DOM.button({type: "button", onClick: this.cancelAndHideOptions, className: "btn btn-sm btn-danger"}, "Cancel"), 
-                                    React.DOM.button({type: "button", onClick: this.saveAndHideOptions, className: "btn btn-sm btn-primary"}, "Ok")
+                            React.createElement("div", {className: "row"}, 
+                                React.createElement("div", {className: "btn-group pull-right"}, 
+                                    React.createElement("button", {type: "button", onClick: this.cancelAndHideOptions, className: "btn btn-sm btn-danger"}, "Cancel"), 
+                                    React.createElement("button", {type: "button", onClick: this.saveAndHideOptions, className: "btn btn-sm btn-primary"}, "Ok")
                                 )
                             )
                         )
@@ -165,13 +165,13 @@ portal.Mashetes = portal.Mashetes || {};
                 }
             }
             var AdminBar = (
-                React.DOM.div({className: "row mashete-bar"}, 
-                    React.DOM.div({className: "pull-left"}, 
-                        React.DOM.h5(null, this.props.title)
+                React.createElement("div", {className: "row mashete-bar"}, 
+                    React.createElement("div", {className: "pull-left"}, 
+                        React.createElement("h5", null, this.props.title)
                     ), 
-                    React.DOM.div({className: "btn-group pull-right"}, 
-                        React.DOM.button({type: "button", className: "btn btn-primary btn-xs", onClick: this.flipOptions}, React.DOM.span({className: "glyphicon glyphicon-cog"})), 
-                        React.DOM.button({type: "button", className: "btn btn-danger btn-xs", onClick: this.hide}, React.DOM.span({className: "glyphicon glyphicon-remove"}))
+                    React.createElement("div", {className: "btn-group pull-right"}, 
+                        React.createElement("button", {type: "button", className: "btn btn-primary btn-xs", onClick: this.flipOptions}, React.createElement("span", {className: "glyphicon glyphicon-cog"})), 
+                        React.createElement("button", {type: "button", className: "btn btn-danger btn-xs", onClick: this.hide}, React.createElement("span", {className: "glyphicon glyphicon-remove"}))
                     )
                 )
                 );
@@ -179,16 +179,16 @@ portal.Mashetes = portal.Mashetes || {};
                 AdminBar = undefined;
             }
             return (
-                React.DOM.div({className: "mashete col-md-12", draggable: "false", ondragover: "event.preventDefault();", 'data-masheteid': this.props.config.masheteid}, 
-                    React.DOM.div({className: "container-fluid"}, 
-                        React.DOM.div({class: "row droppable"}), 
+                React.createElement("div", {className: "mashete col-md-12", draggable: "false", ondragover: "event.preventDefault();", 'data-masheteid': this.props.config.masheteid}, 
+                    React.createElement("div", {className: "container-fluid"}, 
+                        React.createElement("div", {className: "row droppable"}), 
                             AdminBar, 
-                        React.DOM.div({className: "row"}, 
-                            React.DOM.div({className: "col-md-12"}, 
+                        React.createElement("div", {className: "row"}, 
+                            React.createElement("div", {className: "col-md-12"}, 
                                 content
                             )
                         ), 
-                        React.DOM.div({class: "row droppable"})
+                        React.createElement("div", {className: "row droppable"})
                     )
                 )
             );

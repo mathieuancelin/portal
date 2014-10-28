@@ -10,7 +10,7 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                React.DOM.li({onClick: this.onClick, className: this.props.selected ? "list-group-item active" : "list-group-item"}, 
+                React.createElement("li", {onClick: this.onClick, className: this.props.selected ? "list-group-item active" : "list-group-item"}, 
                 this.props.item.data.display_name
                 )
             );
@@ -26,16 +26,16 @@ portal.MashetesStore = portal.MashetesStore || {};
 
             var items = this.props.items.map(function(item) {
                 return (
-                    NavigationItem({key: item.data.id, 
+                    React.createElement(NavigationItem, {key: item.data.id, 
                         item: item, itemSelected: _this.setSelectedItem, 
                         selected: item.data.url === _this.props.activeUrl})
                     );
             });
 
             return (
-                React.DOM.div({className: "navigation"}, 
-                    React.DOM.div({className: "header"}, "Navigation"), 
-                    React.DOM.ul({className: "list-group"}, 
+                React.createElement("div", {className: "navigation"}, 
+                    React.createElement("div", {className: "header"}, "Navigation"), 
+                    React.createElement("ul", {className: "list-group"}, 
                     items
                     )
                 )
@@ -47,18 +47,18 @@ portal.MashetesStore = portal.MashetesStore || {};
         render: function() {
             var storyNodes = this.props.items.map(function(item) {
                 return (
-                    React.DOM.tr({key: item.data.url}, 
-                        React.DOM.td(null, 
-                            React.DOM.p({className: "score"}, item.data.score)
+                    React.createElement("tr", {key: item.data.url}, 
+                        React.createElement("td", null, 
+                            React.createElement("p", {className: "score"}, item.data.score)
                         ), 
-                        React.DOM.td(null, 
-                            React.DOM.p({className: "title"}, 
-                                React.DOM.a({href: item.data.url, target: "_blank"}, 
+                        React.createElement("td", null, 
+                            React.createElement("p", {className: "title"}, 
+                                React.createElement("a", {href: item.data.url, target: "_blank"}, 
                                 item.data.title
                                 )
                             ), 
-                            React.DOM.p({className: "author"}, 
-                            "Posted by ", React.DOM.b(null, item.data.author)
+                            React.createElement("p", {className: "author"}, 
+                            "Posted by ", React.createElement("b", null, item.data.author)
                             )
                         )
                     )
@@ -66,8 +66,8 @@ portal.MashetesStore = portal.MashetesStore || {};
             });
 
             return (
-                React.DOM.table(null, 
-                    React.DOM.tbody(null, 
+                React.createElement("table", null, 
+                    React.createElement("tbody", null, 
                     storyNodes
                     )
                 )
@@ -94,12 +94,12 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                React.DOM.div(null, 
-                    React.DOM.h1(null, this.state.title), 
-                    Navigation({activeUrl: this.state.activeNavigationUrl, 
+                React.createElement("div", null, 
+                    React.createElement("h1", null, this.state.title), 
+                    React.createElement(Navigation, {activeUrl: this.state.activeNavigationUrl, 
                         items: this.state.navigationItems, 
                         itemSelected: this.setSelectedItem}), 
-                    StoryList({items: this.state.storyItems})
+                    React.createElement(StoryList, {items: this.state.storyItems})
                 )
             );
         },
@@ -117,9 +117,9 @@ portal.MashetesStore = portal.MashetesStore || {};
     exports.RedditMashete = React.createClass({displayName: 'RedditMashete',
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: "Reddit", config: this.props}, 
-                    React.DOM.div({className: "redditmashete"}, 
-                        Reddit(null)
+                React.createElement(portal.Mashetes.Mashete, {title: "Reddit", config: this.props}, 
+                    React.createElement("div", {className: "redditmashete"}, 
+                        React.createElement(Reddit, null)
                     )
                 )
             );

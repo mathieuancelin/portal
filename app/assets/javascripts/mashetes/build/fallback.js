@@ -6,8 +6,8 @@ portal.MashetesStore = portal.MashetesStore || {};
     exports.FallbackMashete = React.createClass({displayName: 'FallbackMashete',
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: "Fallback", config: this.props}, 
-                    React.DOM.h3(null, "Mashete kills ... ")
+                React.createElement(portal.Mashetes.Mashete, {title: "Fallback", config: this.props}, 
+                    React.createElement("h3", null, "Mashete kills ... ")
                 )
             );
         }

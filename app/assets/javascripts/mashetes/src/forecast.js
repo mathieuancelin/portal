@@ -21,7 +21,7 @@ portal.MashetesStore = portal.MashetesStore || {};
             return (
                 <portal.Mashetes.Mashete title="Forecast" config={this.props}>
                     <div className="centeredText">
-                        <iframe frameborder="0" height="245" width="100%" src={this.state.displayedUrl}> </iframe>
+                        <iframe frameBorder="0" height="245" width="100%" src={this.state.displayedUrl}> </iframe>
                     </div>
                 </portal.Mashetes.Mashete>
                 );

@@ -35,8 +35,8 @@ portal.Mashetes = portal.Mashetes || {};
                 id: masheteId
             }
         }).then(function() {
-            React.renderComponent(
-                new portal.MashetesStore[masheteId](conf), document.getElementById("left-" + id)
+            React.render(
+                React.createElement(portal.MashetesStore[masheteId], conf), document.getElementById("left-" + id)
             );
         })
     };
@@ -98,8 +98,8 @@ portal.Mashetes = portal.Mashetes || {};
                     newConfig.closeCallback = function () {
                         $(hiding).hide();
                     };
-                    React.renderComponent(
-                        new portal.MashetesStore[this.props.config.mashete](newConfig),
+                    React.render(
+                        React.createElement(portal.MashetesStore[this.props.config.mashete], newConfig),
                         document.getElementById(side + '-' + (idx + 1))
                     );
                 }.bind(masheteThis), 100);
@@ -139,8 +139,8 @@ portal.Mashetes = portal.Mashetes || {};
                                 newConfig.closeCallback = function () {
                                     $(hiding).hide();
                                 };
-                                React.renderComponent(
-                                    new portal.MashetesStore[this.props.config.mashete](newConfig),
+                                React.render(
+                                    React.createElement(portal.MashetesStore[this.props.config.mashete], newConfig),
                                     document.getElementById(side + '-' + (idx + 1))
                                 );
                             }.bind(masheteThis), 100);
@@ -181,14 +181,14 @@ portal.Mashetes = portal.Mashetes || {};
             return (
                 <div className="mashete col-md-12" draggable="false" ondragover="event.preventDefault();" data-masheteid={this.props.config.masheteid}>
                     <div className="container-fluid">
-                        <div class="row droppable"></div>
+                        <div className="row droppable"></div>
                             {AdminBar}
                         <div className="row">
                             <div className="col-md-12">
                                 {content}
                             </div>
                         </div>
-                        <div class="row droppable"></div>
+                        <div className="row droppable"></div>
                     </div>
                 </div>
             );

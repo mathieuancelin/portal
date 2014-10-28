@@ -19,7 +19,7 @@ portal.MashetesStore = portal.MashetesStore || {};
             var clzz = this.props.item.progression < 0 ? 'list-group-item list-group-item-danger' : 'list-group-item list-group-item-success';
             clzz = clzz + (this.state.active ? ' active' : '');
             return (
-                <li className={clzz} onClick={this.onClick}>
+                <li className={clzz} onClick={this.onClick} onTouch={this.onClick}>
                     <div className="row">
                         <div className="col-md-10">
                             <div className="row">
@@ -44,8 +44,8 @@ portal.MashetesStore = portal.MashetesStore || {};
                 portal.Http.url('http://finance.google.com/finance/info?client=ig&q=' + stocks.join(',')).get().then(function (data) {
                     this.setState({
                         stocks: _.map(data.response.json, function (item) {
-                            console.log(item);
                             return {
+                                _id: portal.Utils.generateUUID(),
                                 name: item.t,
                                 value: item.l_cur,
                                 progression: item.c
@@ -75,7 +75,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                 comp.setState({ selected: item.name });
             }
             var stocks = _.map(this.state.stocks, function(item) {
-                return (<StockItem item={item} itemSelected={itemSelected} bus={this.state.bus}/>);
+                return (<StockItem key={item._id} item={item} itemSelected={itemSelected} bus={this.state.bus}/>);
             }.bind(this));
             return (
                 <portal.Mashetes.Mashete title="Stocks" config={this.props}>

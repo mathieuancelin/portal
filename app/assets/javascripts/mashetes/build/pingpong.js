@@ -22,8 +22,8 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props}, 
-                    React.DOM.h2({dangerouslySetInnerHTML: {__html: this.state.show}})
+                React.createElement(portal.Mashetes.Mashete, {title: this.state.displayedTitle, config: this.props}, 
+                    React.createElement("h2", {dangerouslySetInnerHTML: {__html: this.state.show}})
                 )
             );
         }
@@ -44,8 +44,8 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props}, 
-                    React.DOM.h2({dangerouslySetInnerHTML: {__html: this.state.show}})
+                React.createElement(portal.Mashetes.Mashete, {title: this.state.displayedTitle, config: this.props}, 
+                    React.createElement("h2", {dangerouslySetInnerHTML: {__html: this.state.show}})
                 )
                 );
         }

@@ -49,16 +49,16 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: "Clock", config: this.props}, 
-                    React.DOM.input({type: "text", value: this.state.inputId, onChange: this.changeId}), 
-                    React.DOM.textarea({onChange: this.changeQuery, className: "largeText", value: this.state.inputQuery}), 
-                    React.DOM.button({type: "button", className: "btn btn-primary", onClick: this.findById}, "findById"), 
-                    React.DOM.button({type: "button", className: "btn btn-primary", onClick: this.search}, "search"), 
-                    React.DOM.button({type: "button", className: "btn btn-primary", onClick: this.save}, "save"), 
-                    React.DOM.button({type: "button", className: "btn btn-primary", onClick: this.remove}, "delete"), 
-                    React.DOM.button({type: "button", className: "btn btn-primary", onClick: this.findAll}, "findAll"), 
-                    React.DOM.button({type: "button", className: "btn btn-primary", onClick: this.deleteAll}, "deleteAll"), 
-                    React.DOM.textarea({className: "largeText", value: this.state.output})
+                React.createElement(portal.Mashetes.Mashete, {title: "Clock", config: this.props}, 
+                    React.createElement("input", {type: "text", value: this.state.inputId, onChange: this.changeId}), 
+                    React.createElement("textarea", {onChange: this.changeQuery, className: "largeText", value: this.state.inputQuery}), 
+                    React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.findById}, "findById"), 
+                    React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.search}, "search"), 
+                    React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.save}, "save"), 
+                    React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.remove}, "delete"), 
+                    React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.findAll}, "findAll"), 
+                    React.createElement("button", {type: "button", className: "btn btn-primary", onClick: this.deleteAll}, "deleteAll"), 
+                    React.createElement("textarea", {className: "largeText", value: this.state.output})
                 )
                 );
         }

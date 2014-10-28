@@ -325,6 +325,15 @@
                 "instanceConfig": {}
             },
             {
+                "id": "widget-6",
+                "masheteId": "TodoMashete",
+                "position": {
+                    "column": 1,
+                    "line": 3
+                },
+                "instanceConfig": {}
+            },
+            {
                 "id": "widget-4",
                 "masheteId": "MarkdownMashete",
                 "position": {

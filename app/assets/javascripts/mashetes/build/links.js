@@ -15,22 +15,22 @@ portal.MashetesStore = portal.MashetesStore || {};
         render: function() {
             if (this.state.links.length === 0) {
                 return (
-                    portal.Mashetes.Mashete({title: "Navigate to", config: this.props}, 
-                        React.DOM.h5(null, "Nothing here ...")
+                    React.createElement(portal.Mashetes.Mashete, {title: "Navigate to", config: this.props}, 
+                        React.createElement("h5", null, "Nothing here ...")
                     )
                 );
             }
             var linkNodes = _.map(this.state.links, function(link) {
                 return (
-                    React.DOM.li(null, 
-                        React.DOM.a({href: link.url}, link.name)
+                    React.createElement("li", null, 
+                        React.createElement("a", {href: link.url}, link.name)
                     )
                 );
             });
             // TODO : display as tree
             return (
-                portal.Mashetes.Mashete({title: "Navigate to", config: this.props}, 
-                    React.DOM.ul({className: "pushTop unstyled"}, 
+                React.createElement(portal.Mashetes.Mashete, {title: "Navigate to", config: this.props}, 
+                    React.createElement("ul", {className: "pushTop unstyled"}, 
                         linkNodes
                     )
                 )

@@ -19,16 +19,16 @@ portal.MashetesStore = portal.MashetesStore || {};
             var clzz = this.props.item.progression < 0 ? 'list-group-item list-group-item-danger' : 'list-group-item list-group-item-success';
             clzz = clzz + (this.state.active ? ' active' : '');
             return (
-                React.DOM.li({className: clzz, onClick: this.onClick}, 
-                    React.DOM.div({className: "row"}, 
-                        React.DOM.div({className: "col-md-10"}, 
-                            React.DOM.div({className: "row"}, 
-                                React.DOM.div({className: "col-md-6"}, React.DOM.b(null, this.props.item.name)), 
-                                React.DOM.div({className: "col-md-6"}, this.props.item.value)
+                React.createElement("li", {className: clzz, onClick: this.onClick, onTouch: this.onClick}, 
+                    React.createElement("div", {className: "row"}, 
+                        React.createElement("div", {className: "col-md-10"}, 
+                            React.createElement("div", {className: "row"}, 
+                                React.createElement("div", {className: "col-md-6"}, React.createElement("b", null, this.props.item.name)), 
+                                React.createElement("div", {className: "col-md-6"}, this.props.item.value)
                             )
                         ), 
-                        React.DOM.div({className: "col-md-2"}, 
-                            React.DOM.span({className: "badge"}, this.props.item.progression)
+                        React.createElement("div", {className: "col-md-2"}, 
+                            React.createElement("span", {className: "badge"}, this.props.item.progression)
                         )
                     )
                 )
@@ -44,8 +44,8 @@ portal.MashetesStore = portal.MashetesStore || {};
                 portal.Http.url('http://finance.google.com/finance/info?client=ig&q=' + stocks.join(',')).get().then(function (data) {
                     this.setState({
                         stocks: _.map(data.response.json, function (item) {
-                            console.log(item);
                             return {
+                                _id: portal.Utils.generateUUID(),
                                 name: item.t,
                                 value: item.l_cur,
                                 progression: item.c
@@ -75,16 +75,16 @@ portal.MashetesStore = portal.MashetesStore || {};
                 comp.setState({ selected: item.name });
             }
             var stocks = _.map(this.state.stocks, function(item) {
-                return (StockItem({item: item, itemSelected: itemSelected, bus: this.state.bus}));
+                return (React.createElement(StockItem, {key: item._id, item: item, itemSelected: itemSelected, bus: this.state.bus}));
             }.bind(this));
             return (
-                portal.Mashetes.Mashete({title: "Stocks", config: this.props}, 
-                    React.DOM.div({className: "pushTop20"}, 
-                        React.DOM.ul({className: "list-group"}, 
+                React.createElement(portal.Mashetes.Mashete, {title: "Stocks", config: this.props}, 
+                    React.createElement("div", {className: "pushTop20"}, 
+                        React.createElement("ul", {className: "list-group"}, 
                         stocks
                         ), 
-                        React.DOM.div({className: "centeredText"}, 
-                            React.DOM.img({src: this.getImage(this.state.selected)})
+                        React.createElement("div", {className: "centeredText"}, 
+                            React.createElement("img", {src: this.getImage(this.state.selected)})
                         )
                     )
                 )

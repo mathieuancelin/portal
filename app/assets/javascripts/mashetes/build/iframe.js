@@ -17,14 +17,14 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         render: function() {
             return (
-                portal.Mashetes.Mashete({title: this.state.displayedTitle, config: this.props}, 
-                    React.DOM.div({className: "centeredText"}, 
-                        React.DOM.iframe({
+                React.createElement(portal.Mashetes.Mashete, {title: this.state.displayedTitle, config: this.props}, 
+                    React.createElement("div", {className: "centeredText"}, 
+                        React.createElement("iframe", {
                             className: this.state.displayedClass, 
                             src: this.state.displayedUrl, 
                             title: this.state.displayedTitle, 
                             allowTransparency: this.state.displayedAllowTransparency, 
-                            frameborder: this.state.displayedFrameborder, 
+                            frameBorder: this.state.displayedFrameborder, 
                             width: this.state.displayedWidth, 
                             height: this.state.displayedHeight
                         })

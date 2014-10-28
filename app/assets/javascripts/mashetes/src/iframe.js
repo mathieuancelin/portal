@@ -24,7 +24,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                             src={this.state.displayedUrl}
                             title={this.state.displayedTitle}
                             allowTransparency={this.state.displayedAllowTransparency}
-                            frameborder={this.state.displayedFrameborder}
+                            frameBorder={this.state.displayedFrameborder}
                             width={this.state.displayedWidth}
                             height={this.state.displayedHeight}
                         ></iframe>
