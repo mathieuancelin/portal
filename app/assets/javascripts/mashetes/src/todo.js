@@ -6,7 +6,7 @@ portal.MashetesStore = portal.MashetesStore || {};
 // Nicer version of the Todo App using Flux like architecture (http://facebook.github.io/flux/)
 (function(exports) {
 
-    var Constants = {
+    var TaskConstants = {
         SAVE_NEW_TASK: 'SAVE_NEW_TASK',
         DELETE_DONE_TASKS: 'DELETE_DONE_TASK',
         CHANGE_TASK_STATE: 'CHANGE_TASK_STATE',
@@ -16,17 +16,17 @@ portal.MashetesStore = portal.MashetesStore || {};
 
     var TaskActions = {
         saveNewTask: function(text) {
-            Dispatcher.trigger(Constants.SAVE_NEW_TASK, {text: text});
+            TaskDispatcher.trigger(TaskConstants.SAVE_NEW_TASK, {text: text});
         },
         deleteDone: function() {
-            Dispatcher.trigger(Constants.DELETE_DONE_TASKS, {});
+            TaskDispatcher.trigger(TaskConstants.DELETE_DONE_TASKS, {});
         },
         changeTaskState: function(id, done) {
-            Dispatcher.trigger(Constants.CHANGE_TASK_STATE, {id: id, done: done});
+            TaskDispatcher.trigger(TaskConstants.CHANGE_TASK_STATE, {id: id, done: done});
         }
     };
 
-    var Dispatcher = _.extend({}, Backbone.Events);
+    var TaskDispatcher = _.extend({}, Backbone.Events);
 
     var TaskStore = (function() {
 
@@ -39,7 +39,7 @@ portal.MashetesStore = portal.MashetesStore || {};
             repository.search({ docType: DOC_TYPE }).then(function(data) {
                 tasks = data;
                 console.log('tasks changed !!!');
-                Dispatcher.trigger(Constants.TASKS_CHANGED);
+                TaskDispatcher.trigger(TaskConstants.TASKS_CHANGED);
             });
         }
 
@@ -50,7 +50,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                 docType: DOC_TYPE
             };
             repository.save(task).then(function() {
-                Dispatcher.trigger(Constants.TASKS_ADDED);
+                TaskDispatcher.trigger(TaskConstants.TASKS_ADDED);
                 updateStore();
             });
         }
@@ -75,13 +75,13 @@ portal.MashetesStore = portal.MashetesStore || {};
             });
         }
 
-        Dispatcher.on(Constants.SAVE_NEW_TASK, function(data) {
+        TaskDispatcher.on(TaskConstants.SAVE_NEW_TASK, function(data) {
             createNewTask(data.text);
         });
-        Dispatcher.on(Constants.DELETE_DONE_TASKS, function() {
+        TaskDispatcher.on(TaskConstants.DELETE_DONE_TASKS, function() {
             deleteAllDone();
         });
-        Dispatcher.on(Constants.CHANGE_TASK_STATE, function(data) {
+        TaskDispatcher.on(TaskConstants.CHANGE_TASK_STATE, function(data) {
             flipTaskState(data.id, data.done);
         });
         return {
@@ -140,10 +140,10 @@ portal.MashetesStore = portal.MashetesStore || {};
             });
         },
         componentDidMount: function() {
-            Dispatcher.on(Constants.TASKS_ADDED, this.clearTaskName);
+            TaskDispatcher.on(TaskConstants.TASKS_ADDED, this.clearTaskName);
         },
         componentWillUnmount: function() {
-            Dispatcher.off(Constants.TASKS_ADDED, this.clearTaskName);
+            TaskDispatcher.off(TaskConstants.TASKS_ADDED, this.clearTaskName);
         },
         updateName: function(e) {
             this.setState({taskName: e.target.value});
@@ -195,10 +195,10 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         componentDidMount: function() {
             TaskStore.init();
-            Dispatcher.on(Constants.TASKS_CHANGED, this.reloadTasks);
+            TaskDispatcher.on(TaskConstants.TASKS_CHANGED, this.reloadTasks);
         },
         componentWillUnmount: function() {
-            Dispatcher.off(Constants.TASKS_CHANGED, this.reloadTasks);
+            TaskDispatcher.off(TaskConstants.TASKS_CHANGED, this.reloadTasks);
         },
         render: function() {
             var displayedTasks = _.map(this.state.tasks, function(item) {

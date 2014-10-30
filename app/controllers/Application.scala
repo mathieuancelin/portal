@@ -4,17 +4,18 @@ import java.util.concurrent.TimeUnit
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.util.Timeout
+import common.IdGenerator
 import modules.Env
 import modules.communication.UserActor
 import modules.identity.{AnonymousUser, User}
-import modules.structure.Page
-import play.api.Logger
+import modules.structure.{Position, MasheteInstance, Page}
+import play.api.{Mode, Logger}
 import play.api.Play.current
 import play.api.libs.concurrent.Akka
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.iteratee.Concurrent.Channel
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.libs.ws.WS
 import play.api.libs.{Crypto, EventSource}
 import play.api.mvc._
@@ -24,8 +25,6 @@ import scala.concurrent.{Future, Promise}
 import scala.util.{Failure, Success}
 
 // TODO : multitenant ????
-
-// TODO : provide local dev tools (simulates APIs ???)
 
 // TODO : add account management page for one user
 
@@ -180,6 +179,21 @@ object Application extends Controller {
       }
     }
     promise.future.map(p => Ok(p))
+  }
+
+  def devEnv(masheteId: String) = Action.async {
+    play.api.Play.current.mode match {
+      case Mode.Dev => {
+        Env.masheteStore.findById(masheteId) map {
+          case None => InternalServerError(s"Mashete $masheteId does not exist")
+          case Some(mashete) => {
+            val instance = MasheteInstance(IdGenerator.uuid, mashete._id, Position(0, 0), mashete.defaultParam)
+            Ok(views.html.dev(instance, mashete))
+          }
+        }
+      }
+      case _ => Future.successful(InternalServerError("Dev environment is not available in Prod mode"))
+    }
   }
 }
 

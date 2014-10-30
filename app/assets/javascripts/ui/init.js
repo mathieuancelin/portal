@@ -110,6 +110,10 @@ $(function() {
             var portal = portal || {};
             portal.Roles = portal.Roles || {};
             portal.Roles.all = roles;
+        }).then(function() {
+            if (location.hash.replace('#', '') !== '' ) {
+                portal.EventBus.Browser.publish(portal.Url.HashChangeEvent, location.hash.replace("#", ""));
+            }
         });
     }
 

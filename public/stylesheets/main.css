@@ -47,3 +47,12 @@ iframe {
 .centeredText {
     text-align: center;
 }
+
+.tools {
+    border-style: solid;
+    border-color: #eee;
+    border-width: 1px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+}

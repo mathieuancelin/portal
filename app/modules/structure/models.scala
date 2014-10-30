@@ -14,7 +14,10 @@ case class Position(column: Int, line: Int)
 
 case class Mashete(_id: String, name: String, description: String, url: String, defaultParam: JsObject)
 
-case class MasheteInstance(id: String, masheteId: String, position: Position, instanceConfig: JsObject)
+case class MasheteInstance(id: String, masheteId: String, position: Position, instanceConfig: JsObject) {
+  def toJson = MasheteInstance.masheteFmt.writes(this)
+  def toJsonString = Json.stringify(toJson)
+}
 
 case class Page(
                  _id: String,

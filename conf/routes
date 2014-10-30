@@ -7,6 +7,7 @@ POST        /logout                       controllers.Authentication.logout
 GET         /logout                       controllers.Authentication.logout
 GET         /validate                     controllers.Authentication.validate(ticket)
 GET         /error                        controllers.Authentication.error
+GET         /dev/env/:masheteId           controllers.Application.devEnv(masheteId)
 GET         /site/*url                    controllers.Application.page(url)
 # Portal pages
 

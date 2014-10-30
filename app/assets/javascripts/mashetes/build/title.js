@@ -17,7 +17,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                 )
             );
         }
-    })
+    });
     exports.CustomTitleMashete = React.createClass({displayName: 'CustomTitleMashete',
         getInitialState: function() {
             return {
