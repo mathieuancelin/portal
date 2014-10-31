@@ -31,7 +31,23 @@ portal.EventBus = portal.EventBus || {};
     }
 
     function on(channel, callback) {
-        inBrowserBus.on(channel, callback);
+        if (_.isRegExp(channel)) {
+            inBrowserBus.on('all', function(cha, event) {
+                if (cha.match(channel)) {
+                    callback(event);
+                }
+            });
+        } else {
+            inBrowserBus.on(channel, callback);
+        }
+    }
+
+    function predicateFilterFunction(predicate, funct) {
+        return function(something) {
+            if (predicate(something)) {
+                funct(something);
+            }
+        };
     }
 
     exports.User = {
@@ -44,4 +60,5 @@ portal.EventBus = portal.EventBus || {};
         publish: broadcast
     };
     exports.on = on;
+    exports.filter = predicateFilterFunction;
 })(portal.EventBus);
