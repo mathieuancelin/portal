@@ -78,7 +78,7 @@ portal.Http = portal.Http || {};
                     opts.method = 'OPTIONS';
                     return execute(opts);
                 }
-            }
+            };
         }
         return build({
             url: url

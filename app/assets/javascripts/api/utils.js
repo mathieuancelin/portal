@@ -12,8 +12,23 @@ portal.Utils = portal.Utils || {};
     function userNotification(hash) {
         $.notify(hash.message, hash.notifcationType);
     }
+    function keyMirror(obj) {
+        var ret = {};
+        var key;
+        if (!(obj instanceof Object && !Array.isArray(obj))) {
+            throw new Error('keyMirror(...): Argument must be an object.');
+        }
+        for (key in obj) {
+            if (!obj.hasOwnProperty(key)) {
+                continue;
+            }
+            ret[key] = key;
+        }
+        return ret;
+    }
     exports.clientNotification = userNotification;
     exports.generateUUID = generateUUID;
+    exports.keyMirror = keyMirror;
 })(portal.Utils);
 
 /**
@@ -97,5 +112,5 @@ portal.Url = portal.Url || {};
     exports.navigateTo = navigateTo;
     exports.extractParams = extractParams;
     exports.extractParam = extractParam;
-    exports.HashChangeEvent = HashChangeEvent
+    exports.HashChangeEvent = HashChangeEvent;
 })(portal.Url);

@@ -6,13 +6,13 @@ portal.MashetesStore = portal.MashetesStore || {};
 // Nicer version of the Todo App using Flux like architecture (http://facebook.github.io/flux/)
 (function(exports) {
 
-    var TaskConstants = {
-        SAVE_NEW_TASK: 'SAVE_NEW_TASK',
-        DELETE_DONE_TASKS: 'DELETE_DONE_TASK',
-        CHANGE_TASK_STATE: 'CHANGE_TASK_STATE',
-        TASKS_CHANGED: 'TASKS_CHANGED',
-        TASKS_ADDED: 'TASKS_ADDED'
-    };
+    var TaskConstants = portal.Utils.keyMirror({
+        SAVE_NEW_TASK: null,
+        DELETE_DONE_TASKS: null,
+        CHANGE_TASK_STATE: null,
+        TASKS_CHANGED: null,
+        TASKS_ADDED: null
+    });
 
     var TaskActions = {
         saveNewTask: function(text) {
@@ -149,7 +149,9 @@ portal.MashetesStore = portal.MashetesStore || {};
             this.setState({taskName: e.target.value});
         },
         save: function() {
-            TaskActions.saveNewTask(this.state.taskName);
+            if (this.state.taskName && this.state.taskName !== '') {
+                TaskActions.saveNewTask(this.state.taskName);
+            }
         },
         deleteAll: function() {
             TaskActions.deleteDone();
