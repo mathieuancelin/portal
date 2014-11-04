@@ -34,12 +34,17 @@ portal.MashetesStore = portal.MashetesStore || {};
         var DOC_TYPE = 'TodoMashete.Task';
         var repository = portal.Repository.of(SANDBOX);
         var tasks = [];
+        var notifier = _.extend({}, Backbone.Events);
+
+        function notifyChanges() {
+            notifier.trigger(TaskConstants.TASKS_CHANGED, tasks);
+        }
 
         function updateStore() {
             repository.search({ docType: DOC_TYPE }).then(function(data) {
                 tasks = data;
                 console.log('tasks changed !!!');
-                TaskDispatcher.trigger(TaskConstants.TASKS_CHANGED);
+                notifyChanges();
             });
         }
 
@@ -50,7 +55,7 @@ portal.MashetesStore = portal.MashetesStore || {};
                 docType: DOC_TYPE
             };
             repository.save(task).then(function() {
-                TaskDispatcher.trigger(TaskConstants.TASKS_ADDED);
+                notifier.trigger(TaskConstants.TASKS_ADDED);
                 updateStore();
             });
         }
@@ -86,6 +91,12 @@ portal.MashetesStore = portal.MashetesStore || {};
         });
         return {
             init: updateStore,
+            on: function(what, callback) {
+                notifier.on(what, callback);
+            },
+            off: function(what, callback) {
+                notifier.off(what, callback);
+            },
             getAllTasks: function() {
                 return tasks;
             }
@@ -108,6 +119,7 @@ portal.MashetesStore = portal.MashetesStore || {};
         render: function () {
             var cx = React.addons.classSet;
             var classes = cx({
+                'task-done': true,
                 'label': true,
                 'label-success': this.state.done,
                 'label-default': !this.state.done
@@ -140,10 +152,10 @@ portal.MashetesStore = portal.MashetesStore || {};
             });
         },
         componentDidMount: function() {
-            TaskDispatcher.on(TaskConstants.TASKS_ADDED, this.clearTaskName);
+            TaskStore.on(TaskConstants.TASKS_ADDED, this.clearTaskName);
         },
         componentWillUnmount: function() {
-            TaskDispatcher.off(TaskConstants.TASKS_ADDED, this.clearTaskName);
+            TaskStore.off(TaskConstants.TASKS_ADDED, this.clearTaskName);
         },
         updateName: function(e) {
             this.setState({taskName: e.target.value});
@@ -197,10 +209,10 @@ portal.MashetesStore = portal.MashetesStore || {};
         },
         componentDidMount: function() {
             TaskStore.init();
-            TaskDispatcher.on(TaskConstants.TASKS_CHANGED, this.reloadTasks);
+            TaskStore.on(TaskConstants.TASKS_CHANGED, this.reloadTasks);
         },
         componentWillUnmount: function() {
-            TaskDispatcher.off(TaskConstants.TASKS_CHANGED, this.reloadTasks);
+            TaskStore.off(TaskConstants.TASKS_CHANGED, this.reloadTasks);
         },
         render: function() {
             var displayedTasks = _.map(this.state.tasks, function(item) {

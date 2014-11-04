@@ -11,14 +11,14 @@ import modules.jwt.JsonWebToken
 import modules.structure._
 import org.joda.time.DateTime
 import play.api.Logger
+import play.api.Play.current
 import play.api.libs.Codecs
 import play.api.libs.json._
 import play.api.libs.ws.WS
 import reactivemongo.bson.BSONObjectID
-import play.api.Play.current
 
 import scala.concurrent.{Future, Promise}
-import scala.util.{Try, Failure, Success}
+import scala.util.{Failure, Success, Try}
 
 trait NotificationType {
   def name: String
@@ -391,7 +391,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
               }
               var leftSeq = Seq[MasheteInstance]()
               var rightSeq = Seq[MasheteInstance]()
-              import collection.JavaConversions._
+              import scala.collection.JavaConversions._
               for (item <- left) {
                 leftSeq = leftSeq :+ item
               }
