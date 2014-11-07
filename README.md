@@ -11,3 +11,19 @@ Technically, `The Portal` rely on [Play Framework 2](https://www.playframework.c
 Code of `The Portal` is available at : [https://github.com/mathieuancelin/portal](https://github.com/mathieuancelin/portal/)
 
 A demo instance is available on [Heroku](http://theportal.herokuapp.com)
+
+To run it, in dev mode, you need to start a MongoDB instance.
+
+You also need to run the `npm` build.
+
+```bash
+$ npm install
+$ npm run watch
+```
+
+Before building the production distribution, you will need to build the minified javascript
+
+```bash
+$ npm install
+$ npm run build
+```

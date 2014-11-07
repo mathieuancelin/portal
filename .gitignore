@@ -17,3 +17,6 @@ dist
 .module-cache
 /slides
 /mongodata
+/projectFilesBackup
+/node_modules
+app/assets/javascripts/mashetes/build

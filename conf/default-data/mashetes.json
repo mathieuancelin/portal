@@ -3,7 +3,7 @@
         "_id": "TitleMashete",
         "name": "Title Mashete",
         "description": "Display title and description of the current page",
-        "url": "${ASSET}/javascripts/mashetes/build/title.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {
             "title": "Page description"
         }
@@ -12,14 +12,14 @@
         "_id": "LinksMashete",
         "name": "Links Mashete",
         "description": "Display links to follow from the current page",
-        "url": "${ASSET}/javascripts/mashetes/build/links.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": { }
     },
     {
         "_id": "MarkdownMashete",
         "name": "Markdown Mashete",
         "description": "Display markdown formatted content",
-        "url": "${ASSET}/javascripts/mashetes/build/markdown.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {
             "title": "Mardown display",
             "markdown": "VGhpcyBpcyB5b3VyIG5ldyBQbGF5IGFwcGxpY2F0aW9uDQo9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCg0KVGhpcyBmaWxlIHdpbGwgYmUgcGFja2FnZWQgd2l0aCB5b3VyIGFwcGxpY2F0aW9uLCB3aGVuIHVzaW5nIGBhY3RpdmF0b3IgZGlzdGAuDQo="
@@ -29,7 +29,7 @@
         "_id": "IframeMashete",
         "name": "Iframe Mashete",
         "description": "Display content from another address",
-        "url": "${ASSET}/javascripts/mashetes/build/iframe.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {
             "url": "http://fr.m.wikipedia.org/",
             "title": "Wikipedia",
@@ -44,7 +44,7 @@
         "_id": "PingMashete",
         "name": "Ping Mashete",
         "description": "Display Ping",
-        "url": "${ASSET}/javascripts/mashetes/build/pingpong.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {
             "title": "Ping"
         }
@@ -53,7 +53,7 @@
         "_id": "PongMashete",
         "name": "Pong Mashete",
         "description": "Display Pong",
-        "url": "${ASSET}/javascripts/mashetes/build/pingpong.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {
             "title": "Pong"
         }
@@ -62,14 +62,14 @@
         "_id": "ForecastMashete",
         "name": "Forecast Mashete",
         "description": "Display forecast infos",
-        "url": "${ASSET}/javascripts/mashetes/build/forecast.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {}
     },
     {
         "_id": "StocksMashete",
         "name": "Stocks Mashete",
         "description": "Display stocks infos",
-        "url": "${ASSET}/javascripts/mashetes/build/stocks.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {
             "stocks": ["NASDAQ:MSFT", "NASDAQ:YHOO", "NASDAQ:AAPL", "NASDAQ:EBAY", "NASDAQ:GOOG", "NASDAQ:AMZN"]
         }
@@ -78,28 +78,28 @@
         "_id": "ClockMashete",
         "name": "Clock Mashete",
         "description": "Display clock",
-        "url": "${ASSET}/javascripts/mashetes/build/clock.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {}
     },
     {
         "_id": "RedditMashete",
         "name": "Reddit Mashete",
         "description": "Display reddit",
-        "url": "${ASSET}/javascripts/mashetes/build/reddit.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {}
     },
     {
         "_id": "TodoMashete",
         "name": "Todo Mashete",
         "description": "Todo list",
-        "url": "${ASSET}/javascripts/mashetes/build/todo.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {}
     },
     {
         "_id": "ChatMashete",
         "name": "Chat Mashete",
         "description": "Chat",
-        "url": "${ASSET}/javascripts/mashetes/build/chat.js",
+        "url": "${ASSET}/javascripts/mashetes/build/mashetes.js",
         "defaultParam": {}
     }
 ]

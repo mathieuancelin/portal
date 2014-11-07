@@ -1,0 +1,32 @@
+{
+  "name": "the-portal",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "react": "0.12.0",
+    "react-addons": "~0.9.0"
+  },
+  "devDependencies": {
+    "watchify": "2.1.1",
+    "reactify": "0.15.2",
+    "browserify": "6.2.0",
+    "uglify-js": "~2.4.15"
+  },
+  "scripts": {
+    "build-mashetes": "browserify app/assets/javascripts/mashetes/src/mashetes.js | uglifyjs -mc > app/assets/javascripts/mashetes/build/mashetes.js",
+    "watchify-mashetes": "watchify app/assets/javascripts/mashetes/src/mashetes.js -o app/assets/javascripts/mashetes/build/mashetes.js --debug --verbose",
+    "build-module-a": "browserify src/modulea/a.js | uglifyjs -mc > static/modulea.js",
+    "build-module-b": "browserify src/moduleb/a.js | uglifyjs -mc > static/moduleb.js",
+    "build-sample": "npm run build-module-a && npm run build-module-b",
+    "watch-module-a": "watchify src/modulea/a.js -o static/modulea.js --debug --verbose",
+    "watch-module-b": "watchify src/moduleb/a.js -o static/moduleb.js --debug --verbose",
+    "watch-sample": "npm run watch-module-a & npm run watch-module-b",
+    "build": "npm run build-mashetes",
+    "watch": "npm run watchify-mashetes"
+  },
+  "browserify": {
+    "transform": [
+      "reactify"
+    ]
+  }
+}

@@ -25,17 +25,17 @@ $(function() {
                     $(hiding).hide();
                 };
                 console.log("try to instanciate " + mashete.masheteId);
-                React.initializeTouchEvents(true);
+                portal.MashetesStore.React.initializeTouchEvents(true);
                 if (portal.MashetesStore[mashete.masheteId]) {
-                    React.render(
-                        React.createElement(portal.MashetesStore[mashete.masheteId], mashete.instanceConfig),
+                    portal.MashetesStore.React.render(
+                        portal.MashetesStore.React.createElement(portal.MashetesStore[mashete.masheteId], mashete.instanceConfig),
                         document.getElementById(side + '-' + (idx + 1))
                     );
                     console.log("Success !!!");
                 } else {
                     console.log("Fail !!!");
-                    React.render(
-                        React.createElement(portal.MashetesStore.FallbackMashete, {}),
+                    portal.MashetesStore.React.render(
+                        portal.MashetesStore.React.createElement(portal.MashetesStore.FallbackMashete, {}),
                         document.getElementById(side + '-' + (idx + 1))
                     );
                 }

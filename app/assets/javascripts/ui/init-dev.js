@@ -20,17 +20,17 @@ portal.DevTools = portal.DevTools || {};
                     $(hiding).hide();
                 };
                 console.log("try to instanciate " + mashete.masheteId);
-                React.initializeTouchEvents(true);
+                portal.MashetesStore.React.initializeTouchEvents(true);
                 if (portal.MashetesStore[mashete.masheteId]) {
-                    React.render(
-                        React.createElement(portal.MashetesStore[mashete.masheteId], mashete.instanceConfig),
+                    portal.MashetesStore.React.render(
+                        portal.MashetesStore.React.createElement(portal.MashetesStore[mashete.masheteId], mashete.instanceConfig),
                         document.getElementById('masheteInstance')
                     );
                     console.log("Success !!!");
                 } else {
                     console.log("Fail !!!");
-                    React.render(
-                        React.createElement(portal.MashetesStore.FallbackMashete, {}),
+                    portal.MashetesStore.React.render(
+                        portal.MashetesStore.React.createElement(portal.MashetesStore.FallbackMashete, {}),
                         document.getElementById('masheteInstance')
                     );
                 }
@@ -59,5 +59,70 @@ portal.DevTools = portal.DevTools || {};
         };
     }
 })(portal.DevTools);
+
+
+// TODO : add to dev env
+(function(__exports) {
+    __exports.MongoMashete = portal.MashetesStore.React.createClass({
+        getInitialState: function() {
+            return {
+                inputId: '',
+                inputQuery: '',
+                output: ''
+            };
+        },
+        changeId: function(e) {
+            this.setState({inputId: e.target.value})
+        },
+        changeQuery: function(e) {
+            this.setState({inputQuery: e.target.value})
+        },
+        findById: function() {
+            portal.Repository.findById(this.state.inputId).then(function(data) {
+                this.setState({output: JSON.stringify(data)});
+            }.bind(this));
+        },
+        search: function() {
+            portal.Repository.search(JSON.parse(this.state.inputQuery)).then(function(data) {
+                this.setState({output: JSON.stringify(data)});
+            }.bind(this));
+        },
+        save: function() {
+            portal.Repository.save(JSON.parse(this.state.inputQuery)).then(function(data) {
+                this.setState({output: JSON.stringify(data)});
+            }.bind(this));
+        },
+        remove: function() {
+            portal.Repository.remove(this.state.inputId).then(function(data) {
+                this.setState({output: JSON.stringify(data)});
+            }.bind(this));
+        },
+        findAll: function() {
+            portal.Repository.findAll().then(function(data) {
+                this.setState({output: JSON.stringify(data)});
+            }.bind(this));
+        },
+        deleteAll: function() {
+            portal.Repository.deleteAll().then(function(data) {
+                this.setState({output: JSON.stringify(data)});
+            }.bind(this));
+        },
+        render: function() {
+            return (
+                <portal.Mashetes.Mashete title="Clock" config={this.props}>
+                    <input type="text" value={this.state.inputId} onChange={this.changeId}/>
+                    <textarea onChange={this.changeQuery} className="largeText" value={this.state.inputQuery}></textarea>
+                    <button type="button" className="btn btn-primary" onClick={this.findById}>findById</button>
+                    <button type="button" className="btn btn-primary" onClick={this.search}>search</button>
+                    <button type="button" className="btn btn-primary" onClick={this.save}>save</button>
+                    <button type="button" className="btn btn-primary" onClick={this.remove}>delete</button>
+                    <button type="button" className="btn btn-primary" onClick={this.findAll}>findAll</button>
+                    <button type="button" className="btn btn-primary" onClick={this.deleteAll}>deleteAll</button>
+                    <textarea className="largeText" value={this.state.output}></textarea>
+                </portal.Mashetes.Mashete>
+            );
+        }
+    });
+})({});
 
 
