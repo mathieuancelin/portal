@@ -94,5 +94,12 @@
         "description": "Todo list",
         "url": "${ASSET}/javascripts/mashetes/build/todo.js",
         "defaultParam": {}
+    },
+    {
+        "_id": "ChatMashete",
+        "name": "Chat Mashete",
+        "description": "Chat",
+        "url": "${ASSET}/javascripts/mashetes/build/chat.js",
+        "defaultParam": {}
     }
 ]

@@ -26,9 +26,144 @@ portal.Utils = portal.Utils || {};
         }
         return ret;
     }
+    function invariant(condition, message, a, b, c, d, e, f) {
+        if (!condition) {
+            var args = [a, b, c, d, e, f];
+            var argIndex = 0;
+            throw new Error("Violation : " + message.replace(/%s/g, function() { return args[argIndex++]; }));
+        }
+    }
+    function createDispatcher(over) {
+
+        var _lastID = 1;
+        var _prefix = 'ID_';
+
+        var _callbacks = {};
+        var _isPending = {};
+        var _isHandled = {};
+        var _isDispatching = false;
+        var _pendingPayload = null;
+
+        function register(callback) {
+            var id = _prefix + _lastID++;
+            _callbacks[id] = callback;
+            return id;
+        }
+
+        function unregister(id) {
+            invariant(
+                _callbacks[id],
+                'Dispatcher.unregister(...): `%s` does not map to a registered callback.',
+                id
+            );
+            delete _callbacks[id];
+        }
+
+        function waitFor(ids) {
+            invariant(
+                _isDispatching,
+                'Dispatcher.waitFor(...): Must be invoked while dispatching.'
+            );
+            for (var ii = 0; ii < ids.length; ii++) {
+                var id = ids[ii];
+                if (_isPending[id]) {
+                    invariant(
+                        _isHandled[id],
+                            'Dispatcher.waitFor(...): Circular dependency detected while ' +
+                            'waiting for `%s`.',
+                        id
+                    );
+                    continue;
+                }
+                invariant(
+                    _callbacks[id],
+                    'Dispatcher.waitFor(...): `%s` does not map to a registered callback.',
+                    id
+                );
+                _invokeCallback(id);
+            }
+        }
+
+        function dispatch(payload) {
+            invariant(
+                !_isDispatching,
+                'Dispatch.dispatch(...): Cannot dispatch in the middle of a dispatch.'
+            );
+            _startDispatching(payload);
+            try {
+                for (var id in _callbacks) {
+                    if (_isPending[id]) {
+                        continue;
+                    }
+                    _invokeCallback(id);
+                }
+            } finally {
+                _stopDispatching();
+            }
+        }
+
+        function isDispatching() {
+            return _isDispatching;
+        }
+
+        function _invokeCallback(id) {
+            _isPending[id] = true;
+            _callbacks[id](_pendingPayload);
+            _isHandled[id] = true;
+        }
+
+        function _startDispatching(payload) {
+            for (var id in _callbacks) {
+                _isPending[id] = false;
+                _isHandled[id] = false;
+            }
+            _pendingPayload = payload;
+            _isDispatching = true;
+        }
+
+        function _stopDispatching() {
+            _pendingPayload = null;
+            _isDispatching = false;
+        }
+        var api = {
+            trigger: function(a, b) {
+                if (!b) {
+                    return dispatch(a);
+                } else {
+                    return dispatch(b);
+                }
+            },
+            dispatch: dispatch,
+            register: register,
+            unregister: unregister,
+            isDispatching: isDispatching,
+            waitFor: waitFor,
+            on: function(a, b) {
+                if (!b) {
+                    return register(a);
+                } else {
+                    return register(b);
+                }
+            },
+            off: function(a, b) {
+                if (!b) {
+                    return unregister(a);
+                } else {
+                    return unregister(b);
+                }
+            }
+        };
+        if (over) {
+            return _.extend(over, api);
+        } else {
+            return api;
+        }
+    }
+    exports.invariant = invariant;
     exports.clientNotification = userNotification;
     exports.generateUUID = generateUUID;
     exports.keyMirror = keyMirror;
+    exports.Dispatcher = createDispatcher;
 })(portal.Utils);
 
 /**
@@ -36,16 +171,16 @@ portal.Utils = portal.Utils || {};
  * ======
  *
  * portal.EventBus.on(portal.Url.HashChangeEvent, function(url) {
-     *     if (url.startsWith('/name/')) {
-     *         var params = portal.Url.extractParams('/name/$0/age/$1/surname/$2');
-     *         var name = params[0];
-     *         var age = params[1];
-     *         var surname = params[2];
-     *         this.setState({
-     *             displayedText: surname + ' ' + name + ' is ' + age + ' old'
-     *         });
-     *     }
-     *  }.bind(this))
+ *     if (url.startsWith('/name/')) {
+ *         var params = portal.Url.extractParams('/name/$0/age/$1/surname/$2');
+ *         var name = params[0];
+ *         var age = params[1];
+ *         var surname = params[2];
+ *         this.setState({
+ *             displayedText: surname + ' ' + name + ' is ' + age + ' old'
+ *         });
+ *     }
+ *  }.bind(this))
  *
  * portal.Url.navigateTo('/name/Doe/age/42/surname/billy');
  *
