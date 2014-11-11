@@ -50,7 +50,6 @@ $(function() {
 
         function registerDragAndDrop() {
             function dragIt(e) {
-                console.log(e.target);
                 e.originalEvent.dataTransfer.setData("dragged-element", $(e.target).parent().attr('id'));
                 e.originalEvent.dataTransfer.setData("mashete-id", $(e.target).parent().data('masheteid'));
             }

@@ -105,6 +105,13 @@
                                     <input type="text" pattern="[0-9a-zA-Z]*" required class="form-control" id="inputUrl" placeholder="URL">
                                 </div>
                             </div>
+                            @* TODO : better columns management *@
+                            <div class="form-group">
+                                <label for="inputColumns" class="col-sm-2 control-label">Columns</label>
+                                <div class="col-sm-10">
+                                    <input type="text" required class="form-control" id="inputColumns" placeholder="Column sizes, must be equal to 12 : 6;6 or 3;3;6">
+                                </div>
+                            </div>
                             <div class="form-group">
                                 <label for="inputRole" class="col-sm-2 control-label">Roles</label>
                                 <div class="col-sm-10">
@@ -178,7 +185,8 @@
                         name: $('#inputName' ).val(),
                         description: $('#inputDescription').val(),
                         url: $('#inputUrl').val(),
-                        accessibleByIds: roles
+                        accessibleByIds: roles,
+                        colSizes: $('#inputColumns').val().split(';')
                     });
                 });
                 $('#delete').click(function(e) {

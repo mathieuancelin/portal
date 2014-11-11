@@ -410,7 +410,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
               (page \ "accessibleByIds").as[Seq[String]],
               Seq[String](),
               Seq[MasheteInstance](),
-              (page \ "colSizes").asOpt[Seq[Int]].getOrElse(Seq(6, 6))
+              (page \ "colSizes").asOpt[Seq[String]].map(_.map(_.toInt)).getOrElse(Seq(6, 6))
             )
 
             val newParentPage = parentPage.copy(subPageIds = parentPage.subPageIds :+ actualPage._id)
