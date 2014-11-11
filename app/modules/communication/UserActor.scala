@@ -362,49 +362,24 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
           }
         }
       }
-      case "moveMashete" => {
+      case "moveMashetes" => {
         if (!user.isAdmin) return
         val fromId = (js \ "payload" \ "from").as[String]
-        val masheteId = (js \ "payload" \ "id").as[String]
-        val previousColumn = (js \ "payload" \ "previous" \ "column").as[String].toInt
-        val previousLine = (js \ "payload" \ "previous" \ "line").as[String].toInt
-        val currentColumn = (js \ "payload" \ "current" \ "column").as[String].toInt
-        val currentLine = (js \ "payload" \ "current" \ "line").as[String].toInt
+        val mashetes = (js \ "payload" \ "mashetes").as[JsArray]
         Env.pageStore.findById(fromId).map {
           case None => notifyError("page not found", js, token)
           case Some(page) => {
             try {
-              val left: java.util.ArrayList[MasheteInstance] = new util.ArrayList[MasheteInstance]()
-              val right: java.util.ArrayList[MasheteInstance] = new util.ArrayList[MasheteInstance]()
-              page.mashetes.filter(_.position.column == 0).sortBy(_.position.line).toList.foreach(left.add)
-              page.mashetes.filter(_.position.column == 1).sortBy(_.position.line).toList.foreach(right.add)
-              val mashete: MasheteInstance = page.mashetes.find(_.id == masheteId).get
-              if (previousColumn == 0) {
-                left.remove(mashete)
-              } else {
-                right.remove(mashete)
+              var newMashetes = Seq[MasheteInstance]()
+              mashetes.value.map(_.as[JsObject]).foreach { jsObj =>
+                println(Json.prettyPrint(jsObj))
+                val col = (jsObj \ "col").as[Int]
+                val line = (jsObj \ "line").as[Int]
+                val masheteid = (jsObj \ "masheteid").as[String]
+                page.mashetes.find(_.id == masheteid).map { instance =>
+                  newMashetes = newMashetes :+ instance.copy(position = Position(col, line))
+                }
               }
-              if (currentColumn == 0) {
-                left.add(currentLine, mashete)
-              } else {
-                right.add(currentLine, mashete)
-              }
-              var leftSeq = Seq[MasheteInstance]()
-              var rightSeq = Seq[MasheteInstance]()
-              import scala.collection.JavaConversions._
-              for (item <- left) {
-                leftSeq = leftSeq :+ item
-              }
-              for (item <- right) {
-                rightSeq = rightSeq :+ item
-              }
-              leftSeq = leftSeq.zipWithIndex.map { tuple =>
-                tuple._1.copy(position = Position(0, tuple._2))
-              }
-              rightSeq = rightSeq.zipWithIndex.map { tuple =>
-                tuple._1.copy(position = Position(1, tuple._2))
-              }
-              val newMashetes = leftSeq ++ rightSeq
               Env.pageStore.save(page.copy(mashetes = newMashetes)).map { page =>
                 respond(Json.obj(), token, js)
               }
@@ -434,8 +409,7 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
               (page \ "accessibleByIds").as[Seq[String]],
               Seq[String](),
               Seq[MasheteInstance](),
-              (page \ "leftColSize").asOpt[Int].getOrElse(play.api.Play.current.configuration.getInt("portal.left-width").getOrElse(6)),
-              (page \ "rightColSize").asOpt[Int].getOrElse(play.api.Play.current.configuration.getInt("portal.right-width").getOrElse(6))
+              (page \ "colSizes").asOpt[Seq[Int]].getOrElse(Seq(6, 6))
             )
 
             val newParentPage = parentPage.copy(subPageIds = parentPage.subPageIds :+ actualPage._id)

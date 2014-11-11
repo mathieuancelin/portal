@@ -5,15 +5,10 @@ var React = require('react');
 // TODO : notepad mashete (need storage)
 
 function add(masheteId, conf, isAdmin) {
-    // TODO : so ugly ...
     var id = portal.Utils.generateUUID();
-    var hiding = '#left-row-' + id ;
-    var template = '<div class="row" id="left-row-' + id + '">' +
-    '    <div class="row droppable" id="left-drop-start-' + id + '" data-pos="start"></div>' +
-    '    <div class="col-md-12 draggable" id="left-' + id + '" draggable="' + isAdmin + '" ondragover="event.preventDefault();"></div>' +
-    '    <div class="row droppable" id="left-drop-stop-' + id + '" data-pos="stop"></div>'
-    '</div>';
-    $('#left').prepend(template);
+    var hiding = '#row-mashete-' + id;
+    var template = '<div id="mashete-' + id + '"></div>';
+    $('#col-0').prepend(template);
     conf.masheteid = id;
     conf.mashete = masheteId;
     conf.position = {column: 0, line: 0};
@@ -29,10 +24,10 @@ function add(masheteId, conf, isAdmin) {
         }
     }).then(function() {
         React.render(
-            React.createElement(portal.MashetesStore[masheteId], conf), document.getElementById("left-" + id)
+            React.createElement(portal.MashetesStore[masheteId], conf), document.getElementById("mashete-" + id)
         );
     })
-};
+}
 
 var Mashete = React.createClass({
     getInitialState: function() {
@@ -77,14 +72,8 @@ var Mashete = React.createClass({
         portal.Structure.saveMasheteOptions(this.props.config.masheteid, JSON.parse(this.state.optionsContent)).then(function(newConfig) {
             masheteThis.setState({edit: false});
             setTimeout(function() {
-                // TODO : common code => see init.js line 15
-                var idx = this.props.config.position.line;
-                var side = 'left';
-                if (this.props.config.position.column === 1) {
-                    side = 'right';
-                }
-                var hiding = '#' + side + '-row-' + (idx + 1);
-                React.unmountComponentAtNode(document.getElementById(side + '-' + (idx + 1)));
+                var hiding = '#row-mashete-' + this.props.config.masheteid;
+                React.unmountComponentAtNode(document.getElementById("mashete-" + this.props.config.masheteid));
                 newConfig.masheteid = this.props.config.masheteid;
                 newConfig.mashete = this.props.config.mashete;
                 newConfig.position = this.props.config.position;
@@ -93,7 +82,7 @@ var Mashete = React.createClass({
                 };
                 React.render(
                     React.createElement(portal.MashetesStore[this.props.config.mashete], newConfig),
-                    document.getElementById(side + '-' + (idx + 1))
+                    document.getElementById("mashete-" + this.props.config.masheteid)
                 );
             }.bind(masheteThis), 100);
         });
@@ -118,14 +107,8 @@ var Mashete = React.createClass({
                     portal.Structure.saveMasheteOptions(this.props.config.masheteid, newProps).then(function(newConfig) {
                         masheteThis.setState({edit: false});
                         setTimeout(function() {
-                            // TODO : common code => see init.js line 15
-                            var idx = this.props.config.position.line;
-                            var side = 'left';
-                            if (this.props.config.position.column === 1) {
-                                side = 'right';
-                            }
-                            var hiding = '#' + side + '-row-' + (idx + 1);
-                            React.unmountComponentAtNode(document.getElementById(side + '-' + (idx + 1)));
+                            var hiding = '#row-mashete-' + this.props.config.masheteid;
+                            React.unmountComponentAtNode(document.getElementById("mashete-" + this.props.config.masheteid));
                             newConfig.masheteid = this.props.config.masheteid;
                             newConfig.mashete = this.props.config.mashete;
                             newConfig.position = this.props.config.position;
@@ -134,7 +117,7 @@ var Mashete = React.createClass({
                             };
                             React.render(
                                 React.createElement(portal.MashetesStore[this.props.config.mashete], newConfig),
-                                document.getElementById(side + '-' + (idx + 1))
+                                document.getElementById("mashete-" + this.props.config.masheteid)
                             );
                         }.bind(masheteThis), 100);
                     });
@@ -172,16 +155,23 @@ var Mashete = React.createClass({
             AdminBar = undefined;
         }
         return (
-            <div className="mashete col-md-12" draggable="false" ondragover="event.preventDefault();" data-masheteid={this.props.config.masheteid}>
-                <div className="container-fluid">
-                    <div className="row droppable"></div>
-                        {AdminBar}
+            <div className="row mashete-row draggable" draggable={portal.User.current.isAdmin()} data-masheteid={this.props.config.masheteid} id={"row-mashete-" + this.props.config.masheteid}>
+                <div className="col-md-12">
                     <div className="row">
-                        <div className="col-md-12">
+                        <div className="mashete col-md-12" data-masheteid={this.props.config.masheteid}>
+                            <div className="container-fluid">
+                        {AdminBar}
+                                <div className="row">
+                                    <div className="col-md-12">
                             {content}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div className="row droppable"></div>
+                    <div className="row">
+                        <div className="row droppable"></div>
+                    </div>
                 </div>
             </div>
         );

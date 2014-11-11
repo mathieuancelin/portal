@@ -27,8 +27,7 @@ case class Page(
                  accessibleByIds: Seq[String],
                  subPageIds: Seq[String],
                  mashetes: Seq[MasheteInstance],
-                 leftColSize: Int = play.api.Play.current.configuration.getInt("portal.left-width").getOrElse(6),
-                 rightColSize: Int = play.api.Play.current.configuration.getInt("portal.right-width").getOrElse(6)
+                 colSizes: Seq[Int] = Seq(6, 6)
        ) {
 
   def subPages(implicit ec: ExecutionContext): Future[Seq[Page]] = Future.sequence(subPageIds.map(Env.pageStore.findById)).map(_.collect { case Some(role) => role })

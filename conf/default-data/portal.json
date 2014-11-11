@@ -41,8 +41,7 @@
                 }
             }
         ],
-        "leftColSize": 3,
-        "rightColSize": 9
+        "colSizes": [3, 9]
     },
     {
         "_id": "1a47dee22-421b-4b0e-9d2b-cc5bab33d4d0",
@@ -86,8 +85,7 @@
                 }
             }
         ],
-        "leftColSize": 8,
-        "rightColSize": 4
+        "colSizes": [8, 4]
     },
     {
         "_id": "771841d45-19e2-4918-904c-c5e281cce9d4",
@@ -121,8 +119,7 @@
                 }
             }
         ],
-        "leftColSize": 6,
-        "rightColSize": 6
+        "colSizes": [6, 6]
     },
     {
         "_id": "10e370ec3-0aaa-4328-a11b-e9ada3149079",
@@ -156,8 +153,7 @@
                 }
             }
         ],
-        "leftColSize": 3,
-        "rightColSize": 9
+        "colSizes": [3, 9]
     },
     {
         "_id": "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb5",
@@ -177,8 +173,7 @@
                 "instanceConfig": { }
             }
         ],
-        "leftColSize": 12,
-        "rightColSize": 6
+        "colSizes": [12]
     },
     {
         "_id": "30e8bad9c-d0dd-40aa-8ca9-d7de6059bcb4",
@@ -219,8 +214,7 @@
                 }
             }
         ],
-        "leftColSize": 6,
-        "rightColSize": 6
+        "colSizes": [6, 6]
     },
     {
         "_id": "cbdb951b5-3795-4d52-9380-9aad0e514a4a",
@@ -242,8 +236,7 @@
                 "instanceConfig": { }
             }
         ],
-        "leftColSize": 6,
-        "rightColSize": 6
+        "colSizes": [6, 6]
     },
     {
         "_id": "75539595b-c8e6-4237-81c8-6dd3a8c19391",
@@ -265,8 +258,7 @@
                 "instanceConfig": { }
             }
         ],
-        "leftColSize": 6,
-        "rightColSize": 6
+        "colSizes": [6, 6]
     },
     {
         "_id": "5708ca388-3ae1-4bbb-a0e1-120dd40ad786",
@@ -277,7 +269,7 @@
             "USER"
         ],
         "description": "The best portal ever ...",
-        "leftColSize": 6,
+        "colSizes": [6, 6],
         "mashetes": [
             {
                 "id": "544498971800001e008b86ab",
@@ -353,7 +345,6 @@
             }
         ],
         "name": "Welcome to 'The portal'",
-        "rightColSize": 6,
         "subPageIds": [
             "cbdb951b5-3795-4d52-9380-9aad0e514a4a",
             "75539595b-c8e6-4237-81c8-6dd3a8c19391"

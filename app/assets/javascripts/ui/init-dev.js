@@ -1,7 +1,6 @@
 var portal = portal || {};
 portal.DevTools = portal.DevTools || {};
 
-// Nicer version of the Todo App using Flux like architecture (http://facebook.github.io/flux/)
 (function(exports) {
 
     function startUi() {
@@ -60,7 +59,7 @@ portal.DevTools = portal.DevTools || {};
     }
 })(portal.DevTools);
 
-
+/**
 // TODO : add to dev env
 (function(__exports) {
     __exports.MongoMashete = portal.MashetesStore.React.createClass({
@@ -124,5 +123,4 @@ portal.DevTools = portal.DevTools || {};
         }
     });
 })({});
-
-
+**/

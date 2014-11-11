@@ -12,12 +12,7 @@ $(function() {
         showIdentity();
         _.chain(portal.Location.current.mashetes).each(function (mashete) {
             try {
-                var idx = mashete.position.line;
-                var side = 'left';
-                if (mashete.position.column === 1) {
-                    side = 'right';
-                }
-                var hiding = '#' + side + '-row-' + (idx + 1);
+                var hiding = '#row-mashete-' + mashete.id;
                 mashete.instanceConfig.masheteid = mashete.id;
                 mashete.instanceConfig.mashete = mashete.masheteId;
                 mashete.instanceConfig.position = mashete.position;
@@ -29,14 +24,14 @@ $(function() {
                 if (portal.MashetesStore[mashete.masheteId]) {
                     portal.MashetesStore.React.render(
                         portal.MashetesStore.React.createElement(portal.MashetesStore[mashete.masheteId], mashete.instanceConfig),
-                        document.getElementById(side + '-' + (idx + 1))
+                        document.getElementById('mashete-' + mashete.id)
                     );
                     console.log("Success !!!");
                 } else {
                     console.log("Fail !!!");
                     portal.MashetesStore.React.render(
                         portal.MashetesStore.React.createElement(portal.MashetesStore.FallbackMashete, {}),
-                        document.getElementById(side + '-' + (idx + 1))
+                        document.getElementById('mashete-' + mashete.id)
                     );
                 }
             } catch (ex) {
@@ -55,7 +50,6 @@ $(function() {
         function registerDragAndDrop() {
             function dragIt(e) {
                 e.originalEvent.dataTransfer.setData("dragged-element", $(e.target).parent().attr('id'));
-                e.originalEvent.dataTransfer.setData("previous-position", $(e.target).parent().data('position'));
                 e.originalEvent.dataTransfer.setData("mashete-id", $(e.target).parent().data('masheteid'));
             }
 
@@ -65,27 +59,40 @@ $(function() {
                     $(this).height('20px');
                 });
                 var theData = e.originalEvent.dataTransfer.getData("dragged-element");
-                var previousPosition = e.originalEvent.dataTransfer.getData("previous-position");
                 var masheteId = e.originalEvent.dataTransfer.getData("mashete-id");
-                var currentPosition = $(e.originalEvent.target).parent().data("position");
-                var previous = {
-                    column: previousPosition.split(":")[0],
-                    line: previousPosition.split(":")[1]
-                };
-                var current = {
-                    column: currentPosition.split(":")[0],
-                    line: currentPosition.split(":")[1]
-                };
-                var thePos = $(this).data('pos');
-                console.log(thePos);
                 var theDraggedElement = document.getElementById(theData);
-                if (thePos === 'start') {
-                    $(e.originalEvent.target).parent().before(theDraggedElement);
+                console.log(e.originalEvent.target);
+                if ($(e.originalEvent.target).data('pos') === 'start') {
+                    $(e.originalEvent.target).after(theDraggedElement);
                 } else {
-                    $(e.originalEvent.target).parent().after(theDraggedElement);
+                    $(e.originalEvent.target).parent().parent().parent().parent().after(theDraggedElement);
                 }
                 e.originalEvent.preventDefault();
-                portal.Structure.moveMashete(masheteId, previous, current);
+                var mashetes = [];
+                var cols = 0;
+                $('.mashete-column').each(function() {
+                    var col = $(this).data('colpos');
+                    cols++;
+                    $(this).find('.mashete').each(function() {
+                        var masheteid = $(this).data('masheteid');
+                        var top = $(this).offset().top;
+                        mashetes.push({
+                            col: col,
+                            top: top,
+                            masheteid: masheteid
+                        });
+                    });
+                });
+                for (var col = 0; col < cols; col++) {
+                    _.chain(mashetes).filter(function(item) {
+                        return item.col == col;
+                    }).sortBy(function(item) {
+                        return item.top;
+                    }).each(function(item, idx) {
+                        item.line = idx;
+                    });
+                }
+                portal.Structure.moveMashetes(mashetes);
             }
 
             $('.draggable').on('dragstart', dragIt);
@@ -127,30 +134,3 @@ $(function() {
         }
     });
 });
-
-
-(function() {
-    function updateClock(){
-        var now = moment(),
-            second = now.seconds() * 6,
-            minute = now.minutes() * 6 + second / 60,
-            hour = ((now.hours() % 12) / 12) * 360 + 90 + minute / 12;
-
-        $('#hour').css("transform", "rotate(" + hour + "deg)");
-        $('#minute').css("transform", "rotate(" + minute + "deg)");
-        $('#second').css("transform", "rotate(" + second + "deg)");
-    }
-    function timedUpdate () {
-        updateClock();
-        setTimeout(timedUpdate, 1000);
-    }
-    //<div class="hero-circle">
-    //    <div class="hero-face">
-    //        <div id="hour" class="hero-hour"></div>
-    //        <div id="minute" class="hero-minute"></div>
-    //        <div id="second" class="hero-second"></div>
-    //    </div>
-    //</div>
-    //timedUpdate();
-
-})();
