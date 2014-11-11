@@ -43,12 +43,14 @@ $(function() {
             e.preventDefault();
             var id = $(this).data('mid');
             var conf = JSON.parse($(this).data('conf').decodeBase64()); // TODO : server side, from default config
-            portal.Mashetes.add(id, conf, portal.User.current.isAdmin() + "");
-            registerDragAndDrop();
+            portal.Mashetes.add(id, conf, portal.User.current.isAdmin() + "").then(function() {
+                registerDragAndDrop();
+            });
         });
 
         function registerDragAndDrop() {
             function dragIt(e) {
+                console.log(e.target);
                 e.originalEvent.dataTransfer.setData("dragged-element", $(e.target).parent().attr('id'));
                 e.originalEvent.dataTransfer.setData("mashete-id", $(e.target).parent().data('masheteid'));
             }
@@ -61,7 +63,6 @@ $(function() {
                 var theData = e.originalEvent.dataTransfer.getData("dragged-element");
                 var masheteId = e.originalEvent.dataTransfer.getData("mashete-id");
                 var theDraggedElement = document.getElementById(theData);
-                console.log(e.originalEvent.target);
                 if ($(e.originalEvent.target).data('pos') === 'start') {
                     $(e.originalEvent.target).after(theDraggedElement);
                 } else {

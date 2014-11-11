@@ -332,7 +332,9 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
                   }
                 })
                 Env.pageStore.save(newPage.copy(mashetes = newPage.mashetes :+ masheteInstance)).map { page =>
-                  respond(Json.obj(), token, js)
+                  respond(Json.obj(
+                    "masheteid" -> masheteInstance.id
+                  ), token, js)
                 }.onFailure {
                   case e => notifyError(s"fail to save page", js, token)
                 }
@@ -372,7 +374,6 @@ class UserActor(out: ActorRef, fuser: Future[User]) extends Actor {
             try {
               var newMashetes = Seq[MasheteInstance]()
               mashetes.value.map(_.as[JsObject]).foreach { jsObj =>
-                println(Json.prettyPrint(jsObj))
                 val col = (jsObj \ "col").as[Int]
                 val line = (jsObj \ "line").as[Int]
                 val masheteid = (jsObj \ "masheteid").as[String]

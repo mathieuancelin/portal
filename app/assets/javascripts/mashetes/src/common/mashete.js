@@ -5,24 +5,24 @@ var React = require('react');
 // TODO : notepad mashete (need storage)
 
 function add(masheteId, conf, isAdmin) {
-    var id = portal.Utils.generateUUID();
-    var hiding = '#row-mashete-' + id;
-    var template = '<div id="mashete-' + id + '"></div>';
-    $('#col-0').prepend(template);
-    conf.masheteid = id;
-    conf.mashete = masheteId;
-    conf.position = {column: 0, line: 0};
-    conf.closeCallback = function () {
-        $(hiding).hide();
-    };
-    portal.Socket.ask({
+    return portal.Socket.ask({
         topic: '/portal/topics/structure',
         payload: {
             command: 'addMashete',
             from: portal.Location.current._id,
             id: masheteId
         }
-    }).then(function() {
+    }).then(function(data) {
+        var id = data.masheteid;
+        var hiding = '#row-mashete-' + id;
+        var template = '<div id="mashete-' + id + '"></div>';
+        $('#col-0').prepend(template);
+        conf.masheteid = id;
+        conf.mashete = masheteId;
+        conf.position = {column: 0, line: 0};
+        conf.closeCallback = function () {
+            $(hiding).hide();
+        };
         React.render(
             React.createElement(portal.MashetesStore[masheteId], conf), document.getElementById("mashete-" + id)
         );
